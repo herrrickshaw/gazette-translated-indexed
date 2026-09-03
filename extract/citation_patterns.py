@@ -89,8 +89,38 @@ def find_citations(text: str) -> list[Citation]:
     return out
 
 
+@dataclass(frozen=True)
+class GazetteCitation:
+    kind: str          # 'G.S.R.' | 'S.O.'
+    normalized: str    # e.g. 'S.O. 4872(E)' — always this exact spacing, regardless of source formatting
+    start: int         # position of the match in the ORIGINAL text — not of `normalized`,
+    end: int           # which may not even appear verbatim in the source (e.g. "S.O 4872(E)" with no period)
+
+
+def find_gazette_citations(text: str) -> list[GazetteCitation]:
+    """
+    Position-aware G.S.R./S.O. citation finder. Use this (not find_gazette_ids)
+    whenever a caller needs to know *where* a citation is, e.g. to pair it
+    with a nearby relation phrase — `normalized` is a display string, not
+    something safe to re-search for in the source text, because real text is
+    inconsistently formatted (e.g. "S.O 4872(E)" with no period at all).
+    """
+    out = []
+    for m in _GSR_RE.finditer(text):
+        out.append(GazetteCitation(
+            kind='G.S.R.', normalized=f'G.S.R. {m.group(1)}({m.group(2)})',
+            start=m.start(), end=m.end(),
+        ))
+    for m in _SO_RE.finditer(text):
+        out.append(GazetteCitation(
+            kind='S.O.', normalized=f'S.O. {m.group(1)}({m.group(2)})',
+            start=m.start(), end=m.end(),
+        ))
+    return out
+
+
 def find_gazette_ids(text: str) -> list[str]:
-    """G.S.R./S.O. citations, e.g. 'G.S.R. 98(E)', 'S.O. 4848(E)'."""
-    ids = [f'G.S.R. {n}({letter})' for n, letter in _GSR_RE.findall(text)]
-    ids += [f'S.O. {n}({letter})' for n, letter in _SO_RE.findall(text)]
-    return ids
+    """G.S.R./S.O. citations as display strings only — no position info.
+    Kept for callers that just need the set of ids; see find_gazette_citations
+    for anything that needs to locate a citation in the source text."""
+    return [c.normalized for c in find_gazette_citations(text)]
