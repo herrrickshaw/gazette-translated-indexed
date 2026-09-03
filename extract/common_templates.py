@@ -65,9 +65,15 @@ def find_amendment_in_notification_links(
     text: str, ministry_name: str, self_citation: str | None = None
 ) -> list[TemplateLink]:
     """ministry_name: lowercase fragment, e.g. 'road transport and highways'."""
-    # "amendment" not "amendment in" / "amendments in" — a fixed suffix would
-    # miss the singular/plural split real ministries actually use.
-    anchor = f'hereby makes the following amendment'
+    # Dropped "hereby" from the anchor entirely — a real Ministry of
+    # Agriculture notification's own primary text has "the Central
+    # Government herby makes the following amendments" (missing the second
+    # "e"), presumably an OCR/transcription artifact in the source gazette
+    # itself. "makes the following amendment" alone is still specific
+    # enough to avoid false positives, and is a strict substring of every
+    # correctly-spelled example already verified, so this only adds
+    # coverage, it doesn't remove any.
+    anchor = 'makes the following amendment'
     # Anchor on the ministry-name fragment too, so a document that mentions
     # amendments to some OTHER ministry's notification doesn't false-positive.
     if ministry_name.lower() not in text.lower():

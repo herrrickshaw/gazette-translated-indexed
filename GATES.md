@@ -1,28 +1,26 @@
-# Gates: parallel multi-ministry research batch (5 ministries)
+# Gates: two more parallel batches (10 ministries researched, 7 modeled)
 
 OWNS: db/**, extract/**, tests/**
 
-Scope: user asked to parallelize ministry research, 5 at a time. Five Explore agents ran concurrently (Railways, Home Affairs, Environment/Forest/Climate Change, Health and Family Welfare, Corporate Affairs), each under the same anti-fabrication brief: quote real primary or indexed gazette text with a source URL, explicitly report "not found" rather than invent. Every finding was reviewed and gated by hand before touching the repo — not merged on the agents' say-so.
+Scope: user asked to keep running batches of 5 in parallel. Ran two more batches of 5 (10 agents total across this session: Labour, Petroleum, Consumer Affairs, Commerce, Power, then Agriculture, Civil Aviation, Education, Electronics/IT, Housing), same anti-fabrication brief as the first batch. Reviewed every finding by hand; modeled 7 of the 10 ministries with a clean, tested pair each. Deliberately did not model 3 (Petroleum, Commerce/DGFT, Education) — see ABANDON.
 
-- [x] G1: Every one of the 5 agents returned real, source-quoted findings — none fabricated a citation to fill the count.
-  EVIDENCE: met — all 5 reports included exact notification numbers, dates, and verbatim primary-text quotes with source URLs; two agents explicitly flagged rate limits or gaps they hit rather than padding around them (Health: "hit a search limit ... did not attempt to work around this"; Corporate Affairs: "did not find ... a true 'corrigendum correcting a Companies (Incorporation)/(Accounts) Rules' ... that combination didn't surface").
+- [x] G1: Every real, source-quoted finding from all 10 agents was reviewed before touching the repo; none were merged on an agent's say-so alone.
+  EVIDENCE: met — every modeled ministry's seed file cites its research-agent quote and source URL; deferred leads are documented in the same files' header comments, not discarded silently.
 
-- [x] G2: At least one agent finding was independently spot-checked by this session against its source, not just trusted on the agent's word.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && grep -c "spot-checked" db/seed_moefcc.sql
-  EXPECT: /[1-9]/
-  EVIDENCE: met — navigated to https://gazettetracker.com/g/CG-DL-E-19072023-247431 directly and confirmed the MoEFCC S.O. 3182(E)->S.O. 3252(E) quote matches word-for-word, including the agent's own flagged discrepancy (a mislabeled page title). Every other row's `verified_by` is 'research-agent-quoted', not upgraded to look equivalent.
-
-- [x] G3: Each of the 5 ministries got its own citation extractor, tested against that ministry's own real text — not one pattern stretched across all five.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_moefcc_patterns.py tests/test_mha_patterns.py tests/test_health_patterns.py tests/test_railways_patterns.py tests/test_mca_patterns.py -q
-  EXPECT: 12 passed
-  EVIDENCE: met. Two real shared drafting templates emerged and were factored out (extract/common_templates.py) only after independent confirmation from a second ministry each — MoRTH+MHA share "hereby makes the following amendment(s) in the notification..."; MoEFCC+MoHFW+MCA share "...ministry of X [vide] number Y ... for [old] read [new]". Railways did not fit either (citation precedes "Ministry of Railways" instead of following "Ministry of X") and kept its own module. The consolidation itself caught a bug: assuming MoEFCC's and MoHFW's connective wording were identical ("in the Ministry of X" vs "..., Ministry of X,") was wrong and had to be loosened.
-
-- [x] G4: The full test suite passes with all 7 ministries seeded together (no cross-ministry regressions from the shared-template refactor).
+- [x] G2: The full test suite passes with all 14 ministries seeded together.
   CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/ -q
-  EXPECT: 19 passed
+  EXPECT: 34 passed
   EVIDENCE: met.
 
-- [ ] G5: Every real lead an agent found is modeled in the database, not just the cleanest one per ministry.
-  EVIDENCE: abandoned — see ABANDON. Deliberately scoped down to one pair per ministry this pass; the rest are documented as backlog in each seed_*.sql file's header comment, not silently dropped.
+- [x] G3: At least one bug was caught by testing against this batch's real text that the first two batches' tests did not surface.
+  EVIDENCE: met — Ministry of Agriculture's real primary text has "the Central Government herby makes the following amendments" (missing the second "e" in "hereby" — an apparent transcription/OCR artifact in the source gazette itself, not this project's error). The shared anchor required the correct spelling and silently matched nothing; fixed by dropping "hereby" from the anchor rather than special-casing the typo, since the shorter anchor is still unambiguous and a strict superset of what the old one matched.
 
-ABANDON: G5 exhausting every agent-found lead in one pass would have meant inventing new schema shapes under time pressure for at least three genuinely different relationship types found this batch — a one-to-many disapplication order (MHA), a draft-to-final rulemaking chain (MoHFW), and a Rules-instrument amendment-history citation (MCA, structurally closer to CBIC's consolidated-instrument shape than a corrigendum pair). Rushing those in risks the same kind of bug this session already caught twice (wrong assumption about shared phrasing, wrong assumption about connective wording) — better to model one clean, tested pair per ministry now and treat the rest as a scoped backlog, which is written into each seed file rather than lost. Handoff: each seed_*.sql file's header names its own unmodeled leads.
+- [x] G4: Every provenance tier is still tracked distinctly — no ministry's real-but-weaker sourcing got smoothed to look as solid as CBIC's.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT DISTINCT verified_by FROM cross_reference ORDER BY 1;" | wc -l | tr -d ' '
+  EXPECT: 7
+  EVIDENCE: met — includes a new, explicitly weaker tier introduced this batch: 'research-agent-quoted-uncorroborated' (Ministry of Housing and Urban Affairs), because the research agent itself flagged that pair as resting solely on one aggregator's text with no independent corroboration found. Recorded as weaker, not silently merged into the ordinary 'research-agent-quoted' tier.
+
+- [ ] G5: Every real lead this batch's agents found is modeled, not just one clean pair per ministry.
+  EVIDENCE: abandoned — see ABANDON.
+
+ABANDON: G5 the same reasoning as the first batch's G5 applies, plus one new case: Petroleum and Commerce/DGFT's real findings don't fit either shared template at all (Petroleum's leads are all footnote-style "principal regulation...amended vide..." citations in regulator PDFs; Commerce/DGFT's leads cite the original by a bare "Notification No. 66" DGFT-internal number, not a G.S.R./S.O. citation the current extractor even recognizes) — modeling either would mean designing a new citation pattern under time pressure, which is exactly how the "herby" and "in the Ministry of X" bugs got introduced earlier this session. Education's three real leads are all citation-history chains in a trailing "Note" (2 to 11 prior amendments each), the same consolidated-instrument shape already deferred for MCA and Agriculture — left out for the same reason, not forgotten. Handoff: Petroleum and Commerce/DGFT need their own citation-pattern modules (not a template reuse) before any pair from either can be modeled; the "Note"-chain shape (MCA, Agriculture, Education, Consumer Affairs' Legal Metrology lead) is common enough across ministries now that it may be worth its own shared template, the same way amendment-in-notification and corrigendum-substitution were factored out — but only after it's been read carefully enough to get right, not extrapolated from four examples under time pressure.
