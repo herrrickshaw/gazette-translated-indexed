@@ -9,9 +9,18 @@ citation a MoRTH notification has is its own S.O. gazette number. Reusing
 CBIC's citation-number regex here would be reusing a shape that doesn't
 exist in this ministry's text, not genuine code sharing.
 
-Verified against exactly one real example (see db/seed_morth.sql for
-provenance) — this is a first pilot pattern, not yet validated the way
-CBIC's is. See GATES.md G4.
+Verified against three real examples (see db/seed_morth.sql for provenance
+on each) spanning 2024-2026 — a genuine second and third data point, not
+just the first pilot pair. See GATES.md G4.
+
+Earlier version of this module used the phrase "to amend notification",
+taken from a gazette aggregator's AI-generated summary sentence rather than
+the notification's own legal text — even though the real primary text was
+available on the same page. The actual recurring boilerplate across every
+real example checked is "hereby makes the following amendment in [the]
+notification..." — found by reading the primary text properly instead of
+its paraphrase. This is the same class of mistake as the CBIC en-dash bug:
+trusting a cleaner-looking secondary description over messier ground truth.
 """
 from __future__ import annotations
 
@@ -20,17 +29,15 @@ from dataclasses import dataclass
 
 from .citation_patterns import find_gazette_citations  # S.O./G.S.R. regex is shared; it's generic gazette-citation syntax, not CBIC-specific
 
-# MoRTH corrigenda are described with "to amend notification S.O. X(E)" —
-# distinct wording from CBIC's "in supersession of" / "in partial modification
-# of". Order matters only if a document could contain multiple phrases; kept
-# as a list for the same shape as extract.cross_ref, not because there's
-# evidence yet that more than one phrase occurs in practice.
+# The real, recurring MoRTH corrigendum boilerplate: "the Central Government
+# hereby makes the following amendment in [the] notification ... S.O. X(E)".
+# "the" before "notification" is inconsistent across real examples (present
+# in one, absent in two others) — matched on the stable common substring.
 _RELATION_PHRASES = [
-    ('to amend notification', 'corrigendum'),
-    ('correcting', 'corrigendum'),
+    ('hereby makes the following amendment in', 'corrigendum'),
 ]
 
-_WINDOW_CHARS = 500  # MoRTH corrigenda are single-sentence; no long enumerated list to span
+_WINDOW_CHARS = 800  # covers "...amendment in [the notification of the Government of India in the Ministry of X], S.O. Y(E)"
 
 
 @dataclass(frozen=True)
