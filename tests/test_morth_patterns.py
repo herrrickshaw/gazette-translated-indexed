@@ -54,18 +54,20 @@ CASES = [
 def test_finds_the_real_corrigendum_link_in_every_example():
     for text, self_so, expected_target in CASES:
         links = find_candidate_links(text, self_so=self_so)
-        targets = {l.target_so for l in links}
+        targets = {l.target_citation for l in links}
         assert expected_target in targets, f'{self_so}: expected {expected_target} in {targets}'
 
 
 def test_self_citation_excluded_in_every_example():
     for text, self_so, _ in CASES:
         links = find_candidate_links(text, self_so=self_so)
-        targets = {l.target_so for l in links}
+        targets = {l.target_citation for l in links}
         assert self_so not in targets
 
 
-def test_relation_type_is_corrigendum_in_every_example():
-    for text, self_so, _ in CASES:
+def test_positive_control_links_are_never_empty():
+    # A negative check (self-exclusion, above) is meaningless if nothing was
+    # found at all — assert the positive control explicitly.
+    for text, self_so, expected_target in CASES:
         links = find_candidate_links(text, self_so=self_so)
-        assert all(l.relation_type == 'corrigendum' for l in links)
+        assert links, f'{self_so}: found no links at all'

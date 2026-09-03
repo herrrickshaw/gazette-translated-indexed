@@ -1,36 +1,28 @@
-# Gates: second-ministry pilot (Road Transport and Highways)
+# Gates: parallel multi-ministry research batch (5 ministries)
 
-OWNS: db/**, extract/**, tests/**, data/**
+OWNS: db/**, extract/**, tests/**
 
-Scope: "All ministries across all history" is not a completable unit right now (see ABANDON on G0 below). The actual next milestone: extend the pipeline to a second real ministry — Ministry of Road Transport and Highways — with one genuinely verified cross-reference, proving the schema and extraction approach generalize past CBIC's specific drafting conventions rather than just re-running CBIC's regex on new text.
+Scope: user asked to parallelize ministry research, 5 at a time. Five Explore agents ran concurrently (Railways, Home Affairs, Environment/Forest/Climate Change, Health and Family Welfare, Corporate Affairs), each under the same anti-fabrication brief: quote real primary or indexed gazette text with a source URL, explicitly report "not found" rather than invent. Every finding was reviewed and gated by hand before touching the repo — not merged on the agents' say-so.
 
-- [ ] G0: All ~50 central ministries have a verified citation chain spanning each ministry's full notification history, the way CBIC's chain was verified against its own primary-source text.
-  EVIDENCE: abandoned — see ABANDON below.
+- [x] G1: Every one of the 5 agents returned real, source-quoted findings — none fabricated a citation to fill the count.
+  EVIDENCE: met — all 5 reports included exact notification numbers, dates, and verbatim primary-text quotes with source URLs; two agents explicitly flagged rate limits or gaps they hit rather than padding around them (Health: "hit a search limit ... did not attempt to work around this"; Corporate Affairs: "did not find ... a true 'corrigendum correcting a Companies (Incorporation)/(Accounts) Rules' ... that combination didn't surface").
 
-- [x] G1: Real (not fabricated) MoRTH corrigendum-to-original cross-references exist in the database, sourced from independently observable evidence, not invented to fill the schema.
-  CHECK: python3 -c "import sqlite3; c=sqlite3.connect('gazette.db'); r=c.execute(\"SELECT count(*) FROM cross_reference WHERE source_gazette_id LIKE 'morth-%'\").fetchone()[0]; assert r==3, f'expected 3, got {r}'; print('MORTH_XREF_OK')"
-  EXPECT: MORTH_XREF_OK
-  EVIDENCE: met — 3 real corrigendum->original pairs: S.O. 4848(E)->4872(E) (2026, read from the notification's own primary "Full Text" page), S.O. 2432(E)->732(E) and S.O. 4689(E)->1265(E) (2025/2024, literal excerpts from a full-text search index, not an AI summary). verified_by distinguishes 'primary-source-full-text' from 'search-index-excerpt' — neither claims CBIC's tier (an independently downloaded gazette PDF read start to finish).
+- [x] G2: At least one agent finding was independently spot-checked by this session against its source, not just trusted on the agent's word.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && grep -c "spot-checked" db/seed_moefcc.sql
+  EXPECT: /[1-9]/
+  EVIDENCE: met — navigated to https://gazettetracker.com/g/CG-DL-E-19072023-247431 directly and confirmed the MoEFCC S.O. 3182(E)->S.O. 3252(E) quote matches word-for-word, including the agent's own flagged discrepancy (a mislabeled page title). Every other row's `verified_by` is 'research-agent-quoted', not upgraded to look equivalent.
 
-- [x] G2: MoRTH's citation format is structurally different from CBIC's, and the schema/extractor handle that difference explicitly rather than by coincidence.
-  CHECK: python3 -c "
-import sqlite3
-c = sqlite3.connect('gazette.db')
-row = c.execute(\"SELECT numbering_form FROM gazette_notification WHERE gazette_id='morth-so-4872-2025'\").fetchone()
-assert row and row[0] == 'so-only', f'expected so-only, got {row}'
-print('MORTH_FORM_OK')
-"
-  EXPECT: MORTH_FORM_OK
-  EVIDENCE: met — MoRTH notifications under the National Highways Act, 1956 carry no ministry-internal sequential number at all (no "No. X/YYYY-series"); the S.O. gazette number is the only citation. Modeled as numbering_form='so-only', distinct from CBIC's bare/2-digit-year/4-digit-year forms.
+- [x] G3: Each of the 5 ministries got its own citation extractor, tested against that ministry's own real text — not one pattern stretched across all five.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_moefcc_patterns.py tests/test_mha_patterns.py tests/test_health_patterns.py tests/test_railways_patterns.py tests/test_mca_patterns.py -q
+  EXPECT: 12 passed
+  EVIDENCE: met. Two real shared drafting templates emerged and were factored out (extract/common_templates.py) only after independent confirmation from a second ministry each — MoRTH+MHA share "hereby makes the following amendment(s) in the notification..."; MoEFCC+MoHFW+MCA share "...ministry of X [vide] number Y ... for [old] read [new]". Railways did not fit either (citation precedes "Ministry of Railways" instead of following "Ministry of X") and kept its own module. The consolidation itself caught a bug: assuming MoEFCC's and MoHFW's connective wording were identical ("in the Ministry of X" vs "..., Ministry of X,") was wrong and had to be loosened.
 
-- [x] G3: A MoRTH-specific extractor exists and is tested against three real sentences, independent of CBIC's citation_patterns module.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_morth_patterns.py -q
-  EXPECT: 3 passed
-  EVIDENCE: met — see tests/test_morth_patterns.py. The extractor's original phrase ("to amend notification") was itself sourced from an aggregator's AI summary, not the real legal text, and matched none of the three real examples; fixed by reading primary text and matching the actual recurring boilerplate ("hereby makes the following amendment in").
+- [x] G4: The full test suite passes with all 7 ministries seeded together (no cross-ministry regressions from the shared-template refactor).
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/ -q
+  EXPECT: 19 passed
+  EVIDENCE: met.
 
-- [x] G4: A genuine second and third cross-reference (beyond the single seeded example) have been independently fetched and verified from real MoRTH notification text, distinguishing provenance tiers rather than treating every source as equivalent.
-  CHECK: python3 -c "import sqlite3; c=sqlite3.connect('gazette.db'); r=c.execute(\"SELECT count(DISTINCT verified_by) FROM cross_reference WHERE source_gazette_id LIKE 'morth-%'\").fetchone()[0]; assert r==2, f'expected 2 distinct provenance tiers, got {r}'; print('MORTH_G4_OK')"
-  EXPECT: MORTH_G4_OK
-  EVIDENCE: met — see db/seed_morth.sql for the two additional pairs and the explicit provenance-tier distinction ('primary-source-full-text' vs 'search-index-excerpt'), neither smoothed into CBIC's 'primary-source-preamble' tier.
+- [ ] G5: Every real lead an agent found is modeled in the database, not just the cleanest one per ministry.
+  EVIDENCE: abandoned — see ABANDON. Deliberately scoped down to one pair per ministry this pass; the rest are documented as backlog in each seed_*.sql file's header comment, not silently dropped.
 
-ABANDON: G0 "all ministries across all history" is not a gate-able unit of work and is abandoned as stated, not silently narrowed. Reasons: (1) CBIC's own 31-notification chain required fetching and reading actual primary-source PDF text, and testing against that real text caught three genuine extraction bugs (en-dash vs hyphen, a 2-digit-year pivot bug, a too-short phrase-matching window) that a clean synthetic fixture did not surface — there is no shortcut past that per-ministry verification step. (2) ~50 central ministries, each with a decades-to-centuries-long notification history and its own drafting conventions, means ~50 independent verification efforts of that same size, which is real research work across many sessions, not a batch operation. (3) The only way to make "all ministries, all history" look done in one pass is to fabricate citation data to fill the schema — already explicitly ruled out earlier in this project (see README "What's real vs. scaffolded" and the published Ministry Coverage page) and not reversed here. Handoff: pick the next ministry deliberately (MoRTH is a reasonable #2, per G1-G3 above) and budget real fetch-and-verify time per ministry, the same way CBIC got it.
+ABANDON: G5 exhausting every agent-found lead in one pass would have meant inventing new schema shapes under time pressure for at least three genuinely different relationship types found this batch — a one-to-many disapplication order (MHA), a draft-to-final rulemaking chain (MoHFW), and a Rules-instrument amendment-history citation (MCA, structurally closer to CBIC's consolidated-instrument shape than a corrigendum pair). Rushing those in risks the same kind of bug this session already caught twice (wrong assumption about shared phrasing, wrong assumption about connective wording) — better to model one clean, tested pair per ministry now and treat the rest as a scoped backlog, which is written into each seed file rather than lost. Handoff: each seed_*.sql file's header names its own unmodeled leads.
