@@ -75,7 +75,7 @@ breadth:
 
 ## Status
 
-**11 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
+**16 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
 
 | Ministry | Status | Notifications (before → after) | New subject threads |
 |---|---|---|---|
@@ -90,7 +90,12 @@ breadth:
 | Communications | done | 6 → 20 | +6 (real citation collision found and correctly kept distinct) |
 | Consumer Affairs, Food and Public Distribution | done | 6 → 26 | +8 |
 | Cooperation | done | 5 → 9 | +2 (plus a real sibling-notification discovery) |
-| *(42 more ministries pending)* | | | |
+| Corporate Affairs | done | 12 → 60 | +8 (large expansion; 2 summary-sourced leads deliberately deferred) |
+| Culture | done | 6 → 27 | +4 subject areas (AMASR competent-authority 7-node chain, two 2-stage cessation pairs, three 2-stage declaration pairs, National Culture Fund) |
+| Defence | done | 11 → 27 | +8 (bare-form DRDO/CSD/Cantonment Recruitment Rules; multiple real S.R.O.-number collisions across years correctly kept distinct) |
+| DoNER | checked, no new material | 3 → 3 | none (entire tracked corpus is genuinely just 1 citing notification) |
+| Earth Sciences | checked, corpus exhausted | 2 → 2 | none (full corpus reviewed, same 2 unmodelable leads as before) |
+| *(37 more ministries pending)* | | | |
 
 Given the scale (a full research-agent call per ministry, often 150-250K
 tokens of agent work), replicating this across all remaining ministries is a
