@@ -75,17 +75,20 @@ breadth:
 
 ## Status
 
+**6 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
+
 | Ministry | Status | Notifications (before → after) | New subject threads |
 |---|---|---|---|
 | Power | done (pilot) | 6 → 34 | +8 |
-| *(52 more ministries pending)* | | | |
+| Agriculture and Farmers Welfare | done | 5 → 30 | +6 (plus an 8-item gap closed) |
+| Atomic Energy | done | 6 → 14 | real restructuring: 2 chains merged into 1 hub, +3 pairs |
+| Ayush | done | 7 → 27 | +8 (plus a real citation correction: S.O. 221(E) → G.S.R. 221(E)) |
+| Chemicals and Fertilizers | done | 6 → 44 | +13 (new subject area: QCO rescissions) |
+| Civil Aviation | done | 4 → 24 | +8 |
+| *(47 more ministries pending)* | | | |
 
-The remaining 52 already-modeled ministries have not yet had a depth pass.
-Given the scale (a full research-agent call per ministry, each comparable in
-size to the Power pilot — roughly 200K+ tokens of agent work per ministry),
-replicating this across all 53 modeled ministries is a substantial
-undertaking, on the order of the entire original coverage-plan effort again.
-Whether and how fast to run the remaining 52 is a pacing decision for
-whoever picks this file up next — nothing here blocks doing them 5 at a time
-(one research agent per ministry, still 5 concurrent agents per batch) the
-same way the coverage-plan batches ran.
+Given the scale (a full research-agent call per ministry, often 150-250K
+tokens of agent work), replicating this across all remaining ministries is a
+substantial undertaking, on the order of the entire original coverage-plan
+effort again. Continuing 5 at a time (one research agent per ministry, still
+5 concurrent agents per batch) the same way the coverage-plan batches ran.

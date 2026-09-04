@@ -44,3 +44,19 @@ def test_second_real_example_different_closing_verb():
     links = find_candidate_links(RETAIL_PRICE_CORRIGENDUM, self_citation='S.O. 1592(E)')
     targets = {l.target_citation for l in links}
     assert 'S.O. 5635(E)' in targets
+
+
+def test_qco_rescission_via_corrigendum_substitution():
+    # A distinct real shape from Department of Chemicals and Petrochemicals
+    # (not NPPA): "hereby rescinds the notification ... Ministry of
+    # Chemicals and Fertilizers number X ... with immediate effect".
+    rescission = (
+        "S.O. 5527(E). — the Central Government being of the opinion that it is necessary so to do "
+        "in the public interest, after consulting the Bureau of Indian Standards, hereby rescinds "
+        "the notification of the Government of India in the Ministry of Chemicals and Fertilizers "
+        "number S.O. 3929(E), dated the 13th September, 2021, relating to p-Xylene (Quality "
+        "Control) Order, 2021 with immediate effect."
+    )
+    links = find_candidate_links(rescission, self_citation='S.O. 5527(E)')
+    targets = {l.target_citation for l in links}
+    assert 'S.O. 3929(E)' in targets
