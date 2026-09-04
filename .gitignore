@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .pytest_cache/
 gazette.db
+# Cached official PDFs from egazette.gov.in — re-fetchable by gazette ID, so
+# never committed. Extracted transcripts in data/raw_md/ ARE committed.
+data/raw/

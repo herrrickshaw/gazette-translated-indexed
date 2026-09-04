@@ -19,7 +19,12 @@ pip install -r requirements.txt
 ## Pipeline
 
 ```bash
-# 1. extract text from a digital-native notification PDF
+# 0. fetch the official PDF straight from egazette.gov.in by gazette ID
+#    (deterministic URL: WriteReadData/<year>/<file-id>.pdf — no login, no aggregator;
+#     --extract also writes the transcript to data/raw_md/<id>.md)
+python3 -m ingest.egazette CG-DL-E-03092026-275956 --extract
+
+# 1. or extract text from a PDF you already have
 python3 -m ingest.pdf_text data/raw/some-notification.pdf > data/raw_md/some-notification.md
 
 # 2. load the schema + verified seed data
