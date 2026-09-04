@@ -34,8 +34,12 @@ _CITATION_RE = re.compile(
     r'No\.?\s*(?P<numB>\d+)' + _SEP + r'(?P<seriesB>Customs(?:\s*\([A-Za-z.]+\))?)'
 )
 
-_GSR_RE = re.compile(r'G\.S\.R\.?\s*(\d+)\s*\(([A-Z])\)')
-_SO_RE = re.compile(r'S\.O\.?\s*(\d+)\s*\(([A-Z])\)')
+# Optional whitespace between the abbreviation letters: a real Ministry of
+# Culture notification writes "S. O. 3514(E)" (space after "S.") for one
+# target in the same sentence that writes "S.O. 2985(E)" for the next.
+# Both normalize to the canonical "S.O. NNNN(E)" / "G.S.R. NNNN(E)" form.
+_GSR_RE = re.compile(r'G\.\s*S\.\s*R\.?\s*(\d+)\s*\(([A-Z])\)')
+_SO_RE = re.compile(r'S\.\s*O\.?\s*(\d+)\s*\(([A-Z])\)')
 
 # Pivot for expanding a 2-digit year (e.g. the '89' in "No. 207/89-Customs",
 # which is 1989, not 2089). Same convention as POSIX strptime %y: values at

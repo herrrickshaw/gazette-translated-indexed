@@ -1,26 +1,28 @@
-# Gates: two more parallel batches (10 ministries researched, 7 modeled)
+# Gates: batch 4 (Communications, Coal, Steel, Culture, Women & Child Development)
 
 OWNS: db/**, extract/**, tests/**
 
-Scope: user asked to keep running batches of 5 in parallel. Ran two more batches of 5 (10 agents total across this session: Labour, Petroleum, Consumer Affairs, Commerce, Power, then Agriculture, Civil Aviation, Education, Electronics/IT, Housing), same anti-fabrication brief as the first batch. Reviewed every finding by hand; modeled 7 of the 10 ministries with a clean, tested pair each. Deliberately did not model 3 (Petroleum, Commerce/DGFT, Education) — see ABANDON.
+Scope: "finish 1 then 2" — close out the ministry-by-ministry batch already in flight (1), then attempt egazette.gov.in directly for bulk coverage (2). This ledger covers (1). Two of the five ministries fit existing templates and are modeled; two are deferred on the same reasoning as earlier batches; one (Communications) was cut off by an API rate limit mid-run and relaunched.
 
-- [x] G1: Every real, source-quoted finding from all 10 agents was reviewed before touching the repo; none were merged on an agent's say-so alone.
-  EVIDENCE: met — every modeled ministry's seed file cites its research-agent quote and source URL; deferred leads are documented in the same files' header comments, not discarded silently.
+- [x] G1: Every modeled pair traces to a research-agent quote of primary "Full Text" with a source URL, and every deferred lead is written into a seed file header rather than dropped.
+  EVIDENCE: met — db/seed_steel.sql, db/seed_culture.sql carry both the modeled pair and the deferred leads for their ministries. Coal's and Women & Child Development's leads (all trailing-"Note" amendment-history chains, plus one that cites a 1979 "Department of Social Welfare" — a ministry that no longer exists under that name) are recorded in this file's ABANDON, not modeled.
 
-- [x] G2: The full test suite passes with all 14 ministries seeded together.
+- [x] G2: The first genuine one-to-many cross-reference modeled from a single source clause returns all targets, not just the first.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_culture_patterns.py -q
+  EXPECT: 3 passed
+  EVIDENCE: met — S.O. 441(E) partially modifies S.O. 3514(E), S.O. 2985(E), and S.O. 2637(E) in one sentence; three cross_reference rows from one source.
+
+- [x] G3: Testing this batch's real text caught bugs the earlier 39-test suite did not.
+  EVIDENCE: met — two: (a) "S. O. 3514(E)" with a space after "S." was invisible to the S.O. regex, fixed by allowing optional whitespace between abbreviation letters in both _SO_RE and _GSR_RE; (b) passing 'ministry of steel' to the corrigendum-substitution template produced the anchor "ministry of ministry of steel" — the two shared templates treat the ministry-name argument differently (anchor prefix vs. scope-guard substring), and the module docstrings now say so.
+
+- [x] G4: Full suite passes with all 16 ministries seeded together.
   CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/ -q
-  EXPECT: 34 passed
+  EXPECT: 39 passed
   EVIDENCE: met.
 
-- [x] G3: At least one bug was caught by testing against this batch's real text that the first two batches' tests did not surface.
-  EVIDENCE: met — Ministry of Agriculture's real primary text has "the Central Government herby makes the following amendments" (missing the second "e" in "hereby" — an apparent transcription/OCR artifact in the source gazette itself, not this project's error). The shared anchor required the correct spelling and silently matched nothing; fixed by dropping "hereby" from the anchor rather than special-casing the typo, since the shorter anchor is still unambiguous and a strict superset of what the old one matched.
+- [ ] G5: Communications is modeled.
+  EVIDENCE: pending — the first research agent was terminated by an API session rate limit mid-run (HTTP 429) with no findings returned; relaunched. Folded in on arrival, as its own commit.
 
-- [x] G4: Every provenance tier is still tracked distinctly — no ministry's real-but-weaker sourcing got smoothed to look as solid as CBIC's.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT DISTINCT verified_by FROM cross_reference ORDER BY 1;" | wc -l | tr -d ' '
-  EXPECT: 7
-  EVIDENCE: met — includes a new, explicitly weaker tier introduced this batch: 'research-agent-quoted-uncorroborated' (Ministry of Housing and Urban Affairs), because the research agent itself flagged that pair as resting solely on one aggregator's text with no independent corroboration found. Recorded as weaker, not silently merged into the ordinary 'research-agent-quoted' tier.
+## Deferred this batch (not gates — nothing here is claimed done)
 
-- [ ] G5: Every real lead this batch's agents found is modeled, not just one clean pair per ministry.
-  EVIDENCE: abandoned — see ABANDON.
-
-ABANDON: G5 the same reasoning as the first batch's G5 applies, plus one new case: Petroleum and Commerce/DGFT's real findings don't fit either shared template at all (Petroleum's leads are all footnote-style "principal regulation...amended vide..." citations in regulator PDFs; Commerce/DGFT's leads cite the original by a bare "Notification No. 66" DGFT-internal number, not a G.S.R./S.O. citation the current extractor even recognizes) — modeling either would mean designing a new citation pattern under time pressure, which is exactly how the "herby" and "in the Ministry of X" bugs got introduced earlier this session. Education's three real leads are all citation-history chains in a trailing "Note" (2 to 11 prior amendments each), the same consolidated-instrument shape already deferred for MCA and Agriculture — left out for the same reason, not forgotten. Handoff: Petroleum and Commerce/DGFT need their own citation-pattern modules (not a template reuse) before any pair from either can be modeled; the "Note"-chain shape (MCA, Agriculture, Education, Consumer Affairs' Legal Metrology lead) is common enough across ministries now that it may be worth its own shared template, the same way amendment-in-notification and corrigendum-substitution were factored out — but only after it's been read carefully enough to get right, not extrapolated from four examples under time pressure.
+Coal and Women & Child Development are deliberately not modeled this batch: every Coal lead and two of three WCD leads are trailing-"Note" amendment-history chains (the consolidated-instrument shape already deferred for MCA, Agriculture, Petroleum, Education, Steel's other two pairs) — now nine ministries' worth of real examples of that one shape, which is the strongest signal yet that it deserves its own shared template, designed from all nine rather than extrapolated from one. WCD's remaining lead cites "the then Department of Social Welfare No. S.O. 120(E), dated the 2nd March, 1979": the ministry-name scope guard cannot match a department that was renamed decades ago, and handling ministry reorganizations is a data-model question (a ministry alias/lineage table), not a regex tweak. Handoff: (a) design the "Note"-chain template from the nine real examples; (b) add a ministry-alias table before modeling any pre-reorganization notification.
