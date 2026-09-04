@@ -30,6 +30,31 @@ CONSUMER_AFFAIRS_LEGAL_METROLOGY = (
     "vide number G.S.R. 312(E), dated 27th April, 2026."
 )
 
+# Real Ministry of Mines text: an eight-item amendment history (principal +
+# seven amendments) joined by semicolons, with "and" before the final item
+# ("...16th April, 2025; and 7. G.S.R. 449(E)..."). The regex-based citation
+# scan doesn't anchor on connectives at all, but this is the longest real
+# chain seen so far and the first with an "and" conjunction, worth its own
+# confirmation rather than assuming the 2-3 item cases generalize.
+MINES_MCDR_NOTE = (
+    "Note: - The principal rules were published in the Gazette of India, Extraordinary, Part II, "
+    "Section 3, Sub-section (i), vide notification number G.S.R. 169 (E) dated the 27th February, 2017 "
+    "and were subsequently amended as follows:– 1. G.S.R. 289 (E), dated the 27th March, 2018; "
+    "2. G.S.R. 570 (E), dated the 13th August, 2019; 3. G.S.R. 780 (E), dated the 3rd November, 2021; "
+    "4. G.S.R. 294 (E), dated the 11th April, 2022; 5. G.S.R. 51 (E), dated the 21st January, 2024; "
+    "6. G.S.R. 232 (E), dated the 16th April, 2025; and 7. G.S.R. 449 (E), dated the 5th June, 2026."
+)
+
+# Real Ministry of Defence text: same shape as Culture/Consumer Affairs but
+# the first ministry confirmed to cite exclusively via S.R.O. rather than
+# G.S.R./S.O. — confirms find_note_chain works through the shared
+# find_gazette_citations scan regardless of which of the three series is
+# used, without any change to this function itself.
+DEFENCE_NAVY_ACT_NOTE = (
+    "Note: The principal notification was published in the Gazette of India, Extraordinary, Part II, "
+    "section 4, dated the 23rd June, 2022 vide number S.R.O. 9(E), dated the 23rd June, 2022."
+)
+
 
 def test_two_item_chain_in_order():
     assert find_note_chain(CULTURE_NMA) == ['G.S.R. 635(E)', 'G.S.R. 1034(E)']
@@ -57,3 +82,14 @@ def test_note_as_a_word_inside_other_text_is_not_a_false_anchor():
     # "noteworthy" contains "note" but not as the standalone word the
     # regex requires (\bnote\b) — must not treat it as the anchor.
     assert find_note_chain('This is noteworthy: G.S.R. 1(E), dated 1.1.2020.') == []
+
+
+def test_eight_item_chain_with_and_conjunction_before_last_item():
+    assert find_note_chain(MINES_MCDR_NOTE) == [
+        'G.S.R. 169(E)', 'G.S.R. 289(E)', 'G.S.R. 570(E)', 'G.S.R. 780(E)',
+        'G.S.R. 294(E)', 'G.S.R. 51(E)', 'G.S.R. 232(E)', 'G.S.R. 449(E)',
+    ]
+
+
+def test_sro_series_note_chain():
+    assert find_note_chain(DEFENCE_NAVY_ACT_NOTE) == ['S.R.O. 9(E)']

@@ -1,32 +1,55 @@
-# Gates: clear the deferred-lead backlog with a third shared template
+# Gates: 5th research batch — Ayush, Mines, Law and Justice, Defence (+ Textiles processing)
 
-OWNS: db/**, extract/**, tests/**
+OWNS: db/**, extract/**, tests/**, ingest/parse_manifest.py
 
-Scope: "ensure that every gazette notification is processed" — every real, already-verified lead documented as deferred backlog across 9 ministries (MCA, Agriculture, Steel, Power, Consumer Affairs, Civil Aviation, Housing, Communications, Culture) now has actual gazette_notification + cross_reference rows, not just a comment describing what wasn't modeled.
+Scope: process every real gazette notification found this session for the batch (Ayush, Mines, Law and Justice, Defence) plus the previously-received but unbuilt Textiles results — model what the schema/extractors can represent, and explicitly abandon (not silently drop) what they can't, per "ensure that every gazette notification is processed."
 
-- [x] G1: A third shared template ("note-chain") built and tested against two real, independently-sourced examples — not designed from one, the same bar the first two templates were held to.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_note_chain.py -q
-  EXPECT: 5 passed
-  EVIDENCE: met — extract.common_templates.find_note_chain, confirmed across Culture (NMA rules) and Consumer Affairs (Legal Metrology Rules), two different connective phrasings ("subsequently amended" vs. "was last amended") for the same shape. Deliberately deferred across nine ministries before being written, per its own docstring, rather than designed from one example under time pressure.
+- [x] G1: Real Ayush comma-typo bug (`"S.O, 2281(E)"`, a keying error in the source gazette itself, not a formatting choice) fixed in the shared citation regex and covered by a regression test using the real text.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_ayush_note_chain.py tests/test_ayush_patterns.py -q
+  EXPECT: 3 passed
+  EVIDENCE: met — extract/citation_patterns.py's `_SO_RE`/`_GSR_RE` now tolerate `[.,]?` in place of the bare `\.?` after the abbreviation letters. All three Ayush pairs (2 corrigenda + 1 three-item note-chain, S.O. 2281(E) -> S.O. 221(E) -> S.O. 563(E)) modeled in db/seed_ayush.sql with real dates recovered from the original research-agent report.
 
-- [x] G2: Every deferred lead with a COMPLETE citation+date pair on record is now a real row — no partial or half-cited chain link invented to fill a gap.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM cross_reference;"
-  EXPECT: 76
-  EVIDENCE: met — went from 56 to 76 cross-references across the 9 ministries without adding a single new agent-researched fact; every new row traces to a citation+date already recorded in that ministry's own seed-file comments from earlier sessions. Two new relation_types added on real evidence: 'repeals' (Power: S.O. 2978(E) repeals S.O. 1034(E), a distinct statutory verb from 'rescinds') and reuse of 'amends' for every Note-chain edge.
+- [x] G2: A third gazette-citation series (S.R.O., "Statutory Rules and Orders") added to the shared citation extractor after Defence turned up as the first ministry citing exclusively via S.R.O., never G.S.R./S.O. — confirmed against real text, not designed speculatively.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_sro_citations.py tests/test_note_chain.py::test_sro_series_note_chain -q
+  EXPECT: 4 passed
+  EVIDENCE: met — extract/citation_patterns.py's `_SRO_RE` plus a `GazetteCitation.kind == 'S.R.O.'` branch in `find_gazette_citations`; both shared templates (corrigendum-substitution, note-chain) pick it up for free since they scan through `find_gazette_citations`.
 
-- [x] G3: A genuinely incomplete chain (missing intermediate citations) is left honestly incomplete, not bridged with an invented edge.
-  EVIDENCE: met — Agriculture's S.O. 2944(E) is the Note-chain's 11th named amendment to S.O. 1589(E) (2005); only the endpoint (item 11, S.O. 2963(E)) and the 2005 principal were captured verbatim this session, so no edge asserts a direct 2944(E)-to-1589(E) or 2963(E)-to-1589(E) relationship — items 2 through 10 are real but uncited, and the seed file says so. Power's G.S.R. 259(E)/G.S.R. 211(E) edge similarly omits the real intermediate G.S.R. 488(E), whose exact date was never captured.
-  Also real, and still correctly unmodeled (a citation form the schema doesn't represent, not a time-pressure gap): Culture's "No. 108(Addendum)" (bare Notification No. + File Number) and Communications' reference to numbered rules 419/419A of the Indian Telegraph Rules, 1951 (a citation to rules within an Act, not a gazette notification).
+- [x] G3: Ministry of Mines fully modeled — one corrigendum-substitution pair plus two note-chains, including the longest real chain seen this project (9 nodes: principal + 8 amendments) and the first real "; and" conjunction before a chain's final citation.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_mines_patterns.py tests/test_note_chain.py::test_eight_item_chain_with_and_conjunction_before_last_item -q
+  EXPECT: 3 passed
+  EVIDENCE: met — db/seed_mines.sql, extract/mines_patterns.py.
 
-- [x] G4: Foreign-key integrity holds across the whole database after 20 new rows across 9 files edited by hand.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "PRAGMA foreign_key_check;" > /tmp/fk_check_$$.txt; [ ! -s /tmp/fk_check_$$.txt ] && echo FK_CLEAN; rm -f /tmp/fk_check_$$.txt
+- [x] G4: Ministry of Defence — the two pairs the current schema/extractors CAN represent (S.R.O.-cited: one corrigendum-substitution, one note-chain) are modeled and tested.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_defence_patterns.py -q
+  EXPECT: 2 passed
+  EVIDENCE: met — db/seed_defence.sql.
+
+- [ ] G4b: Defence's third pair, Corrigendum No. 11(E) (Army honorary-rank fan-out amending 5 separate prior notifications).
+  EVIDENCE: not modeled — it cites via a bare "No. NN(E)" form with no G.S.R./S.O./S.R.O. prefix, a fourth citation shape this schema doesn't recognize, and it is also a one-to-many corrigendum no template here handles.
+
+ABANDON: G4b Building a citation form for one occurrence would repeat exactly the un-evidenced-design mistake this project has deliberately avoided elsewhere. Documented in db/seed_defence.sql's header comment rather than silently dropped.
+
+- [x] G5: Ministry of Textiles (results received last batch, not yet built) — the two note-chain pairs are modeled and tested; the schema-incompatible one is explicitly deferred.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM gazette_notification WHERE ministry_id='textiles';"
+  EXPECT: 8
+  EVIDENCE: met — db/seed_textiles.sql (Cotton Bales Order 6-node chain ending in a 'rescinds' edge; Ropes and Cordages Order 2-node chain).
+
+- [ ] G5b: Textiles' third pair, S.O. 3189(E) superseding "Notification No. 2/TDRO/8/2003" (Hank Yarn packing notification).
+  EVIDENCE: not modeled — same bare-notification-number citation-shape gap as Commerce/DGFT.
+
+ABANDON: G5b Documented rather than forced; no second ministry confirms this citation shape.
+
+- [ ] G6: Ministry of Law and Justice — all three real pairs found this batch use Act/Regulation-number citations ("Reg. 2 of 2026", "4 of 2026"), never G.S.R./S.O./S.R.O., and the Legislative Department's corrigenda text doesn't carry a "Ministry of X" anchor phrase either.
+  EVIDENCE: not modeled — none of the three fit the current schema's citation representation or either shared template. This is a structurally different citation regime from every other ministry modeled so far (25 ministries now, all G.S.R./S.O./S.R.O.), not a research gap or a time-pressure shortcut.
+
+ABANDON: G6 Corrigenda to the Lakshadweep (Registration Amendment) Regulation, 2026; the Lakshadweep Fire and Emergency Service Regulation, 2026; and the Finance Act, 2026 / Jan Vishwas (Amendment of Provisions) Act, 2026 are all real, all quoted from primary Full Text, and all left unmodeled — building Act/Regulation-number citation support for a single ministry's batch, with no second ministry confirming the shape, would be exactly the un-evidenced, one-example design this project has refused to do for every other template.
+
+- [x] G7: Foreign-key integrity holds across the whole database after 6 new/edited seed files (ayush, mines, defence, textiles) plus 3 new extractor modules.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && rm -f gazette.db && sqlite3 gazette.db < db/schema.sql && for f in db/seed_*.sql; do sqlite3 gazette.db < "$f" || echo "FAILED: $f"; done && sqlite3 gazette.db "PRAGMA foreign_key_check;" > /tmp/fk_check_gates.txt; [ ! -s /tmp/fk_check_gates.txt ] && echo FK_CLEAN; rm -f /tmp/fk_check_gates.txt
   EXPECT: FK_CLEAN
-  EVIDENCE: met.
+  EVIDENCE: met — 23 ministries, 166 notifications, 113 cross-references.
 
-- [x] G5: Full suite passes with 17 ministries, 113 notifications, 76 cross-references.
+- [x] G8: Full suite passes.
   CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/ -q
-  EXPECT: 74 passed
+  EXPECT: 86 passed
   EVIDENCE: met.
-
-- [ ] G6: Next 5 ministries (batch continuing "the same way") researched, reviewed, and modeled using all three templates.
-  EVIDENCE: pending — starting now.

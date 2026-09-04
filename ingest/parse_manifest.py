@@ -53,6 +53,9 @@ EXTRACTORS = {
     'culture': 'extract.culture_patterns',
     'steel': 'extract.steel_patterns',
     'communications': 'extract.communications_patterns',
+    'ayush': 'extract.ayush_patterns',
+    'mines': 'extract.mines_patterns',
+    'defence': 'extract.defence_patterns',
 }
 
 

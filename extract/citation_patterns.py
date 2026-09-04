@@ -38,8 +38,23 @@ _CITATION_RE = re.compile(
 # Culture notification writes "S. O. 3514(E)" (space after "S.") for one
 # target in the same sentence that writes "S.O. 2985(E)" for the next.
 # Both normalize to the canonical "S.O. NNNN(E)" / "G.S.R. NNNN(E)" form.
-_GSR_RE = re.compile(r'G\.\s*S\.\s*R\.?\s*(\d+)\s*\(([A-Z])\)')
-_SO_RE = re.compile(r'S\.\s*O\.?\s*(\d+)\s*\(([A-Z])\)')
+#
+# `[.,]?` after the final abbreviation letter, not `\.?`: a real Ministry of
+# Ayush Note clause writes "S.O, 2281(E)" — a comma standing in for the
+# period, evidently a keying error in the source gazette itself (same class
+# of real-text defect as the "herby"/"hereby" typo already found). Kept as
+# printed in the test fixture, tolerated here rather than silently assumed
+# away — the goal is recognizing the citation, not correcting the document.
+_GSR_RE = re.compile(r'G\.\s*S\.\s*R\.?[.,]?\s*(\d+)\s*\(([A-Z])\)')
+_SO_RE = re.compile(r'S\.\s*O\.?[.,]?\s*(\d+)\s*\(([A-Z])\)')
+
+# S.R.O. ("Statutory Rules and Orders") is a third standard Gazette-of-India
+# citation series alongside G.S.R./S.O. — confirmed via three real Ministry
+# of Defence notifications (Cantonment Board and Navy Act amendments) that
+# use it exclusively; that ministry's corrigenda never use G.S.R./S.O. at
+# all. Same optional-whitespace/comma tolerance as the other two, on the
+# same evidentiary basis.
+_SRO_RE = re.compile(r'S\.\s*R\.\s*O\.?[.,]?\s*(\d+)\s*\(([A-Z])\)')
 
 # Pivot for expanding a 2-digit year (e.g. the '89' in "No. 207/89-Customs",
 # which is 1989, not 2089). Same convention as POSIX strptime %y: values at
@@ -95,7 +110,7 @@ def find_citations(text: str) -> list[Citation]:
 
 @dataclass(frozen=True)
 class GazetteCitation:
-    kind: str          # 'G.S.R.' | 'S.O.'
+    kind: str          # 'G.S.R.' | 'S.O.' | 'S.R.O.'
     normalized: str    # e.g. 'S.O. 4872(E)' — always this exact spacing, regardless of source formatting
     start: int         # position of the match in the ORIGINAL text — not of `normalized`,
     end: int           # which may not even appear verbatim in the source (e.g. "S.O 4872(E)" with no period)
@@ -118,6 +133,11 @@ def find_gazette_citations(text: str) -> list[GazetteCitation]:
     for m in _SO_RE.finditer(text):
         out.append(GazetteCitation(
             kind='S.O.', normalized=f'S.O. {m.group(1)}({m.group(2)})',
+            start=m.start(), end=m.end(),
+        ))
+    for m in _SRO_RE.finditer(text):
+        out.append(GazetteCitation(
+            kind='S.R.O.', normalized=f'S.R.O. {m.group(1)}({m.group(2)})',
             start=m.start(), end=m.end(),
         ))
     return out
