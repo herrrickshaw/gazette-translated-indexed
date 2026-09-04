@@ -40,7 +40,22 @@ of being forced into one of these — see extract/railways_patterns.py.
    ministry (e.g. Skill Development superseding a Ministry of Labour
    notification), so anchoring on "ministry of <self>" would miss it.
 
-4. "note-chain": a Rules/Order instrument's amending notification closes
+4. "bare-citation-reference": the citing document names its target with no
+   ministry-name anchor at all — just "vide notification number
+   <citation>" or "In the Notification <citation>", often because the
+   ministry is already established by context rather than restated.
+   Confirmed independently across two different ministries in one
+   research pass: Ministry of Statistics and Programme Implementation
+   ("...vide notification number S.O. 1398(E) dated..." and "In the
+   Notification S.O. 174(E) dated...", two DIFFERENT lead-in phrasings)
+   and Ministry of Ports, Shipping and Waterways ("...in the notification
+   vide S.O.1935(E) dated..."). Because there is no ministry name to
+   anchor on, the window here is deliberately tight (60 chars, versus 100-
+   300 for the ministry-anchored templates) — the citation always follows
+   almost immediately in every real example seen, and a wider window would
+   risk picking up an unrelated citation elsewhere in a longer document.
+
+5. "note-chain": a Rules/Order instrument's amending notification closes
    with a trailing "Note[:.-]" (any punctuation) naming its own history —
    "The principal rules were published ... vide number <citation1>, dated
    <date1> and [subsequently/last] amended vide [number(s)] <citation2>[,
@@ -181,6 +196,40 @@ def find_supersession_links(text: str, self_citation: str | None = None) -> list
             if search_from <= c.start < window_end and c.normalized != self_citation:
                 out.append(TemplateLink(target_citation=c.normalized))
         start = search_from
+
+    seen = set()
+    deduped = []
+    for link in out:
+        if link.target_citation not in seen:
+            seen.add(link.target_citation)
+            deduped.append(link)
+    return deduped
+
+
+# Two different real lead-ins, both with no ministry name in between the
+# connective and the citation — 'in the notification' also covers
+# extract.railways_patterns' shape when no ministry-name scope guard is
+# added by the caller.
+_BARE_CITATION_ANCHORS = ('vide notification number', 'in the notification', 'vide')
+_BARE_CITATION_WINDOW_CHARS = 60
+
+
+def find_bare_citation_links(text: str, self_citation: str | None = None) -> list[TemplateLink]:
+    text = _normalize(text)
+    lower = text.lower()
+    citations = find_gazette_citations(text)
+    out: list[TemplateLink] = []
+    for anchor in _BARE_CITATION_ANCHORS:
+        start = 0
+        while True:
+            idx = lower.find(anchor, start)
+            if idx == -1:
+                break
+            window_end = idx + len(anchor) + _BARE_CITATION_WINDOW_CHARS
+            for c in citations:
+                if idx < c.start < window_end and c.normalized != self_citation:
+                    out.append(TemplateLink(target_citation=c.normalized))
+            start = idx + len(anchor)
 
     seen = set()
     deduped = []

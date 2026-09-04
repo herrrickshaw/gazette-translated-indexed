@@ -63,6 +63,10 @@ EXTRACTORS = {
     'heavy-industries': 'extract.heavy_industries_patterns',
     'food-processing-industries': 'extract.food_processing_patterns',
     'tribal-affairs': 'extract.tribal_affairs_patterns',
+    'external-affairs': 'extract.external_affairs_patterns',
+    'personnel-public-grievances-pensions': 'extract.personnel_patterns',
+    'statistics-and-programme-implementation': 'extract.mospi_patterns',
+    'ports-shipping-waterways': 'extract.ports_shipping_patterns',
 }
 
 
