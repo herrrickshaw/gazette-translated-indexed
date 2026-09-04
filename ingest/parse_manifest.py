@@ -57,6 +57,8 @@ EXTRACTORS = {
     'mines': 'extract.mines_patterns',
     'defence': 'extract.defence_patterns',
     'skill-development-entrepreneurship': 'extract.skill_development_patterns',
+    'chemicals-and-fertilizers': 'extract.chemicals_fertilizers_patterns',
+    'earth-sciences': 'extract.earth_sciences_patterns',
 }
 
 
