@@ -75,7 +75,7 @@ breadth:
 
 ## Status
 
-**21 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
+**26 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
 
 | Ministry | Status | Notifications (before → after) | New subject threads |
 |---|---|---|---|
@@ -100,7 +100,12 @@ breadth:
 | Finance (other departments) | done | 6 → 110 | both flagged gaps closed (FEMA 18-item Note, DEA<->DFS chain), +14 new subject threads; a real G.S.R. 488(E) collision with Power correctly kept distinct |
 | Fisheries, Animal Husbandry and Dairying | done | 15 → 40 | +6 new subject threads, +1 parallel sub-chain on the existing root node |
 | Food Processing Industries | checked, corpus exhausted | 2 → 2 | none (all 6 tracker notifications + 2 NIFTEM controls re-opened) |
-| *(32 more ministries pending)* | | | |
+| Health and Family Welfare | done | 2 → 34 | +6 new subject threads, plus a closed draft-to-final deferred lead (G.S.R. 587(E)) |
+| Heavy Industries | done | 6 → 29 | +7 new subject threads; PLI-Auto revealed as a 3-amendment hub |
+| Information and Broadcasting | done | 9 → 61 | +8 new subject threads incl. a 29-node Cable TV Rules chain; 2 real citation collisions (G.S.R. 459(E), G.S.R. 719(E)) kept distinct |
+| Jal Shakti | done | 40 → 94 | +9 new subject threads, several tribunal chains comparable in scale to the existing 36-node Ravi-Beas chain |
+| Labour and Employment | done | 2 → 27 | +9 new pairs/chains incl. this ministry's first `rescinds` pairs; one deferred-lead citation correction (G.S.R. 706(E) -> G.S.R. 705(E)) |
+| *(27 more ministries pending)* | | | |
 
 Given the scale (a full research-agent call per ministry, often 150-250K
 tokens of agent work), replicating this across all remaining ministries is a
