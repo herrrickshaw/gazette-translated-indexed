@@ -22,6 +22,19 @@ A ministry whose real text doesn't fit either shape (e.g. Railways, where
 the citation can appear *before* "issued by the Ministry of Railways" rather
 than after "Ministry of X number Y") gets its own dedicated module instead
 of being forced into one of these — see extract/railways_patterns.py.
+
+3. "note-chain": a Rules/Order instrument's amending notification closes
+   with a trailing "Note[:.-]" (any punctuation) naming its own history —
+   "The principal rules were published ... vide number <citation1>, dated
+   <date1> and [subsequently/last] amended vide [number(s)] <citation2>[,
+   <citation3>, ...]". Confirmed independently across nine real
+   ministries before being written (MCA, Agriculture, Steel, Power,
+   Consumer Affairs, Civil Aviation, Housing, Communications, Culture) —
+   deferred that long deliberately, per this module's own header history,
+   rather than designed from one example. Returns the ordered citation
+   list found in the Note; the caller builds the chain edges (each item
+   amends the one before it, and the citing document amends the last item)
+   because only the caller knows which citation is "self".
 """
 from __future__ import annotations
 
@@ -121,3 +134,39 @@ def find_corrigendum_substitution_links(
     """
     anchor = f'ministry of {ministry_name.lower()}'
     return find_after_anchor(text, anchor, self_citation)
+
+
+_NOTE_ANCHOR = re.compile(r'\bnote\b\s*[:.\-]')
+
+
+def find_note_chain(text: str) -> list[str]:
+    """Ordered citation list from a trailing "Note[:.-] The principal
+    rules/order were published ... vide number X, dated ... and
+    [subsequently/last] amended vide number(s) Y[, Z, ...]" clause.
+
+    No self_citation/ministry_name parameter, unlike the other two
+    templates: a Note lists OTHER documents' citations (the instrument's own
+    history), so there is nothing here to exclude, and the phrasing is
+    ministry-agnostic (an Order, Rules, or Scheme, not tied to one drafting
+    office's name). Returns the citations in the order printed — principal
+    first, each subsequent amendment after — from the anchor to the end of
+    the document (a Note is a closing clause; scanning to end-of-text rather
+    than a fixed window avoids under-reading long numbered histories, like
+    an 18-item one seen in real Ministry of Coal text).
+
+    Building chain edges (item[i] amends item[i-1], the citing document
+    amends the last item) is the caller's job, because only the caller
+    knows which citation is the citing document's own ("self").
+    """
+    text = _normalize(text)
+    m = _NOTE_ANCHOR.search(text.lower())
+    if not m:
+        return []
+    tail = text[m.end():]
+    seen = set()
+    out = []
+    for c in find_gazette_citations(tail):
+        if c.normalized not in seen:
+            seen.add(c.normalized)
+            out.append(c.normalized)
+    return out

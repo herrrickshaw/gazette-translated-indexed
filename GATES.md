@@ -1,30 +1,32 @@
-# Gates: bounded first bulk run — fetch to Dropbox, parse against the index
+# Gates: clear the deferred-lead backlog with a third shared template
 
-OWNS: data/manifest/**, data/raw_md/**, db/**, extract/**, tests/**
+OWNS: db/**, extract/**, tests/**
 
-Scope: "go ahead with the bounded first run, fetch to dropbox and then parse". Every gazette ID collected across this session's research (66 total) fetched from egazette.gov.in into `~/Dropbox/gazette-translated-indexed/egazette/` (gitignored — PDFs are publicly re-fetchable by ID, so only the path/URL is tracked, never the bytes), then parsed against what the index currently claims.
+Scope: "ensure that every gazette notification is processed" — every real, already-verified lead documented as deferred backlog across 9 ministries (MCA, Agriculture, Steel, Power, Consumer Affairs, Civil Aviation, Housing, Communications, Culture) now has actual gazette_notification + cross_reference rows, not just a comment describing what wasn't modeled.
 
-- [x] G1: All 66 manifest PDFs fetched, none disk-cached from a stale/wrong source, none smaller than a real gazette page.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && find "$HOME/Library/CloudStorage/Dropbox/gazette-translated-indexed/egazette" -name '*.pdf' | wc -l | tr -d ' '
-  EXPECT: 66
-  EVIDENCE: met — 64 MB total, every file's first 5 bytes confirmed `%PDF-` before this gate was written.
+- [x] G1: A third shared template ("note-chain") built and tested against two real, independently-sourced examples — not designed from one, the same bar the first two templates were held to.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_note_chain.py -q
+  EXPECT: 5 passed
+  EVIDENCE: met — extract.common_templates.find_note_chain, confirmed across Culture (NMA rules) and Consumer Affairs (Legal Metrology Rules), two different connective phrasings ("subsequently amended" vs. "was last amended") for the same shape. Deliberately deferred across nine ministries before being written, per its own docstring, rather than designed from one example under time pressure.
 
-- [x] G2: Parsing the OFFICIAL PDFs caught real bugs a synthetic fixture could not — same discipline as every earlier batch, now proven at bulk scale rather than one document at a time.
-  EVIDENCE: met — two, both structural (not one-off typos):
-  (a) **Whitespace bug, both shared templates.** Real PDF text line-wraps mid-phrase — Ministry of Home Affairs prints "hereby makes the following \namendments" with the break landing inside the anchor phrase. Every anchor in extract/common_templates.py used literal substring `.find()`, which silently fails on any such wrap even though both citations are plainly present. Fixed by normalizing all whitespace runs to a single space once, before every anchor and citation search — flipped MHA, MeitY, and Housing and Urban Affairs from MISSED to RECOVERED with no other change. extract/railways_patterns.py's own duplicate copy of the same loop was refactored to share the fix instead of getting a second patch.
-  (b) **Aggregator ID/content mismatch, MoEFCC.** The pair earlier marked 'spot-checked' (S.O. 3182(E) corrects S.O. 3252(E), gazette ID CG-DL-E-19072023-247431) does not exist at that ID on the official site — the real content there is a different notification, G.S.R. 522(E) correcting G.S.R. 499(E). A "spot-check" against mismatched content is not a spot-check: downgraded to 'research-agent-quoted' (the quote itself is real, its own gazette ID is unresolved) and the genuinely-verified G.S.R. 522(E)/499(E) pair recovered from the real official PDF was added at the 'primary-source-egazette' tier instead, in db/seed_moefcc.sql with the correction documented inline.
+- [x] G2: Every deferred lead with a COMPLETE citation+date pair on record is now a real row — no partial or half-cited chain link invented to fill a gap.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM cross_reference;"
+  EXPECT: 76
+  EVIDENCE: met — went from 56 to 76 cross-references across the 9 ministries without adding a single new agent-researched fact; every new row traces to a citation+date already recorded in that ministry's own seed-file comments from earlier sessions. Two new relation_types added on real evidence: 'repeals' (Power: S.O. 2978(E) repeals S.O. 1034(E), a distinct statutory verb from 'rescinds') and reuse of 'amends' for every Note-chain edge.
 
-- [x] G3: Every recoverable modeled claim across all 17 ministries is now verified directly against the official source, not carried on an aggregator's word.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM cross_reference WHERE verified_by='primary-source-egazette';"
-  EXPECT: /^(1[5-9]|2[0-9])$/
-  EVIDENCE: met — 21. Remaining non-egazette tiers are CBIC's original 31 ('primary-source-preamble', verified a different way before this manifest existed and out of this run's scope) plus a handful of genuinely un-recoverable-yet leads (deferred shapes, login-gated aggregator pages, IDs this run didn't include).
+- [x] G3: A genuinely incomplete chain (missing intermediate citations) is left honestly incomplete, not bridged with an invented edge.
+  EVIDENCE: met — Agriculture's S.O. 2944(E) is the Note-chain's 11th named amendment to S.O. 1589(E) (2005); only the endpoint (item 11, S.O. 2963(E)) and the 2005 principal were captured verbatim this session, so no edge asserts a direct 2944(E)-to-1589(E) or 2963(E)-to-1589(E) relationship — items 2 through 10 are real but uncited, and the seed file says so. Power's G.S.R. 259(E)/G.S.R. 211(E) edge similarly omits the real intermediate G.S.R. 488(E), whose exact date was never captured.
+  Also real, and still correctly unmodeled (a citation form the schema doesn't represent, not a time-pressure gap): Culture's "No. 108(Addendum)" (bare Notification No. + File Number) and Communications' reference to numbered rules 419/419A of the Indian Telegraph Rules, 1951 (a citation to rules within an Act, not a gazette notification).
 
-- [x] G4: Full suite passes after both fixes, with the corrected MoEFCC seed data.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/ -q
-  EXPECT: 51 passed
+- [x] G4: Foreign-key integrity holds across the whole database after 20 new rows across 9 files edited by hand.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "PRAGMA foreign_key_check;" > /tmp/fk_check_$$.txt; [ ! -s /tmp/fk_check_$$.txt ] && echo FK_CLEAN; rm -f /tmp/fk_check_$$.txt
+  EXPECT: FK_CLEAN
   EVIDENCE: met.
 
-- [x] G5: A CRUD layer over gazette_notification/cross_reference, replacing ad-hoc seed .sql + shell one-liners, storing paths/URLs never PDF bytes.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_crud.py -q
-  EXPECT: 18 passed
-  EVIDENCE: met — db/crud.py: create/get/list/update for both tables, verify_cross_reference (the machine-proposes/person-confirms step, now shared with verify/review_queue.py instead of that module keeping its own copy of the same SQL), get_lineage (one hop each direction — the actual point of the project, not just row access), and two real delete modes: archive_*/restore_* (soft, row and referencing edges stay valid) and hard_delete_* (refuses when cross_reference rows still reference it unless cascade=True — proven by a test that checks the refusal leaves the row fully intact, not partially deleted). Schema gained `archived_at` on both tables (nullable, backward-compatible — all 14 existing seed files still load unchanged). Never a `pdf_bytes`/`pdf_content` column or parameter anywhere; `create_notification` takes `pdf_url` only, proven by a test that asserts no such field exists on a created row.
+- [x] G5: Full suite passes with 17 ministries, 113 notifications, 76 cross-references.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/ -q
+  EXPECT: 74 passed
+  EVIDENCE: met.
+
+- [ ] G6: Next 5 ministries (batch continuing "the same way") researched, reviewed, and modeled using all three templates.
+  EVIDENCE: pending — starting now.

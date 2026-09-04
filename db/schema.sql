@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS cross_reference (
     ref_id             INTEGER PRIMARY KEY AUTOINCREMENT,
     source_gazette_id  TEXT NOT NULL REFERENCES gazette_notification(gazette_id),
     target_gazette_id  TEXT NOT NULL REFERENCES gazette_notification(gazette_id),
-    relation_type      TEXT NOT NULL,   -- amends | supersedes | corrigendum | rescinds | cites
+    relation_type      TEXT NOT NULL,   -- amends | supersedes | corrigendum | rescinds | repeals | cites
     verified_by        TEXT,            -- reviewer id/name, NULL until verified
     verified_at        TEXT,            -- ISO datetime, NULL until verified
     archived_at        TEXT,            -- ISO datetime; NULL = active. Soft delete: db/crud.py
