@@ -10,6 +10,21 @@
 -- notifications, under the Salary and Allowances of Leaders of
 -- Opposition in Parliament Act, 1977) cites only a bare "F. No."
 -- file number and is deliberately not modeled.
+--
+-- Depth pass 2026-09-04: checked, corpus exhausted. All 28 tracker
+-- notifications re-opened (plus 18 egazette PDFs read through the
+-- login-truncated tails); both known pairs are closed at 2 nodes (nothing
+-- cites G.S.R. 281(E) or G.S.R. 168(E)). The 8 Recruitment Rules, 2025
+-- (G.S.R. 504(E)-510(E), 515(E)) each supersede a 2010-2014 predecessor
+-- by title/year only, never by number. The Leader of Opposition lead was
+-- re-tested against the bare-form rule and still fails: the citing texts
+-- refer to the Speaker's act, not to any notification number/date (the
+-- Speaker's act was separately gazetted as Lok Sabha Secretariat S.O.
+-- 2457(E), 2024-06-26 — linking the two would be an inference across
+-- documents, which this project forbids). G.S.R. 507(E)'s reference to
+-- re-designation "order number 3/5/2016-Admn., dated 14th June, 2016" is
+-- an internal administrative order, not a gazette notification — noted,
+-- not modeled.
 
 INSERT OR IGNORE INTO ministry (ministry_id, name, department) VALUES
   ('parliamentary-affairs', 'Ministry of Parliamentary Affairs', NULL);

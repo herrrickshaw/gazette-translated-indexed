@@ -75,7 +75,7 @@ breadth:
 
 ## Status
 
-**36 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
+**41 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
 
 | Ministry | Status | Notifications (before → after) | New subject threads |
 |---|---|---|---|
@@ -115,7 +115,12 @@ breadth:
 | Statistics and Programme Implementation | done | 4 → 16 | +4 subject areas from a 44-notification corpus; deferred S.O. 4544(E) lead closed via File-No. cross-match |
 | MSME | done | 5 → 12 | +3 subject threads; one existing edge CORRECTED (3820 amends 3193, not 5403); deferred "GSR 381" lead closed as bare-form |
 | New and Renewable Energy | done | 3 → 9 | documented 2017-Order gap resolved (S.O. 2920(E)); parallel >100kW chain; narrative-prose shape now has 5 real instances |
-| *(17 more ministries pending)* | | | |
+| Parliamentary Affairs | checked, corpus exhausted | 4 → 4 | none (all 28 notifications + 18 egazette PDFs re-read; LoP lead still fails the bare-form rule) |
+| Personnel, Public Grievances and Pensions (DoPT/DoPPW) | done | 6 → 487 | +23 subject threads (CAT hubs, UPSC, AIS Pay/cadre-strength tables, Appointment-by-Promotion segments); CCS(CCA) intermediate G.S.R. 18(E) inserted; G.S.R. 331(E) re-identified |
+| Petroleum and Natural Gas | done | 6 → 73 | 2 corrections (draft date; missing G.S.R. 196(E)); +11 threads incl. two 12-node EC Act Order chains; 3 collisions kept distinct; PNGRB deferred (issuer taxonomy) |
+| Ports, Shipping and Waterways | done | 7 → 164 | ~45 chains: Inland Vessels draft->final cycles, 11 ports' board-seat supersessions, 9 port-of-import continuations; 6 in-ministry collisions kept distinct |
+| Posts | done | 4 → 242 | Regulations chain 4->15 nodes (S.O. 4053(E) re-parented); the 1933 Rules' 207-entry official history transcribed; +5 threads |
+| *(12 more ministries pending)* | | | |
 
 Given the scale (a full research-agent call per ministry, often 150-250K
 tokens of agent work), replicating this across all remaining ministries is a
