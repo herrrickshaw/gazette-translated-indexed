@@ -75,7 +75,7 @@ breadth:
 
 ## Status
 
-**26 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
+**31 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
 
 | Ministry | Status | Notifications (before → after) | New subject threads |
 |---|---|---|---|
@@ -105,7 +105,12 @@ breadth:
 | Information and Broadcasting | done | 9 → 61 | +8 new subject threads incl. a 29-node Cable TV Rules chain; 2 real citation collisions (G.S.R. 459(E), G.S.R. 719(E)) kept distinct |
 | Jal Shakti | done | 40 → 94 | +9 new subject threads, several tribunal chains comparable in scale to the existing 36-node Ravi-Beas chain |
 | Labour and Employment | done | 2 → 27 | +9 new pairs/chains incl. this ministry's first `rescinds` pairs; one deferred-lead citation correction (G.S.R. 706(E) -> G.S.R. 705(E)) |
-| *(27 more ministries pending)* | | | |
+| Electronics and Information Technology (MeitY) | done | 2 → 29 | +5 new subject threads, richest a 13-node Compulsory Registration Order chain; deferred lead closed and extended into a draft-to-final chain |
+| Home Affairs | done | 2 → 49 | +13 new pairs/chains incl. a rich FCRR 2011 Note-chain and a novel UAPA Tribunal-confirmation preamble; both deferred leads confirmed |
+| Mines | done | 15 → 62 | +8 new subject threads; Concession Rules corrigendum re-parented into a 17-node chain; a novel CGPB "one supersedes six" shape |
+| Minority Affairs | done | 15 → 24 | +2 new note-chains, +2 nodes on the existing Haj chain (one exposing a real Ministry record-keeping gap) |
+| Environment, Forest and Climate Change | done | 8 → 24 | +3 new subject areas beyond corrigenda (PWM Rules, CRZ, E-Waste), deliberately egazette-PDF-verified given this ministry's aggregator-mismatch history |
+| *(22 more ministries pending)* | | | |
 
 Given the scale (a full research-agent call per ministry, often 150-250K
 tokens of agent work), replicating this across all remaining ministries is a

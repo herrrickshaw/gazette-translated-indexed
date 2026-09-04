@@ -33,15 +33,52 @@
 -- [old text] read [new text]" — a corrigendum-by-textual-substitution
 -- template, not a supersession or a single "hereby makes the following
 -- amendment" clause.
+--
+-- Deepened 2026-09-04 (depth pass — see docs/DEPTH_PASS_PLAN.md), this time
+-- deliberately preferring the official egazette.gov.in PDF (fetched by
+-- gazette ID, WebFetch fails on egazette.gov.in with a TLS error — curl
+-- works, matching the standing project note about this host) over
+-- aggregator text, given this ministry's own documented mismatch history
+-- above. 3 new subject areas found beyond simple corrigenda: the Plastic
+-- Waste Management Rules, 2016 amendment chain (5 amendments, 3 with their
+-- own draft-notification precursor modeled via `cites`); the Coastal
+-- Regulation Zone Notification's 2019 supersession of its 2011 predecessor;
+-- and the E-Waste (Management) Rules' two-generation supersession lineage
+-- (2011->2016->2022), each with its own draft precursor.
+--
+-- REAL CITATION COLLISION found and correctly kept distinct: "G.S.R.
+-- 522(E)" denotes two unrelated real MoEFCC documents — the Plastic Waste
+-- Management (Second Amendment) Rules, 2022 [2022-07-06] and the already-
+-- modeled G.S.R. 499(E) corrigendum [2023-07-18] — kept as distinct
+-- gazette_id rows.
+--
+-- Verification tiers for the new material: PWM amendments and their draft
+-- precursors are 'primary-source-egazette' (fetched directly); the CRZ and
+-- E-Waste supersessions are 'official-government-mirror' (verified against
+-- a state pollution-control-board or coastal-authority copy carrying
+-- matching Gazette Part II Sec 3 pagination, not egazette.gov.in itself and
+-- not an aggregator — one tier below primary but well above aggregator
+-- trust, given this ministry's specific mismatch history).
+--
+-- Real leads NOT modeled: five further PWM amendments (G.S.R. 285(E)/2018,
+-- 647(E)/2021, 318(E)/2023, 73(E)/2025, 237(E)/2026) known only from a
+-- secondary compiled tracker, not yet independently fetched from an
+-- official source.
 
 INSERT OR IGNORE INTO ministry (ministry_id, name, department) VALUES
   ('environment-forest-climate-change', 'Ministry of Environment, Forest and Climate Change', NULL);
 
 INSERT OR IGNORE INTO act_or_rule (instrument_id, title, year) VALUES
-  ('moefcc-notifications-general', 'MoEFCC notifications (various subject matter)', NULL);
+  ('moefcc-notifications-general', 'MoEFCC notifications (various subject matter)', NULL),
+  ('plastic-waste-management-rules-2016', 'Plastic Waste Management Rules, 2016', 2016),
+  ('coastal-regulation-zone-notification', 'Coastal Regulation Zone Notification', 2011),
+  ('ewaste-management-rules', 'E-Waste (Management) Rules', 2011);
 
 INSERT OR IGNORE INTO subject_thread (thread_id, subject_summary, status) VALUES
-  ('moefcc-corrections', 'MoEFCC notification corrigenda', 'active');
+  ('moefcc-corrections', 'MoEFCC notification corrigenda', 'active'),
+  ('pwm-rules-amendments', 'Plastic Waste Management Rules, 2016 and its amendments', 'active'),
+  ('crz-notification-supersession', 'Coastal Regulation Zone Notification supersession', 'superseded'),
+  ('ewaste-rules-supersession', 'E-Waste (Management) Rules — two-generation supersession lineage', 'superseded');
 
 INSERT OR IGNORE INTO gazette_notification
   (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
@@ -55,10 +92,45 @@ VALUES
   -- Recovered directly from the OFFICIAL PDF at CG-DL-E-19072023-247431 —
   -- the notification actually at that gazette ID (see correction above).
   ('moefcc-gsr-499-2023', 'MoEFCC', 'G.S.R. 499(E)', 2023, 'so-only', '2023-07-11', 'G.S.R. 499(E)', 'environment-forest-climate-change', 'moefcc-notifications-general', 'moefcc-corrections'),
-  ('moefcc-gsr-522-2023', 'MoEFCC', 'G.S.R. 522(E)', 2023, 'so-only', '2023-07-18', 'G.S.R. 522(E)', 'environment-forest-climate-change', 'moefcc-notifications-general', 'moefcc-corrections');
+  ('moefcc-gsr-522-2023', 'MoEFCC', 'G.S.R. 522(E)', 2023, 'so-only', '2023-07-18', 'G.S.R. 522(E)', 'environment-forest-climate-change', 'moefcc-notifications-general', 'moefcc-corrections'),
+  -- Plastic Waste Management Rules, 2016 amendment chain
+  ('moefcc-gsr-320-2016', 'MoEFCC', 'G.S.R. 320(E)', 2016, 'so-only', '2016-03-18', 'G.S.R. 320(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  ('moefcc-gsr-169-2021', 'MoEFCC', 'G.S.R. 169(E)', 2021, 'so-only', '2021-03-11', 'G.S.R. 169(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  ('moefcc-gsr-571-2021', 'MoEFCC', 'G.S.R. 571(E)', 2021, 'so-only', '2021-08-12', 'G.S.R. 571(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  ('moefcc-gsr-22-2022',  'MoEFCC', 'G.S.R. 22(E)',  2022, 'so-only', '2022-01-18', 'G.S.R. 22(E)',  'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  ('moefcc-gsr-133-2022', 'MoEFCC', 'G.S.R. 133(E)', 2022, 'so-only', '2022-02-16', 'G.S.R. 133(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  ('moefcc-gsr-522-2022', 'MoEFCC', 'G.S.R. 522(E)', 2022, 'so-only', '2022-07-06', 'G.S.R. 522(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  ('moefcc-gsr-744-2023', 'MoEFCC', 'G.S.R. 744(E)', 2023, 'so-only', '2023-10-16', 'G.S.R. 744(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  ('moefcc-gsr-807-2023', 'MoEFCC', 'G.S.R. 807(E)', 2023, 'so-only', '2023-10-30', 'G.S.R. 807(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  ('moefcc-gsr-201-2024', 'MoEFCC', 'G.S.R. 201(E)', 2024, 'so-only', '2024-03-14', 'G.S.R. 201(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  -- Coastal Regulation Zone Notification
+  ('moefcc-so-19-2011', 'MoEFCC', 'S.O. 19(E)', 2011, 'so-only', '2011-01-06', 'S.O. 19(E)', 'environment-forest-climate-change', 'coastal-regulation-zone-notification', 'crz-notification-supersession'),
+  ('moefcc-gsr-37-2019', 'MoEFCC', 'G.S.R. 37(E)', 2019, 'so-only', '2019-01-18', 'G.S.R. 37(E)', 'environment-forest-climate-change', 'coastal-regulation-zone-notification', 'crz-notification-supersession'),
+  -- E-Waste (Management) Rules — two-generation supersession
+  ('moefcc-so-1035-2011', 'MoEFCC', 'S.O. 1035(E)', 2011, 'so-only', '2011-05-12', 'S.O. 1035(E)', 'environment-forest-climate-change', 'ewaste-management-rules', 'ewaste-rules-supersession'),
+  ('moefcc-gsr-472-2015', 'MoEFCC', 'G.S.R. 472(E)', 2015, 'so-only', '2015-06-10', 'G.S.R. 472(E)', 'environment-forest-climate-change', 'ewaste-management-rules', 'ewaste-rules-supersession'),
+  ('moefcc-gsr-338-2016', 'MoEFCC', 'G.S.R. 338(E)', 2016, 'so-only', '2016-03-23', 'G.S.R. 338(E)', 'environment-forest-climate-change', 'ewaste-management-rules', 'ewaste-rules-supersession'),
+  ('moefcc-so-360-2022',  'MoEFCC', 'S.O. 360(E)',  2022, 'so-only', '2022-05-19', 'S.O. 360(E)',  'environment-forest-climate-change', 'ewaste-management-rules', 'ewaste-rules-supersession'),
+  ('moefcc-gsr-801-2022', 'MoEFCC', 'G.S.R. 801(E)', 2022, 'so-only', '2022-11-02', 'G.S.R. 801(E)', 'environment-forest-climate-change', 'ewaste-management-rules', 'ewaste-rules-supersession');
 
 INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
   ('moefcc-so-3182-2023', 'moefcc-so-3252-2022', 'corrigendum', 'research-agent-quoted',   '2026-09-03'),
   ('moefcc-so-4101-2023', 'moefcc-so-5254-2022', 'corrigendum', 'research-agent-quoted',   '2026-09-03'),
   ('moefcc-gsr-731-2024', 'moefcc-gsr-766-2018', 'corrigendum', 'research-agent-quoted',   '2026-09-03'),
-  ('moefcc-gsr-522-2023', 'moefcc-gsr-499-2023', 'corrigendum', 'primary-source-egazette', '2026-09-04');
+  ('moefcc-gsr-522-2023', 'moefcc-gsr-499-2023', 'corrigendum', 'primary-source-egazette', '2026-09-04'),
+  -- Plastic Waste Management Rules chain
+  ('moefcc-gsr-571-2021', 'moefcc-gsr-320-2016', 'amends', 'primary-source-egazette', '2026-09-04'),
+  ('moefcc-gsr-571-2021', 'moefcc-gsr-169-2021', 'cites',  'primary-source-egazette', '2026-09-04'),
+  ('moefcc-gsr-133-2022', 'moefcc-gsr-320-2016', 'amends', 'primary-source-egazette', '2026-09-04'),
+  ('moefcc-gsr-522-2022', 'moefcc-gsr-320-2016', 'amends', 'primary-source-egazette', '2026-09-04'),
+  ('moefcc-gsr-522-2022', 'moefcc-gsr-22-2022',  'cites',  'primary-source-egazette', '2026-09-04'),
+  ('moefcc-gsr-807-2023', 'moefcc-gsr-320-2016', 'amends', 'primary-source-egazette', '2026-09-04'),
+  ('moefcc-gsr-201-2024', 'moefcc-gsr-320-2016', 'amends', 'primary-source-egazette', '2026-09-04'),
+  ('moefcc-gsr-201-2024', 'moefcc-gsr-744-2023', 'cites',  'primary-source-egazette', '2026-09-04'),
+  -- Coastal Regulation Zone Notification
+  ('moefcc-gsr-37-2019', 'moefcc-so-19-2011', 'supersedes', 'official-government-mirror', '2026-09-04'),
+  -- E-Waste (Management) Rules
+  ('moefcc-gsr-338-2016', 'moefcc-so-1035-2011', 'supersedes', 'official-government-mirror', '2026-09-04'),
+  ('moefcc-gsr-338-2016', 'moefcc-gsr-472-2015', 'cites',      'official-government-mirror', '2026-09-04'),
+  ('moefcc-gsr-801-2022', 'moefcc-gsr-338-2016', 'supersedes', 'official-government-mirror', '2026-09-04'),
+  ('moefcc-gsr-801-2022', 'moefcc-so-360-2022',  'cites',      'official-government-mirror', '2026-09-04');
