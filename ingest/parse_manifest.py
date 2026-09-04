@@ -73,6 +73,8 @@ EXTRACTORS = {
     'education': 'extract.education_patterns',
     'youth-affairs-and-sports': 'extract.youth_affairs_sports_patterns',
     'cooperation': 'extract.cooperation_patterns',
+    'finance-other-departments': 'extract.finance_other_patterns',
+    'parliamentary-affairs': 'extract.parliamentary_affairs_patterns',
 }
 
 
