@@ -75,7 +75,7 @@ breadth:
 
 ## Status
 
-**6 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
+**11 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
 
 | Ministry | Status | Notifications (before → after) | New subject threads |
 |---|---|---|---|
@@ -85,7 +85,12 @@ breadth:
 | Ayush | done | 7 → 27 | +8 (plus a real citation correction: S.O. 221(E) → G.S.R. 221(E)) |
 | Chemicals and Fertilizers | done | 6 → 44 | +13 (new subject area: QCO rescissions) |
 | Civil Aviation | done | 4 → 24 | +8 |
-| *(47 more ministries pending)* | | | |
+| Coal | done | 10 → 33 | +5 (plus an 18-item pension-scheme gap closed) |
+| Commerce and Industry | done | 12 → 30 | +6 (new format: SEZ area-adjustment tables) |
+| Communications | done | 6 → 20 | +6 (real citation collision found and correctly kept distinct) |
+| Consumer Affairs, Food and Public Distribution | done | 6 → 26 | +8 |
+| Cooperation | done | 5 → 9 | +2 (plus a real sibling-notification discovery) |
+| *(42 more ministries pending)* | | | |
 
 Given the scale (a full research-agent call per ministry, often 150-250K
 tokens of agent work), replicating this across all remaining ministries is a
