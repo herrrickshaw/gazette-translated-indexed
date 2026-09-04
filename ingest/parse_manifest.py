@@ -56,6 +56,7 @@ EXTRACTORS = {
     'ayush': 'extract.ayush_patterns',
     'mines': 'extract.mines_patterns',
     'defence': 'extract.defence_patterns',
+    'skill-development-entrepreneurship': 'extract.skill_development_patterns',
 }
 
 

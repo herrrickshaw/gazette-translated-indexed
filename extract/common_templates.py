@@ -23,7 +23,24 @@ the citation can appear *before* "issued by the Ministry of Railways" rather
 than after "Ministry of X number Y") gets its own dedicated module instead
 of being forced into one of these — see extract/railways_patterns.py.
 
-3. "note-chain": a Rules/Order instrument's amending notification closes
+3. "supersession-preamble": the citing document says it is issued "in
+   supersession of the notification of the [Government of India in the]
+   Ministry of <any ministry — the superseded notification need not be
+   this ministry's own> ... vide number <citation> ... except as respects
+   things done or omitted to be done before such supersession". This is
+   the same boilerplate extract.cross_ref already matches for CBIC-style
+   numbering (find_candidate_links there) — generalized here to scan via
+   find_gazette_citations (G.S.R./S.O./S.R.O.) instead of find_citations
+   (CBIC's own "No. X/YYYY-Customs" form), after two independent real
+   Ministry of Skill Development and Entrepreneurship notifications
+   (Apprentices Act industry-coverage supersession, Central Apprenticeship
+   Council reconstitution) both used it verbatim. Unlike the other two
+   ministry-anchored templates, this one does NOT anchor on a ministry
+   name — the superseded notification is often issued by a *different*
+   ministry (e.g. Skill Development superseding a Ministry of Labour
+   notification), so anchoring on "ministry of <self>" would miss it.
+
+4. "note-chain": a Rules/Order instrument's amending notification closes
    with a trailing "Note[:.-]" (any punctuation) naming its own history —
    "The principal rules were published ... vide number <citation1>, dated
    <date1> and [subsequently/last] amended vide [number(s)] <citation2>[,
@@ -134,6 +151,44 @@ def find_corrigendum_substitution_links(
     """
     anchor = f'ministry of {ministry_name.lower()}'
     return find_after_anchor(text, anchor, self_citation)
+
+
+_SUPERSESSION_ANCHOR = 'in supersession of'
+# Real preambles enumerate the superseded notification(s) then close with
+# this exact legal boilerplate before moving on to the new rule's own body
+# — same terminator extract.cross_ref uses for CBIC's version of this
+# shape, for the same reason: a fixed window either cuts off a long
+# enumerated list or (with no cap at all) runs into the citing document's
+# own body text and picks up unrelated citations.
+_SUPERSESSION_TERMINATOR = 'except as respects'
+_SUPERSESSION_FALLBACK_WINDOW = 4000
+
+
+def find_supersession_links(text: str, self_citation: str | None = None) -> list[TemplateLink]:
+    text = _normalize(text)
+    lower = text.lower()
+    citations = find_gazette_citations(text)
+    out: list[TemplateLink] = []
+    start = 0
+    while True:
+        idx = lower.find(_SUPERSESSION_ANCHOR, start)
+        if idx == -1:
+            break
+        search_from = idx + len(_SUPERSESSION_ANCHOR)
+        term_idx = lower.find(_SUPERSESSION_TERMINATOR, search_from)
+        window_end = term_idx if term_idx != -1 else search_from + _SUPERSESSION_FALLBACK_WINDOW
+        for c in citations:
+            if search_from <= c.start < window_end and c.normalized != self_citation:
+                out.append(TemplateLink(target_citation=c.normalized))
+        start = search_from
+
+    seen = set()
+    deduped = []
+    for link in out:
+        if link.target_citation not in seen:
+            seen.add(link.target_citation)
+            deduped.append(link)
+    return deduped
 
 
 _NOTE_ANCHOR = re.compile(r'\bnote\b\s*[:.\-]')

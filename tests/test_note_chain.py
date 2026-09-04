@@ -93,3 +93,29 @@ def test_eight_item_chain_with_and_conjunction_before_last_item():
 
 def test_sro_series_note_chain():
     assert find_note_chain(DEFENCE_NAVY_ACT_NOTE) == ['S.R.O. 9(E)']
+
+
+def test_thirteen_item_chain_with_roman_numeral_parenthetical_items():
+    # Real Ministry of Rural Development text (MGNREGA wage-rate Schedule):
+    # a different numbered-list style from Mines' "1. 2. 3." — roman
+    # numerals in parens, "(i) ... ; (ii) ... ; and (xii) ...". The
+    # citation scan doesn't care about list-marker style at all, but this
+    # is the longest real chain seen so far (13 citations) and the first
+    # roman-numeral-parenthetical one, worth its own confirmation.
+    text = (
+        "Note- The principal notification was published in the Gazette of India, Extraordinary, "
+        "Part d-II, Section 3, Sub-section (ii), vide number S.O. 463(E), dated the 26th "
+        "February, 2013 and subsequently amended vide the following notifications, - "
+        "(i) S.O. 400(E), dated the 13th February, 2014; (ii) S.O. 2118(E), dated the 22nd "
+        "August, 2014; (iii) S.O. 890(E), dated the 31st March, 2015; (iv) S.O. 1205 (E), dated "
+        "the 23rd March, 2016; (v) S.O. 666 (E), dated the 28th February, 2017; "
+        "(vi) S.O.1406(E), dated the 28th March, 2018; (vii) S.O.1424(E), dated the 26th March, "
+        "2019; (viii) S.O.1203(E), dated the 23th March, 2020; (ix) S.O.1206(E), dated the 15th "
+        "March, 2021; (x) S.O.1427(E) dated the 28th March, 2022; (xi) S.O.1425(E) dated the "
+        "24th March, 2023; and (xii) S.O.1562(E) dated the 27th March, 2024."
+    )
+    assert find_note_chain(text) == [
+        'S.O. 463(E)', 'S.O. 400(E)', 'S.O. 2118(E)', 'S.O. 890(E)', 'S.O. 1205(E)',
+        'S.O. 666(E)', 'S.O. 1406(E)', 'S.O. 1424(E)', 'S.O. 1203(E)', 'S.O. 1206(E)',
+        'S.O. 1427(E)', 'S.O. 1425(E)', 'S.O. 1562(E)',
+    ]

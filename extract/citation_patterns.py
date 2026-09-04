@@ -45,8 +45,13 @@ _CITATION_RE = re.compile(
 # of real-text defect as the "herby"/"hereby" typo already found). Kept as
 # printed in the test fixture, tolerated here rather than silently assumed
 # away — the goal is recognizing the citation, not correcting the document.
-_GSR_RE = re.compile(r'G\.\s*S\.\s*R\.?[.,]?\s*(\d+)\s*\(([A-Z])\)')
-_SO_RE = re.compile(r'S\.\s*O\.?[.,]?\s*(\d+)\s*\(([A-Z])\)')
+#
+# `(?:No\.?\s*)?` before the digits: a real Ministry of Social Justice and
+# Empowerment Note clause writes "S.O. No. 1436 (E)" — an extra "No." that
+# every other ministry modeled so far omits. Optional, so it doesn't
+# require the word to be present for the (far more common) plain form.
+_GSR_RE = re.compile(r'G\.\s*S\.\s*R\.?[.,]?\s*(?:No\.?\s*)?(\d+)\s*\(([A-Z])\)')
+_SO_RE = re.compile(r'S\.\s*O\.?[.,]?\s*(?:No\.?\s*)?(\d+)\s*\(([A-Z])\)')
 
 # S.R.O. ("Statutory Rules and Orders") is a third standard Gazette-of-India
 # citation series alongside G.S.R./S.O. — confirmed via three real Ministry
