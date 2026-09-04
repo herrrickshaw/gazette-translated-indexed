@@ -70,6 +70,9 @@ EXTRACTORS = {
     'atomic-energy': 'extract.atomic_energy_patterns',
     'information-and-broadcasting': 'extract.information_broadcasting_patterns',
     'jal-shakti': 'extract.jal_shakti_patterns',
+    'education': 'extract.education_patterns',
+    'youth-affairs-and-sports': 'extract.youth_affairs_sports_patterns',
+    'cooperation': 'extract.cooperation_patterns',
 }
 
 
