@@ -67,6 +67,9 @@ EXTRACTORS = {
     'personnel-public-grievances-pensions': 'extract.personnel_patterns',
     'statistics-and-programme-implementation': 'extract.mospi_patterns',
     'ports-shipping-waterways': 'extract.ports_shipping_patterns',
+    'atomic-energy': 'extract.atomic_energy_patterns',
+    'information-and-broadcasting': 'extract.information_broadcasting_patterns',
+    'jal-shakti': 'extract.jal_shakti_patterns',
 }
 
 

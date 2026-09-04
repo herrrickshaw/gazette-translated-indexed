@@ -240,7 +240,15 @@ def find_bare_citation_links(text: str, self_citation: str | None = None) -> lis
     return deduped
 
 
-_NOTE_ANCHOR = re.compile(r'\bnote\b\s*[:.\-]')
+# \b?note\b (optional boundary before, not just after) — a real Ministry
+# of Information and Broadcasting notification closes with "Footnote:"
+# instead of "Note:". \bnote\b alone never matches this: \b requires a
+# transition between a word and non-word character, and "t" (in "Foot")
+# immediately before "n" (in "note") is word-to-word, so there is no
+# boundary there at all. Allowing the leading boundary to be optional lets
+# "footnote" match while "noteworthy" (word-boundary-led "note" followed by
+# a word character, no ":.-" after it) still correctly does not.
+_NOTE_ANCHOR = re.compile(r'(?:\b|(?<=[a-z]))note\b\s*[:.\-]')
 
 
 def find_note_chain(text: str) -> list[str]:

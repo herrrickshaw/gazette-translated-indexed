@@ -95,6 +95,19 @@ def test_sro_series_note_chain():
     assert find_note_chain(DEFENCE_NAVY_ACT_NOTE) == ['S.R.O. 9(E)']
 
 
+def test_footnote_variant_is_recognized():
+    # Real Ministry of Information and Broadcasting text closes with
+    # "Footnote:" instead of "Note:" — \bnote\b alone never matches this
+    # (no word boundary between "t" in "Foot" and "n" in "note").
+    text = (
+        "Footnote: The Principal notification was published in the Gazette of India, "
+        "Extraordinary, Part II, Section 3, Sub-section (ii) vide notification number "
+        "S.O. 2693(E), dated the 5th September, 2013 and was subsequently amended vide "
+        "numbers:- 1. S.O. 1388(E), dated the 25th May, 2015."
+    )
+    assert find_note_chain(text) == ['S.O. 2693(E)', 'S.O. 1388(E)']
+
+
 def test_thirteen_item_chain_with_roman_numeral_parenthetical_items():
     # Real Ministry of Rural Development text (MGNREGA wage-rate Schedule):
     # a different numbered-list style from Mines' "1. 2. 3." — roman
