@@ -75,7 +75,7 @@ breadth:
 
 ## Status
 
-**16 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
+**21 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
 
 | Ministry | Status | Notifications (before → after) | New subject threads |
 |---|---|---|---|
@@ -95,7 +95,12 @@ breadth:
 | Defence | done | 11 → 27 | +8 (bare-form DRDO/CSD/Cantonment Recruitment Rules; multiple real S.R.O.-number collisions across years correctly kept distinct) |
 | DoNER | checked, no new material | 3 → 3 | none (entire tracked corpus is genuinely just 1 citing notification) |
 | Earth Sciences | checked, corpus exhausted | 2 → 2 | none (full corpus reviewed, same 2 unmodelable leads as before) |
-| *(37 more ministries pending)* | | | |
+| Education | done | 12 → 36 | 2 existing chains extended +2 nodes each, +4 new subject threads |
+| External Affairs | done | 7 → 23 | +4 (a recurring MEA trailing-Note drafting convention found across 3 threads) |
+| Finance (other departments) | done | 6 → 110 | both flagged gaps closed (FEMA 18-item Note, DEA<->DFS chain), +14 new subject threads; a real G.S.R. 488(E) collision with Power correctly kept distinct |
+| Fisheries, Animal Husbandry and Dairying | done | 15 → 40 | +6 new subject threads, +1 parallel sub-chain on the existing root node |
+| Food Processing Industries | checked, corpus exhausted | 2 → 2 | none (all 6 tracker notifications + 2 NIFTEM controls re-opened) |
+| *(32 more ministries pending)* | | | |
 
 Given the scale (a full research-agent call per ministry, often 150-250K
 tokens of agent work), replicating this across all remaining ministries is a
