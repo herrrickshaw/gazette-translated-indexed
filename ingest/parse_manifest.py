@@ -59,6 +59,10 @@ EXTRACTORS = {
     'skill-development-entrepreneurship': 'extract.skill_development_patterns',
     'chemicals-and-fertilizers': 'extract.chemicals_fertilizers_patterns',
     'earth-sciences': 'extract.earth_sciences_patterns',
+    'msme': 'extract.msme_patterns',
+    'heavy-industries': 'extract.heavy_industries_patterns',
+    'food-processing-industries': 'extract.food_processing_patterns',
+    'tribal-affairs': 'extract.tribal_affairs_patterns',
 }
 
 
