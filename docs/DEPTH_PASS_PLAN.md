@@ -75,7 +75,7 @@ breadth:
 
 ## Status
 
-**31 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
+**36 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
 
 | Ministry | Status | Notifications (before → after) | New subject threads |
 |---|---|---|---|
@@ -110,7 +110,12 @@ breadth:
 | Mines | done | 15 → 62 | +8 new subject threads; Concession Rules corrigendum re-parented into a 17-node chain; a novel CGPB "one supersedes six" shape |
 | Minority Affairs | done | 15 → 24 | +2 new note-chains, +2 nodes on the existing Haj chain (one exposing a real Ministry record-keeping gap) |
 | Environment, Forest and Climate Change | done | 8 → 24 | +3 new subject areas beyond corrigenda (PWM Rules, CRZ, E-Waste), deliberately egazette-PDF-verified given this ministry's aggregator-mismatch history |
-| *(22 more ministries pending)* | | | |
+| Housing and Urban Affairs | done | 7 → 46 | +3 subject areas incl. the Metro Railways Act Schedule-alignment series (Pune Metro hub); six more UT/State RERA amendments; S.O. 2979(E) collision with Power kept distinct |
+| Road Transport and Highways | done | 6 → 20 | +5 CMVR/adjacent-rules draft-to-final chains beyond land-acquisition corrigenda |
+| Statistics and Programme Implementation | done | 4 → 16 | +4 subject areas from a 44-notification corpus; deferred S.O. 4544(E) lead closed via File-No. cross-match |
+| MSME | done | 5 → 12 | +3 subject threads; one existing edge CORRECTED (3820 amends 3193, not 5403); deferred "GSR 381" lead closed as bare-form |
+| New and Renewable Energy | done | 3 → 9 | documented 2017-Order gap resolved (S.O. 2920(E)); parallel >100kW chain; narrative-prose shape now has 5 real instances |
+| *(17 more ministries pending)* | | | |
 
 Given the scale (a full research-agent call per ministry, often 150-250K
 tokens of agent work), replicating this across all remaining ministries is a
