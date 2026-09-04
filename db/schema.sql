@@ -36,7 +36,11 @@ CREATE TABLE IF NOT EXISTS gazette_notification (
     instrument_id  TEXT REFERENCES act_or_rule(instrument_id),
     thread_id      TEXT REFERENCES subject_thread(thread_id),
     pdf_url        TEXT,
-    ocr_status     TEXT NOT NULL DEFAULT 'not_needed'  -- not_needed | needs_ocr | ocr_done
+    ocr_status     TEXT NOT NULL DEFAULT 'not_needed',  -- not_needed | needs_ocr | ocr_done
+    archived_at    TEXT                  -- ISO datetime; NULL = active. Soft delete: db/crud.py
+                                          -- never stores the PDF itself here — pdf_url is the
+                                          -- egazette.gov.in path, the bytes live outside the repo
+                                          -- (and outside this table) because the source is public.
 );
 
 CREATE TABLE IF NOT EXISTS cross_reference (
@@ -46,6 +50,7 @@ CREATE TABLE IF NOT EXISTS cross_reference (
     relation_type      TEXT NOT NULL,   -- amends | supersedes | corrigendum | rescinds | cites
     verified_by        TEXT,            -- reviewer id/name, NULL until verified
     verified_at        TEXT,            -- ISO datetime, NULL until verified
+    archived_at        TEXT,            -- ISO datetime; NULL = active. Soft delete: db/crud.py
     UNIQUE(source_gazette_id, target_gazette_id, relation_type)
 );
 

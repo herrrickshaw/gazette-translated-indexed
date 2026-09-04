@@ -24,5 +24,7 @@ Scope: "go ahead with the bounded first run, fetch to dropbox and then parse". E
   EXPECT: 51 passed
   EVIDENCE: met.
 
-- [ ] G5: A CRUD layer over gazette_notification/cross_reference, replacing ad-hoc seed .sql + shell one-liners, storing paths/URLs never PDF bytes (already true of the schema; this is the access-layer request, not a data-model change).
-  EVIDENCE: pending — next piece of work, in progress.
+- [x] G5: A CRUD layer over gazette_notification/cross_reference, replacing ad-hoc seed .sql + shell one-liners, storing paths/URLs never PDF bytes.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_crud.py -q
+  EXPECT: 18 passed
+  EVIDENCE: met — db/crud.py: create/get/list/update for both tables, verify_cross_reference (the machine-proposes/person-confirms step, now shared with verify/review_queue.py instead of that module keeping its own copy of the same SQL), get_lineage (one hop each direction — the actual point of the project, not just row access), and two real delete modes: archive_*/restore_* (soft, row and referencing edges stay valid) and hard_delete_* (refuses when cross_reference rows still reference it unless cascade=True — proven by a test that checks the refusal leaves the row fully intact, not partially deleted). Schema gained `archived_at` on both tables (nullable, backward-compatible — all 14 existing seed files still load unchanged). Never a `pdf_bytes`/`pdf_content` column or parameter anywhere; `create_notification` takes `pdf_url` only, proven by a test that asserts no such field exists on a created row.

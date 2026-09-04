@@ -27,9 +27,34 @@ python3 -m ingest.egazette CG-DL-E-03092026-275956 --extract
 # 1. or extract text from a PDF you already have
 python3 -m ingest.pdf_text data/raw/some-notification.pdf > data/raw_md/some-notification.md
 
+# 0b. bulk: fetch every ID in a manifest (one column of gazette IDs), then parse
+#     the official PDFs against what the index claims and upgrade provenance on
+#     evidence. data/manifest/collected_ids.csv is the first bounded run: every
+#     ID discovered during the design sessions, PDFs kept outside the repo.
+tail -n +2 data/manifest/collected_ids.csv | cut -d, -f1 \
+  | xargs python3 -m ingest.egazette --out "$PDF_DIR"
+python3 -m ingest.parse_manifest data/manifest/collected_ids.csv \
+  --pdf-dir "$PDF_DIR" --report data/manifest/parse_report.md --update-db gazette.db
+
 # 2. load the schema + verified seed data
 sqlite3 gazette.db < db/schema.sql
 sqlite3 gazette.db < db/seed_cbic.sql
+
+# 2b. all reads/writes to gazette_notification and cross_reference go through
+#     db/crud.py — not raw SQL. It never stores a PDF's bytes (pdf_url only,
+#     since every gazette here is a public document, re-fetchable by ID) and
+#     Delete has two real modes: archive_*/restore_* (soft — the row and
+#     everything pointing at it stay valid, it just drops out of default
+#     listings) and hard_delete_* (refuses if cross_reference rows still
+#     reference it, unless cascade=True). See db/crud.py's own docstring.
+python3 -c "
+import sqlite3
+from db.crud import list_notifications, get_lineage
+conn = sqlite3.connect('gazette.db'); conn.execute('PRAGMA foreign_keys = ON')
+for n in list_notifications(conn, ministry_id='power'):
+    print(n['gsr_or_so'], n['publish_date'])
+print(get_lineage(conn, 'power-so-5852-2022'))
+"
 
 # 3. run the extractor's test suite against the 31-entry gold-standard set
 pytest tests/

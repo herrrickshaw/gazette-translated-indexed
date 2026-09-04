@@ -7,19 +7,21 @@ Lists every cross_reference row with verified_by IS NULL (i.e. proposed by
 extract.cross_ref but not yet confirmed by a person), and for each one asks
 accept / reject / skip. Machines propose, people confirm — nothing here
 goes live unverified.
+
+Goes through db.crud rather than its own SQL — this module used to run
+UPDATE/DELETE directly; that logic now lives once, in crud.py, alongside
+create/read/archive/hard-delete for the same tables.
 """
 from __future__ import annotations
 
 import argparse
 import sqlite3
-from datetime import datetime, timezone
+
+from db.crud import hard_delete_cross_reference, list_cross_references, verify_cross_reference
 
 
-def pending(conn: sqlite3.Connection) -> list[sqlite3.Row]:
-    conn.row_factory = sqlite3.Row
-    return conn.execute(
-        'SELECT * FROM cross_reference WHERE verified_by IS NULL ORDER BY ref_id'
-    ).fetchall()
+def pending(conn: sqlite3.Connection) -> list[dict]:
+    return list_cross_references(conn, unverified_only=True)
 
 
 def review(conn: sqlite3.Connection, reviewer: str) -> None:
@@ -33,12 +35,9 @@ def review(conn: sqlite3.Connection, reviewer: str) -> None:
               f'--{row["relation_type"]}--> {row["target_gazette_id"]}')
         answer = input('  accept / reject / skip? [a/r/s] ').strip().lower()
         if answer == 'a':
-            conn.execute(
-                'UPDATE cross_reference SET verified_by = ?, verified_at = ? WHERE ref_id = ?',
-                (reviewer, datetime.now(timezone.utc).isoformat(timespec='seconds'), row['ref_id']),
-            )
+            verify_cross_reference(conn, row['ref_id'], verified_by=reviewer)
         elif answer == 'r':
-            conn.execute('DELETE FROM cross_reference WHERE ref_id = ?', (row['ref_id'],))
+            hard_delete_cross_reference(conn, row['ref_id'])
         # 's' (or anything else): leave pending, move on
     conn.commit()
 
@@ -50,6 +49,7 @@ def main() -> int:
     args = ap.parse_args()
 
     conn = sqlite3.connect(args.db)
+    conn.execute('PRAGMA foreign_keys = ON')
     try:
         review(conn, args.reviewer)
     finally:
