@@ -25,11 +25,29 @@ of being forced into one of these — see extract/railways_patterns.py.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from .citation_patterns import find_gazette_citations
 
 _WINDOW_CHARS = 300
+
+# PDF text extraction line-wraps mid-phrase — a real Ministry of Home
+# Affairs notification prints "hereby makes the following \namendments"
+# with the line break landing between "following" and "amendments". Every
+# anchor here is a literal substring match, which silently fails against
+# any such wrap even though both citations are plainly present in the
+# text — caught only by running the extractors against real PDF-extracted
+# text end-to-end, not by any synthetic fixture (fixtures are hand-typed as
+# one line and never wrap). Normalizing all whitespace runs (including
+# newlines) to a single space, once, before every anchor and citation
+# search fixes this for every template at once rather than patching each
+# phrase's spelling of "the following amendment" individually.
+_WS_RE = re.compile(r'\s+')
+
+
+def _normalize(text: str) -> str:
+    return _WS_RE.sub(' ', text)
 
 
 @dataclass(frozen=True)
@@ -37,7 +55,13 @@ class TemplateLink:
     target_citation: str
 
 
-def _find_after_anchor(text: str, anchor: str, self_citation: str | None) -> list[TemplateLink]:
+def find_after_anchor(text: str, anchor: str, self_citation: str | None,
+                       window_chars: int = _WINDOW_CHARS) -> list[TemplateLink]:
+    """Shared anchor-then-nearby-citation scan, normalizing whitespace first.
+    Public (no leading underscore) so extract.railways_patterns can reuse it
+    with its own anchor/window instead of maintaining a parallel copy of
+    this loop with its own copy of the same whitespace bug."""
+    text = _normalize(text)
     lower = text.lower()
     citations = find_gazette_citations(text)
     out: list[TemplateLink] = []
@@ -46,7 +70,7 @@ def _find_after_anchor(text: str, anchor: str, self_citation: str | None) -> lis
         idx = lower.find(anchor, start)
         if idx == -1:
             break
-        window_end = idx + len(anchor) + _WINDOW_CHARS
+        window_end = idx + len(anchor) + window_chars
         for c in citations:
             if idx < c.start < window_end and c.normalized != self_citation:
                 out.append(TemplateLink(target_citation=c.normalized))
@@ -76,9 +100,11 @@ def find_amendment_in_notification_links(
     anchor = 'makes the following amendment'
     # Anchor on the ministry-name fragment too, so a document that mentions
     # amendments to some OTHER ministry's notification doesn't false-positive.
-    if ministry_name.lower() not in text.lower():
+    # Checked against normalized text for the same reason as the anchor
+    # itself — a long ministry name can wrap across a line too.
+    if ministry_name.lower() not in _normalize(text).lower():
         return []
-    return _find_after_anchor(text, anchor, self_citation)
+    return find_after_anchor(text, anchor, self_citation)
 
 
 def find_corrigendum_substitution_links(
@@ -94,4 +120,4 @@ def find_corrigendum_substitution_links(
     testing against a second ministry's real text instead of stopping at one.
     """
     anchor = f'ministry of {ministry_name.lower()}'
-    return _find_after_anchor(text, anchor, self_citation)
+    return find_after_anchor(text, anchor, self_citation)

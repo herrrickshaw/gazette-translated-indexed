@@ -1,0 +1,67 @@
+gazette_id,ministry_id,self_citation,expected_targets,modeled,note
+CG-DL-E-03092026-275956,road-transport-highways,S.O. 4848(E),S.O. 4872(E),1,corrigendum; already fetched during part-2 proof
+CG-DL-E-19072023-247431,environment-forest-climate-change,G.S.R. 522(E),G.S.R. 499(E),1,CORRECTED 2026-09-04: this ID's real content is G.S.R. 522(E)/499(E) (verified against the official PDF); the aggregator had served S.O. 3182(E)/3252(E) content under this same ID (mismatched — kept in db unfetchable, no correct ID known)
+CG-DL-E-19092023-248826,environment-forest-climate-change,S.O. 4101(E),S.O. 5254(E),1,corrigendum
+CG-DL-E-26112024-258938,environment-forest-climate-change,G.S.R. 731(E),G.S.R. 766(E),1,corrigendum to CAF Rules 2018
+CG-DL-E-11072026-274360,home-affairs,S.O. 3778(E),S.O. 3987(E),1,immigration post list amendment
+CG-DL-E-19082026-275587,home-affairs,S.O. 4583(E),S.O. 1231(E);S.O. 941(E);S.O. 1110(E),0,one-to-many disapplication (deferred)
+CG-DL-E-07072026-274214,home-affairs,,,0,Resolution cited by File No. (deferred)
+CG-DL-E-08012025-260006,health-family-welfare,G.S.R. 11(E),G.S.R. 10(E),1,corrigendum to draft
+CG-DL-E-27012026-269595,health-family-welfare,G.S.R. 50(E),G.S.R. 587(E);G.S.R. 810(E),0,final rules citing draft+corrigendum (deferred)
+CG-DL-E-21082026-275637,health-family-welfare,G.S.R. 743(E),G.S.R. 270(E),0,final rules citing draft (deferred)
+CG-KA-E-02092026-275945,railways,S.O. 4815(E),S.O. 2950(E),1,survey-number correction (SW Rly)
+CG-MH-E-06052026-272277,railways,S.O. 2196(E),S.O. 5877(E),0,Central Rly corrigendum citing gazette issue no. (deferred)
+CG-MH-E-23122025-268726,railways,S.O. 5877(E),,0,original of the above
+CG-MH-E-16102023-249453,railways,S.O. 4509(E),S.O. 4445(E),0,Western Rly supersession (deferred)
+CG-DL-E-17112025-267739,corporate-affairs,G.S.R. 849(E),G.S.R. 703(E),1,name-spelling corrigendum
+CG-DL-E-22042026-271973,corporate-affairs,G.S.R. 300(E),G.S.R. 268(E),0,Rules amendment with Note-chain (deferred)
+CG-DL-E-31122025-268970,corporate-affairs,G.S.R. 943(E),G.S.R. 259(E),0,Rules amendment with Note-chain (deferred)
+CG-DL-E-28082025-265752,consumer-affairs-food-public-distribution,S.O. 3926(E),S.O. 2359(E),1,wheat stock-limit amendment
+CG-DL-E-17012026-269416,consumer-affairs-food-public-distribution,S.O. 245(E),S.O. 2359(E),1,wheat stock-limit amendment (2nd edge)
+CG-DL-E-01062026-273053,consumer-affairs-food-public-distribution,G.S.R. 418(E),G.S.R. 202(E),0,Legal Metrology Rules Note-chain (deferred)
+CG-DL-E-19082026-275577,labour-and-employment,S.O. 4573(E),S.O. 2455(E),1,Code on Wages corrigendum
+CG-DL-E-04082026-275186,labour-and-employment,G.S.R. 703(E),G.S.R. 525(E),0,EPF Scheme corrigendum; named-Scheme anchor (deferred)
+CG-DL-E-04082026-275187,labour-and-employment,G.S.R. 704(E),G.S.R. 527(E),0,EPS Scheme corrigendum; named-Scheme anchor (deferred)
+CG-DL-E-04072026-274106,power,S.O. 3520(E),S.O. 5852(E),1,protected-systems amendment
+CG-DL-E-15062026-273468,power,S.O. 2978(E),S.O. 1034(E),0,repeal with Note-chain (deferred)
+CG-DL-E-09042026-271660,power,G.S.R. 259(E),G.S.R. 211(E),0,JERC rules Note-chain (deferred)
+CG-DL-E-09072026-274306,agriculture-and-farmers-welfare,S.O. 3666(E),S.O. 1018(E),1,Fertiliser Control Order amendment; real 'herby' typo
+CG-DL-E-08072026-274259,agriculture-and-farmers-welfare,S.O. 3665(E),S.O. 5836(E),0,second FCO pair (fits; not modeled for time)
+CG-DL-E-11062026-273324,agriculture-and-farmers-welfare,S.O. 2944(E),S.O. 1589(E),0,11-amendment Note-chain (deferred)
+CG-DL-E-14012025-260198,education,G.S.R. 29(E),G.S.R. 839(E),0,UGC recruitment rules Note-chain (deferred)
+CG-DL-E-14102025-266925,education,S.O. 4659(E),S.O. 3239(E),0,SPA Act Note-chain (deferred)
+CG-DL-E-28102025-267217,education,S.O. 4861(E),G.S.R. 68(E),0,Architects Act Note-chain (deferred)
+CG-DL-E-26022026-270525,electronics-and-information-technology,G.S.R. 148(E),G.S.R. 120(E),1,IT Rules corrigendum
+CG-DL-E-10022026-269993,electronics-and-information-technology,G.S.R. 120(E),,0,original of the above
+CG-DL-E-12122025-268455,electronics-and-information-technology,G.S.R. 892(E),G.S.R. 846(E),0,DPDP Rules corrigendum (fits; not modeled for time)
+CG-DL-E-14112025-267650,electronics-and-information-technology,G.S.R. 846(E),,0,original of the above
+CG-DL-E-12022026-270086,civil-aviation,G.S.R. 124(E),G.S.R. 77(E),1,Aircraft Objects Rules corrigendum
+CG-DL-E-31012026-269709,civil-aviation,G.S.R. 77(E),,0,original of the above
+CG-DL-E-23072026-274731,civil-aviation,G.S.R. 647(E),G.S.R. 829(E),0,Accident Investigation Rules amendment (deferred)
+CG-DL-E-10112025-267513,civil-aviation,G.S.R. 829(E),,0,original of the above
+CG-DL-E-23072026-274728,housing-and-urban-affairs,S.O. 4041(E),S.O. 3379(E),1,Directorate of Estates corrigendum (uncorroborated tier)
+CG-DL-E-03072026-274061,housing-and-urban-affairs,G.S.R. 559(E),G.S.R. 619(E),0,Ladakh RERA rules amendment (deferred)
+CG-DL-E-02042026-271536,housing-and-urban-affairs,S.O. 1713(E),S.O. 3184(E),0,RERA CAC amendment chain (deferred)
+CG-DL-E-20072026-274630,commerce,S.O. 3881(E),,0,DGFT corrigendum citing bare 'Notification No. 66' (deferred)
+CG-DL-E-31012026-269723,culture,S.O. 441(E),S.O. 3514(E);S.O. 2985(E);S.O. 2637(E),1,one-to-many partial modification
+CG-DL-E-13042026-271766,culture,,,0,Notification No. 108 cited by File No. (deferred)
+CG-DL-E-15072026-274487,culture,,,0,Addendum to No. 108 (deferred)
+CG-DL-E-07072025-264428,culture,G.S.R. 448(E),G.S.R. 635(E),0,NMA rules Note-chain (deferred)
+CG-DL-E-17062025-263909,steel,S.O. 2685(E),S.O. 1868(E),1,address corrigendum
+CG-DL-E-25042025-262696,steel,S.O. 1868(E),,0,original of the above
+CG-DL-E-02092024-256823,steel,S.O. 3716(E),,0,Quality Control Order 2024 (principal)
+CG-DL-E-20112025-267864,steel,S.O. 5134(E),S.O. 3716(E),0,QCO amendment Note-chain (deferred)
+CG-DL-E-22062026-273720,steel,S.O. 3300(E),S.O. 3716(E),0,QCO amendment Note-chain (deferred)
+CG-DL-E-10082026-275355,women-child-development,S.O. 4423(E),S.O. 120(E),0,1979 Dept of Social Welfare original (deferred: renamed dept)
+CG-DL-E-31012026-269717,women-child-development,G.S.R. 75(E),,0,NCPCR rules amendment Note-chain (deferred)
+CG-DL-E-09072026-274280,women-child-development,,,0,Resolution cited by File No. (deferred)
+CG-DL-E-25062026-273810,coal,G.S.R. 508(E),G.S.R. 877(E),0,Coal Blocks Allocation rules Note-chain (deferred)
+CG-DL-E-07082026-275259,coal,G.S.R. 710(E),G.S.R. 540(E),0,Colliery Control rules Note-chain (deferred)
+CG-DL-E-22052026-272751,coal,G.S.R. 370(E),G.S.R. 123(E),0,Coal Mines Pension Scheme 18-item Note-chain (deferred)
+CG-DL-E-25112025-267951,communications,G.S.R. 863(E),G.S.R. 796(E),1,rescission
+CG-DL-E-29102025-267236,communications,G.S.R. 796(E),,0,rescinded duplicate; aggregator page title was WRONG
+CG-DL-E-22102025-267074,communications,G.S.R. 771(E),G.S.R. 720(E),0,amends 'principal rules' by name (deferred)
+CG-DL-E-21112024-258808,communications,G.S.R. 720(E),,0,principal Telecom Cyber Security Rules 2024
+CG-DL-E-12092025-266124,communications,G.S.R. 625(E),G.S.R. 754(E),0,Lawful Interception amendment (deferred)
+CG-DL-E-06122024-259238,communications,G.S.R. 754(E),,0,principal; supersedes Telegraph Rules 419/419A
+CG-DL-E-09042025-262363,communications,,,0,Dept of Posts RPLI corrigendum; login-gated on aggregator - official PDF may read fine

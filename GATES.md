@@ -1,38 +1,28 @@
-# Gates: part 2 — official source (egazette.gov.in), plus Communications closed out
+# Gates: bounded first bulk run — fetch to Dropbox, parse against the index
 
-OWNS: db/**, extract/**, ingest/**, tests/**, data/raw_md/**
+OWNS: data/manifest/**, data/raw_md/**, db/**, extract/**, tests/**
 
-Scope: "finish 1 then 2". (1) closed: Communications' relaunched agent returned and is modeled (17 ministries). (2) egazette.gov.in — the Government of India's own portal — exposes every notification PDF at a deterministic, unauthenticated URL derived from the gazette ID. That replaces the third-party aggregator as the text source for the pipeline; the aggregator remains useful only for *discovering* which IDs to fetch.
+Scope: "go ahead with the bounded first run, fetch to dropbox and then parse". Every gazette ID collected across this session's research (66 total) fetched from egazette.gov.in into `~/Dropbox/gazette-translated-indexed/egazette/` (gitignored — PDFs are publicly re-fetchable by ID, so only the path/URL is tracked, never the bytes), then parsed against what the index currently claims.
 
-- [x] G1: Communications (Dept. of Telecommunications) is modeled — the first `rescinds` edge.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_communications_patterns.py -q
-  EXPECT: 2 passed
-  EVIDENCE: met — G.S.R. 863(E) rescinds G.S.R. 796(E); the full 720→771→796(duplicate)→863(rescinds) chain is documented in db/seed_communications.sql, only the edge stated in the rescinding clause itself is modeled.
+- [x] G1: All 66 manifest PDFs fetched, none disk-cached from a stale/wrong source, none smaller than a real gazette page.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && find "$HOME/Library/CloudStorage/Dropbox/gazette-translated-indexed/egazette" -name '*.pdf' | wc -l | tr -d ' '
+  EXPECT: 66
+  EVIDENCE: met — 64 MB total, every file's first 5 bytes confirmed `%PDF-` before this gate was written.
 
-- [x] G2: The gazette-ID → official-PDF-URL mapping is pinned by tests, including weekly (W) series, state (SG) prefix, malformed IDs, and year-from-ID-not-today.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/test_egazette.py -q
-  EXPECT: 10 passed
-  EVIDENCE: met — pattern `WriteReadData/<YYYY>/<file-id>.pdf`, corroborated by an Internet Archive mirror item that carries the same file-id (in.gazette.central.e.2024-09-27.257550).
+- [x] G2: Parsing the OFFICIAL PDFs caught real bugs a synthetic fixture could not — same discipline as every earlier batch, now proven at bulk scale rather than one document at a time.
+  EVIDENCE: met — two, both structural (not one-off typos):
+  (a) **Whitespace bug, both shared templates.** Real PDF text line-wraps mid-phrase — Ministry of Home Affairs prints "hereby makes the following \namendments" with the break landing inside the anchor phrase. Every anchor in extract/common_templates.py used literal substring `.find()`, which silently fails on any such wrap even though both citations are plainly present. Fixed by normalizing all whitespace runs to a single space once, before every anchor and citation search — flipped MHA, MeitY, and Housing and Urban Affairs from MISSED to RECOVERED with no other change. extract/railways_patterns.py's own duplicate copy of the same loop was refactored to share the fix instead of getting a second patch.
+  (b) **Aggregator ID/content mismatch, MoEFCC.** The pair earlier marked 'spot-checked' (S.O. 3182(E) corrects S.O. 3252(E), gazette ID CG-DL-E-19072023-247431) does not exist at that ID on the official site — the real content there is a different notification, G.S.R. 522(E) correcting G.S.R. 499(E). A "spot-check" against mismatched content is not a spot-check: downgraded to 'research-agent-quoted' (the quote itself is real, its own gazette ID is unresolved) and the genuinely-verified G.S.R. 522(E)/499(E) pair recovered from the real official PDF was added at the 'primary-source-egazette' tier instead, in db/seed_moefcc.sql with the correction documented inline.
 
-- [x] G3: A live fetch through ingest.egazette produced a cached, valid PDF (this gate checks the cached artifact; the live download itself was observed once: HTTP 200, application/pdf, 569,251 bytes).
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -c "p='data/raw/egazette/2026/CG-DL-E-03092026-275956.pdf'; d=open(p,'rb').read(5); assert d==b'%PDF-', d; print('CACHED_PDF_OK')"
-  EXPECT: CACHED_PDF_OK
-  EVIDENCE: met — second invocation returned from cache in 0.05 s with no network call and no politeness sleep.
+- [x] G3: Every recoverable modeled claim across all 17 ministries is now verified directly against the official source, not carried on an aggregator's word.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM cross_reference WHERE verified_by='primary-source-egazette';"
+  EXPECT: /^(1[5-9]|2[0-9])$/
+  EVIDENCE: met — 21. Remaining non-egazette tiers are CBIC's original 31 ('primary-source-preamble', verified a different way before this manifest existed and out of this run's scope) plus a handful of genuinely un-recoverable-yet leads (deferred shapes, login-gated aggregator pages, IDs this run didn't include).
 
-- [x] G4: End-to-end from the OFFICIAL PDF: fetch → PyMuPDF text → MoRTH extractor recovers the known cross-reference. No aggregator text anywhere in this path.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -c "from ingest.pdf_text import extract_text; from extract.morth_patterns import find_candidate_links; t=extract_text('data/raw/egazette/2026/CG-DL-E-03092026-275956.pdf'); l=[x.target_citation for x in find_candidate_links(t, self_so='S.O. 4848(E)')]; assert l==['S.O. 4872(E)'], l; print('E2E_OFFICIAL_OK')" 2>/dev/null
-  EXPECT: E2E_OFFICIAL_OK
-  EVIDENCE: met — the same pair earlier verified from the aggregator's transcription now verifies from the primary source, which also retires the `search-index-excerpt` tier for any ID that can be re-fetched this way.
-
-- [x] G5: TLS verification is never disabled anywhere in the fetcher — the SSL-chain fallback is system curl with the OS trust store, not `verify=False` / `-k`. (Negative check with an inline positive control.)
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -c "import re; bad=re.compile(r\"verify\s*=\s*False|['\\\"]-k['\\\"]|--insecure\"); assert bad.search('requests.get(u, verify=False)'), 'positive control failed'; assert bad.search(\"['curl','-k',u]\"), 'positive control 2 failed'; s=open('ingest/egazette.py').read(); assert not bad.search(s), 'insecure TLS found'; print('NO_INSECURE_TLS')"
-  EXPECT: NO_INSECURE_TLS
-  EVIDENCE: met — observed live: Python `requests` raised SSLError on this host (missing intermediate in the served chain); the module then used curl, which verified the chain against the macOS trust store (`ssl_verify_result=0`).
-
-- [x] G6: Full suite passes with 17 ministries seeded and the fetcher's tests included.
+- [x] G4: Full suite passes after both fixes, with the corrected MoEFCC seed data.
   CHECK: cd /Users/umashankar/gazette-translated-indexed && /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/ -q
   EXPECT: 51 passed
   EVIDENCE: met.
 
-- [x] G7: The URL scheme is confirmed beyond the single 2026 Delhi-region ID it was verified on — for an earlier year and non-DL region codes.
-  EVIDENCE: met — three range-request probes (first 1 KB each, 2 s apart), all HTTP 206 / application/pdf / `%PDF-` magic / TLS verified: CG-DL-E-19072023-247431 → /2023/247431.pdf (earlier year); CG-MH-E-16102023-249453 → /2023/249453.pdf (Maharashtra region); CG-KA-E-02092026-275945 → /2026/275945.pdf (Karnataka region). The region code is not part of the path at all — `gazette_id_to_pdf_url` correctly ignores it. Boundary that remains: a web-search hit showed a 1966 file at `WriteReadData/1966/O-1665-1966-0041-75918.pdf`, a different file-id scheme, so the mapping is verified for the modern numeric-file-id era (at least 2023–2026) and explicitly NOT claimed for legacy scans — those would need their own ID scheme and, being scans, the OCR path.
+- [ ] G5: A CRUD layer over gazette_notification/cross_reference, replacing ad-hoc seed .sql + shell one-liners, storing paths/URLs never PDF bytes (already true of the schema; this is the access-layer request, not a data-model change).
+  EVIDENCE: pending — next piece of work, in progress.
