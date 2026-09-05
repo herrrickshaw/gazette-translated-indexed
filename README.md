@@ -71,6 +71,16 @@ python3 -m verify.review_queue --db gazette.db
 
 # 5. regenerate a page from the database
 python3 -m render.pages --db gazette.db --notification "45/2025-Customs" > out.html
+
+# 6. export the whole graph as an LLM-ready JSONL corpus (one notification
+#    per line, ministry/instrument/thread + one-hop lineage inlined)
+python3 -m render.llm_export --db gazette.db > data/llm_corpus.jsonl
+
+# 7. check already-modeled ministries for notifications newer than what's
+#    in the database (never writes to the db -- flags candidates for a
+#    depth-pass-style follow-up, same as extract/cross_ref.py's regex
+#    candidates or ingest/mistral_extract.py's model candidates)
+python3 -m ingest.freshness_check --db gazette.db --extract
 ```
 
 OCR is opt-in and only invoked for scanned (non-digital-native) PDFs, via the
