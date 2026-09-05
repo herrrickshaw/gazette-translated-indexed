@@ -65,6 +65,7 @@ import json
 import os
 import sqlite3
 import sys
+import time
 import urllib.request
 from pathlib import Path
 
@@ -114,7 +115,7 @@ def _read_credential(name: str) -> str | None:
     return None
 
 
-def _translate_text(text: str, lang_name: str, api_key: str, model: str, timeout: int = 60, retries: int = 2) -> str:
+def _translate_text(text: str, lang_name: str, api_key: str, model: str, timeout: int = 60, retries: int = 3) -> str:
     prompt = (
         f"Translate the following short administrative/legal phrase into {lang_name}. "
         f"Keep proper nouns and Act/Order titles recognizable; output ONLY the translation, "
@@ -129,6 +130,14 @@ def _translate_text(text: str, lang_name: str, api_key: str, model: str, timeout
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 body = json.loads(resp.read())
             return body["candidates"][0]["content"]["parts"][0]["text"].strip()
+        except urllib.error.HTTPError as e:
+            last_error = e
+            if e.code == 429 and attempt < retries:
+                # rate-limited -- back off (2s, 4s, 8s) rather than hammer the same limit again
+                time.sleep(2 ** (attempt + 1))
+                continue
+            if e.code != 429:
+                raise
         except (TimeoutError, urllib.error.URLError) as e:
             last_error = e
     raise TimeoutError(f"Gemini call failed after {retries + 1} attempts: {last_error}")

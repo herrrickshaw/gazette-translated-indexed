@@ -149,6 +149,22 @@ Two separate tools, for two separate things:
   only the four text fields translate, and the English originals stay
   alongside as `<field>_en`.
 
+  **Sample translation** -- No. 45/2025-Customs's generated summary, live
+  output from six of the twenty-two languages:
+
+  | Language | Translation |
+  |---|---|
+  | English (source) | Customs 45/2025 (G.S.R. 781(E), 2025-10-24) supersedes 31 notifications; amended by 6 notifications; corrigendum issued by 2 notifications; cited by 1 notification. |
+  | Telugu | కస్టమ్స్ 45/2025 (G.S.R. 781(E), 2025-10-24) 31 నోటిఫికేషన్‌లను అధిగమిస్తుంది; 6 నోటిఫికేషన్‌ల ద్వారా సవరించబడింది; 2 నోటిఫికేషన్‌ల ద్వారా కొరిజెండమ్ జారీ చేయబడింది; 1 నోటిఫికేషన్ ద్వారా ప్రస్తావించబడింది. |
+  | Punjabi | ਕਸਟਮਜ਼ 45/2025 (ਜੀ.ਐੱਸ.ਆਰ. 781(ਈ), 2025-10-24) 31 ਨੋਟੀਫਿਕੇਸ਼ਨਾਂ ਦੀ ਥਾਂ ਲੈਂਦਾ ਹੈ; 6 ਨੋਟੀਫਿਕੇਸ਼ਨਾਂ ਦੁਆਰਾ ਸੋਧਿਆ ਗਿਆ; 2 ਨੋਟੀਫਿਕੇਸ਼ਨਾਂ ਦੁਆਰਾ ਸ਼ੁੱਧੀ-ਪੱਤਰ ਜਾਰੀ ਕੀਤਾ ਗਿਆ; 1 ਨੋਟੀਫਿਕੇਸ਼ਨ ਦੁਆਰਾ ਹਵਾਲਾ ਦਿੱਤਾ ਗਿਆ। |
+  | Kannada | ಕಸ್ಟಮ್ಸ್ 45/2025 (G.S.R. 781(E), 2025-10-24) 31 ಅಧಿಸೂಚನೆಗಳನ್ನು ಅತಿಕ್ರಮಿಸುತ್ತದೆ; 6 ಅಧಿಸೂಚನೆಗಳಿಂದ ತಿದ್ದುಪಡಿ ಮಾಡಲಾಗಿದೆ; 2 ಅಧಿಸೂಚನೆಗಳಿಂದ ಶುದ್ಧಿಪತ್ರ ಹೊರಡಿಸಲಾಗಿದೆ; 1 ಅಧಿಸೂಚನೆಯಲ್ಲಿ ಉಲ್ಲೇಖಿಸಲಾಗಿದೆ. |
+  | Urdu | کسٹمز 45/2025 (G.S.R. 781(E)، 2025-10-24) 31 نوٹیفکیشنز کو منسوخ کرتا ہے؛ 6 نوٹیفکیشنز کے ذریعے ترمیم شدہ؛ 2 نوٹیفکیشنز کے ذریعے تصحیح نامہ جاری کیا گیا؛ 1 نوٹیفکیشن میں اس کا حوالہ دیا گیا۔ |
+  | Tamil | சுங்கம் 45/2025 (G.S.R. 781(E), 2025-10-24) 31 அறிவிக்கைகளை ரத்து செய்து மாற்றீடு செய்கிறது; 6 அறிவிக்கைகளால் திருத்தப்பட்டுள்ளது; 2 அறிவிக்கைகள் மூலம் பிழைதிருத்தம் வெளியிடப்பட்டுள்ளது; 1 அறிவிக்கையில் மேற்கோள் காட்டப்பட்டுள்ளது. |
+  | Marathi | सीमा शुल्क ४५/२०२५ (जी.एस.आर. ७८१(ई), २०२५-१०-२४) हे ३१ अधिसूचनांचे अधिक्रमण करते; ६ अधिसूचनांद्वारे सुधारित; २ अधिसूचनांद्वारे शुद्धिपत्रक जारी; १ अधिसूचनेत उद्धृत. |
+
+  (Live output, one Gemini call per row -- not hand-translated. Regenerate
+  with `python3 -m render.translate cus-45-2025 --lang <code> --db gazette.db`.)
+
   This does **not** translate a notification's own legal text -- that's
   the government's job, and many gazette notifications already print an
   official Hindi column alongside English (this project's `verified_by`
