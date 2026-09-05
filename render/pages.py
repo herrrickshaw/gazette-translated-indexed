@@ -8,6 +8,14 @@ The output is the historical-lineage + current-chain HTML body (no <title>/
 <style> wrapper is repeated here beyond what's needed for a standalone
 preview) — meant to be diffed against, or dropped into, the existing
 Artifact-published compendium page.
+
+Pass --translate-widget to prepend Google's own translate.google.com page
+widget, so anyone viewing the rendered page can read it in their own
+language without this project maintaining any translations itself. This
+is for the *rendered page* (a human browsing it); render/translate.py is
+for the *data* (a single record's fields, translated on request). Off by
+default so the plain HTML fragment still diffs cleanly against the
+existing published compendium page.
 """
 from __future__ import annotations
 
@@ -67,7 +75,22 @@ def _row_html(row: sqlite3.Row, as_listed: str | None = None) -> str:
     )
 
 
-def render(conn: sqlite3.Connection, series: str, number: str) -> str:
+# Google's own hosted widget -- no API key, no translation this project
+# maintains itself. `<div id="google_translate_element">` is the mount
+# point; the script below initializes it against every language Google
+# Translate supports (a strict superset of render.translate's priority
+# list, which exists for translating the *data*, not the *page*).
+TRANSLATE_WIDGET = '''<div id="google_translate_element" style="margin-bottom:1em"></div>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+'''
+
+
+def render(conn: sqlite3.Connection, series: str, number: str, translate_widget: bool = False) -> str:
     current = _fetch_notification(conn, series, number)
     history = _absorbed_history(conn, current['gazette_id'])
     amendments = _amendments(conn, current['gazette_id'])
@@ -75,8 +98,11 @@ def render(conn: sqlite3.Connection, series: str, number: str) -> str:
     pre1994 = [r for r in history if r['numbering_form'] != '4-digit-year']
     post1994 = [r for r in history if r['numbering_form'] == '4-digit-year']
 
-    parts = [f'<h2>No. {current["number"]}&#8209;{current["series"]} '
-             f'&mdash; generated from the database</h2>']
+    parts = []
+    if translate_widget:
+        parts.append(TRANSLATE_WIDGET)
+    parts.append(f'<h2>No. {current["number"]}&#8209;{current["series"]} '
+                 f'&mdash; generated from the database</h2>')
 
     if amendments:
         parts.append('<h3>Current chain</h3><table><tbody>')
@@ -107,12 +133,14 @@ def main() -> int:
     ap.add_argument('--db', required=True)
     ap.add_argument('--notification', required=True, help='e.g. "45/2025-Customs"')
     ap.add_argument('--out')
+    ap.add_argument('--translate-widget', action='store_true',
+                     help="prepend Google's translate.google.com page widget")
     args = ap.parse_args()
 
     number, series = args.notification.split('-', 1)
     conn = sqlite3.connect(args.db)
     try:
-        html = render(conn, series, number)
+        html = render(conn, series, number, translate_widget=args.translate_widget)
     finally:
         conn.close()
 

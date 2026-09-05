@@ -73,14 +73,22 @@ python3 -m verify.review_queue --db gazette.db
 python3 -m render.pages --db gazette.db --notification "45/2025-Customs" > out.html
 
 # 6. export the whole graph as an LLM-ready JSONL corpus (one notification
-#    per line, ministry/instrument/thread + one-hop lineage inlined)
-python3 -m render.llm_export --db gazette.db > data/llm_corpus.jsonl
+#    per line, ministry/instrument/thread + one-hop lineage inlined) --
+#    schema and usage in docs/LLM_CORPUS.md
+python3 -m render.llm_export --db gazette.db > data/exports/llm_corpus.jsonl
 
 # 7. check already-modeled ministries for notifications newer than what's
 #    in the database (never writes to the db -- flags candidates for a
 #    depth-pass-style follow-up, same as extract/cross_ref.py's regex
 #    candidates or ingest/mistral_extract.py's model candidates)
 python3 -m ingest.freshness_check --db gazette.db --extract
+
+# 8. read a single notification's data in another language (translates this
+#    project's own ministry/instrument/thread/summary text, not the
+#    notification's original legal text -- see "Reading it in another
+#    language" below)
+python3 -m render.translate cus-45-2025 --lang hi --db gazette.db
+python3 -m render.translate --list-languages
 ```
 
 OCR is opt-in and only invoked for scanned (non-digital-native) PDFs, via the
@@ -116,6 +124,60 @@ module instead (e.g. `extract/railways_patterns.py`, whose citation appears
 *before* the ministry name rather than after) — see `extract/common_templates.py`'s
 own docstring for the full evidence trail behind each template, and any
 `extract/*_patterns.py` module for a ministry-specific shape.
+
+## Reading it in another language
+
+Two separate tools, for two separate things:
+
+- **`render/translate.py`** translates one notification's *data* -- the
+  ministry name, instrument title, thread summary, and generated summary
+  sentence -- into another language, on request:
+
+  ```bash
+  python3 -m render.translate cus-45-2025 --lang hi --db gazette.db      # Hindi
+  python3 -m render.translate cus-45-2025 --lang-name Swahili --db gazette.db
+  python3 -m render.translate --list-languages                          # the priority list
+  ```
+
+  Coverage, in priority order: all 22 languages of the Eighth Schedule to
+  the Constitution (the actual constitutional list -- Assamese through
+  Urdu, including Bodo, Dogri, Konkani, Maithili, Manipuri and Santali,
+  not just the eleven or twelve "major" ones), then a foreign-language tier
+  (French, Spanish, Arabic, Chinese, Russian, Portuguese, German, Japanese,
+  plus neighbors Sinhala, Burmese, Tibetan), then anything else at all via
+  `--lang-name`. Numbers, dates, and `gazette_id`s are never touched --
+  only the four text fields translate, and the English originals stay
+  alongside as `<field>_en`.
+
+  This does **not** translate a notification's own legal text -- that's
+  the government's job, and many gazette notifications already print an
+  official Hindi column alongside English (this project's `verified_by`
+  tier `primary-source-egazette-hindi-column` tracks exactly that case).
+  It exists so a reader can find and understand a citation *chain* in
+  their own language, then follow `pdf_url` to the official bilingual
+  source for the legal text itself.
+
+  Default backend is Gemini (`GEMINI_API_KEY`, environment or
+  `~/.config/market-secrets/credentials.env`) -- zero setup, adequate
+  quality, a paid per-call API. Two self-hosted alternatives are
+  documented as extension points in the module's own docstring rather
+  than wired in (each is a real infrastructure decision):
+  [AI4Bharat/IndicTrans2](https://github.com/AI4Bharat/IndicTrans2) (MIT,
+  purpose-built for these exact 22 languages by IIT Madras -- the right
+  choice if Indian-language quality or cost-at-volume ever matters more
+  than zero setup) and
+  [LibreTranslate](https://github.com/LibreTranslate/LibreTranslate)
+  (AGPL, 100+ languages, Docker-simple -- the right choice for the
+  foreign-language tier at volume). Meta's NLLB-200 covers 200+ languages
+  but ships CC-BY-NC-4.0 (non-commercial only), so it's noted, not
+  adopted, for a public repo.
+
+- **`render/pages.py --translate-widget`** puts Google's own
+  `translate.google.com` page widget on a *rendered page*, for a human
+  browsing it in whatever language their browser is already set to --
+  no API key, no translation this project maintains itself. Off by
+  default so the plain HTML fragment still diffs cleanly against the
+  existing published compendium page.
 
 ## Data quality discipline
 
