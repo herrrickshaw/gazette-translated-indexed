@@ -7,10 +7,11 @@ is visible when you read a single notification on its own.
 **Scope:** 53 central Government of India ministries/departments modeled, plus
 3 honestly abandoned (documented, not silently dropped — see
 `docs/MINISTRY_COVERAGE_PLAN.md` for the full list and the reasoning behind
-each abandonment). 412 notifications, 291 cross-references, 137 tests, all
+each abandonment). 2,591 notifications, 2,113 cross-references, 141 tests, all
 built against real quoted primary-source text — no synthetic fixtures. See
-`docs/MINISTRY_COVERAGE_PLAN.md` for how coverage was built out batch by
-batch, and for how to extend it further.
+`docs/MINISTRY_COVERAGE_PLAN.md` for how coverage was first built out batch by
+batch, and `docs/DEPTH_PASS_PLAN.md` for the subsequent depth pass that took
+every ministry from a bounded first coverage to substantially deeper linkage.
 
 ## Setup
 
@@ -61,7 +62,7 @@ for n in list_notifications(conn, ministry_id='power'):
 print(get_lineage(conn, 'power-so-5852-2022'))
 "
 
-# 3. run the full test suite (137 tests, one file per template/ministry-module,
+# 3. run the full test suite (141 tests, one file per template/ministry-module,
 #    each built against real quoted notification text)
 pytest tests/
 
