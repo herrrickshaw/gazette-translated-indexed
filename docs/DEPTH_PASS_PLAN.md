@@ -75,7 +75,9 @@ breadth:
 
 ## Status
 
-**41 of 53 ministries deepened.** User confirmed (2026-09-04) "full speed, same batching" — proceeding 5 ministries per batch, one dedicated research agent per ministry, continuously.
+**53 of 53 ministries deepened. Depth pass complete.** User confirmed (2026-09-04) "full speed, same batching" — completed 5 ministries per batch (final batch was 7, including a return trip to CBIC), one dedicated research agent per ministry, continuously. Final DB state: 2,591 notifications / 2,113 cross-references (up from 194/97 at project start).
+
+Token-efficiency policy adopted mid-pass (2026-09-05, batch 11): research agents were burning 150-250K tokens each on live web fetches, and one 7-agent batch hit the session rate limit mid-run. Going forward for any future agent-heavy work on this repo: cap concurrency at 5 agents/batch, and require extraction-before-reading (`curl | trafilatura -`, installed at `~/.venvs/gazette-trail/bin/trafilatura`) rather than reading full HTML pages into an agent's context.
 
 | Ministry | Status | Notifications (before → after) | New subject threads |
 |---|---|---|---|
@@ -120,10 +122,21 @@ breadth:
 | Petroleum and Natural Gas | done | 6 → 73 | 2 corrections (draft date; missing G.S.R. 196(E)); +11 threads incl. two 12-node EC Act Order chains; 3 collisions kept distinct; PNGRB deferred (issuer taxonomy) |
 | Ports, Shipping and Waterways | done | 7 → 164 | ~45 chains: Inland Vessels draft->final cycles, 11 ports' board-seat supersessions, 9 port-of-import continuations; 6 in-ministry collisions kept distinct |
 | Posts | done | 4 → 242 | Regulations chain 4->15 nodes (S.O. 4053(E) re-parented); the 1933 Rules' 207-entry official history transcribed; +5 threads |
-| *(12 more ministries pending)* | | | |
+| Rural Development | done | 16 → 31 | MGNREGA repealed 2026-07-01 by VB-G RAM G Act, both threads marked superseded; four draft->final chains closed |
+| Science and Technology | done | 4 → 25 | SERB->ANRF transition (rescission chain); four title+date-resolved `cites` at a new verified_by tier |
+| Skill Development and Entrepreneurship | done | 6 → 22 | Apprenticeship Rules 1992 bare-form chain from G.S.R. 356; two cross-ministry supersession targets (labour, finance) |
+| Social Justice and Empowerment | done | 18 → 61 | 15-node RPwD Rules chain; RCI/NCSK/Hindi Samiti/Transgender threads; four Aadhaar supersessions |
+| Ministry of Railways | done | 2 → 37 | SCR ROB corrigendum chain; NWR land-acquisition cluster incl. a novel CANCELLATION shape; 10 Railway Board G.S.R. Note-chain pairs; corrigendum pattern confirmed across 9 zonal railway drafting formats (only a bounded subset of the full ~3,300-item survey modeled, rest documented as further leads) |
+| Department of Space | done | 2 → 4 | 39-row Note table fully resolved (column semantics + 2 rows independently verified); publish_date correction |
+| Ministry of Steel | done | 5 → 65 | Full QCO supersession spine 2018-2024 recovered via archive.org; 10 new subject threads |
+| Ministry of Textiles | done | 8 → 73 | JPM reservation-order chain; Jute Commissioner stock-limit chain; Hank Yarn deferred lead resolved as fact (Part I, no S.O. number exists) |
+| Ministry of Tribal Affairs | done | 2 → 20 | NCST appointment chain recovered from archive.org back to 2004; Scheduled Areas Commission and Forest Rights Rules threads |
+| Women and Child Development | done | 10 → 20 | Juvenile Justice Rules repeal/amendment chain 2007-2022; POCSO 2020 corrigendum; Adoption Guidelines/Regulations supersession |
+| Youth Affairs and Sports | checked, corpus exhausted | 4 → 4 | full 24-item corpus re-read, egazette-PDF-verified; no new modelable citation found |
+| Finance/CBIC (return pass) | done | 33 → 55 | both NULL G.S.R. gaps closed (45/2025 = G.S.R. 781(E); 02/2026 = G.S.R. 83(E)); full amendment history + 3 further chains |
 
-Given the scale (a full research-agent call per ministry, often 150-250K
-tokens of agent work), replicating this across all remaining ministries is a
-substantial undertaking, on the order of the entire original coverage-plan
-effort again. Continuing 5 at a time (one research agent per ministry, still
-5 concurrent agents per batch) the same way the coverage-plan batches ran.
+**All 53 ministries in `docs/MINISTRY_COVERAGE_PLAN.md` have now had a depth pass.** See git history for the pilot (Power) and each subsequent batch's commit message for full detail; each ministry's own `db/seed_<ministry>.sql` header comment documents what was closed, what was corrected, and what remains genuinely deferred (title-only citations, unlocatable targets, and out-of-scope ministries) in that file's own words.
+
+The depth pass took 11 batches (a full research-agent call per ministry, often
+150-250K tokens of agent work each), on the order of the entire original
+coverage-plan effort again. It is now complete for all 53 ministries.

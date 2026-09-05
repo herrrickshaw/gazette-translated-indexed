@@ -1,7 +1,27 @@
 -- Verified CBIC seed data: the 31 notifications superseded by No. 45/2025-Customs
 -- (transcribed from that notification's own preamble), 45/2025-Customs itself,
--- and its first amendment, No. 02/2026-Customs. No other ministry/notification
--- data is seeded here — see README "What's real vs. scaffolded".
+-- and its first amendment, No. 02/2026-Customs.
+--
+-- Depth pass (2026-09-05): both previously-NULL G.S.R. numbers confirmed from
+-- primary egazette PDFs (45/2025-Customs = G.S.R. 781(E); 02/2026-Customs =
+-- G.S.R. 83(E)) -- see below. 02/2026 was NOT the first amendment of
+-- 45/2025 as originally modeled: a 31 Oct 2025 corrigendum (G.S.R. 807(E))
+-- and No. 48/2025-Customs (G.S.R. 847(E), 14 Nov 2025) both preceded it.
+-- The full amendment/corrigendum history of 45/2025 through 8 Jul 2026 is
+-- now modeled (thread customs-45-2025-amendment-history), plus three
+-- further real chains found in the same pass: the last amendments to
+-- No. 50/2017-Customs before its 2025 supersession, two anti-dumping-duty
+-- sunset-clause extension chains, and No. 44/2025-Customs (45/2025's
+-- companion exemption notification, sharing its preamble list) with its
+-- own corrigendum.
+--
+-- Deferred, not modeled this pass (real but title-only or not independently
+-- read): the 2026 Baggage Rules supersession cluster (Baggage Rules 2016,
+-- Passenger's Baggage Regulations 1966, Baggage Transit Regulations 1967,
+-- Customs Baggage Declaration Regulations 2013 -- all cited by title only,
+-- no No./G.S.R.); the Courier Import/Export Regulations 1998/2010
+-- principals (same reason); several CVD amendments known only from the
+-- CBIC index, not read in primary text.
 
 INSERT OR IGNORE INTO ministry (ministry_id, name, department) VALUES
   ('finance-revenue-cbic', 'Ministry of Finance', 'Department of Revenue (CBIC)');
@@ -48,9 +68,9 @@ VALUES
   ('cus-57-2022',  'Customs', '57/2022',  2022, '4-digit-year', '2022-11-17', 'G.S.R. 822(E)',  'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-duty-exemptions'),
   ('cus-1-2025',   'Customs', '1/2025',   2025, '4-digit-year', '2025-01-16', 'G.S.R. 63(E)',   'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-duty-exemptions'),
   -- the consolidating instrument itself
-  ('cus-45-2025',  'Customs', '45/2025',  2025, '4-digit-year', '2025-10-24', NULL,              'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-duty-exemptions'),
-  -- its first amendment (G.S.R. not independently confirmed — left NULL, not guessed)
-  ('cus-2-2026',   'Customs', '2/2026',   2026, '4-digit-year', '2026-02-01', NULL,              'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-duty-exemptions');
+  ('cus-45-2025',  'Customs', '45/2025',  2025, '4-digit-year', '2025-10-24', 'G.S.R. 781(E)',   'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-duty-exemptions'),
+  -- G.S.R. confirmed 2026-09-05 from egazette.gov.in/WriteReadData/2026/269755.pdf
+  ('cus-2-2026',   'Customs', '2/2026',   2026, '4-digit-year', '2026-02-01', 'G.S.R. 83(E)',    'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-duty-exemptions');
 
 -- Cross-references: source = the notification performing the action, target = the one acted on.
 INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at)
@@ -65,4 +85,64 @@ WHERE gazette_id IN (
 );
 
 INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at)
-VALUES ('cus-2-2026', 'cus-45-2025', 'amends', 'secondary-source-corroborated-3x', '2026-09-03');
+VALUES ('cus-2-2026', 'cus-45-2025', 'amends', 'primary-source-egazette', '2026-09-05');
+
+-- New threads found in the 2026-09-05 depth pass:
+INSERT OR IGNORE INTO subject_thread (thread_id, subject_summary, status) VALUES
+  ('customs-45-2025-amendment-history', 'No. 45/2025-Customs and its full amendment/corrigendum history', 'active'),
+  ('customs-50-2017-amendments', 'No. 50/2017-Customs amendments before its 2025 supersession', 'superseded'),
+  ('customs-add-sunset-extensions', 'Anti-dumping duty sunset-clause extensions (66/2021 and 60/2021-ADD chains)', 'active'),
+  ('customs-44-2025-companion', 'No. 44/2025-Customs (companion exemption notification to 45/2025) and its corrigendum', 'active');
+
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('cus-corr-45-2025-a', 'Customs', 'Corrigendum', 2025, 'bare', '2025-10-31', 'G.S.R. 807(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-45-2025-amendment-history'),
+  ('cus-48-2025', 'Customs', '48/2025', 2025, '4-digit-year', '2025-11-14', 'G.S.R. 847(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-45-2025-amendment-history'),
+  ('cus-6-2026', 'Customs', '06/2026', 2026, '4-digit-year', '2026-03-12', 'G.S.R. 181(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-45-2025-amendment-history'),
+  ('cus-14-2026', 'Customs', '14/2026', 2026, '4-digit-year', '2026-04-30', 'G.S.R. 330(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-45-2025-amendment-history'),
+  ('cus-15-2026', 'Customs', '15/2026', 2026, '4-digit-year', '2026-05-12', 'G.S.R. 358(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-45-2025-amendment-history'),
+  ('cus-corr-14-2026', 'Customs', 'Corrigendum', 2026, 'bare', '2026-05-19', 'G.S.R. 375(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-45-2025-amendment-history'),
+  ('cus-corr-45-2025-b', 'Customs', 'Corrigendum', 2026, 'bare', '2026-06-12', 'G.S.R. 476(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-45-2025-amendment-history'),
+  ('cus-25-2026', 'Customs', '25/2026', 2026, '4-digit-year', '2026-07-08', 'G.S.R. 600(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-45-2025-amendment-history'),
+  ('cus-31-2025', 'Customs', '31/2025', 2025, '4-digit-year', '2025-05-30', 'G.S.R. 355(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-50-2017-amendments'),
+  ('cus-39-2025', 'Customs', '39/2025', 2025, '4-digit-year', '2025-09-17', 'G.S.R. 643(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-50-2017-amendments'),
+  ('cus-40-2025', 'Customs', '40/2025', 2025, '4-digit-year', '2025-09-25', 'G.S.R. 717(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-50-2017-amendments'),
+  ('cus-66-2021-add', 'Customs', '66/2021 (ADD)', 2021, '4-digit-year', '2021-11-11', 'S.O. 790(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-add-sunset-extensions'),
+  ('cus-30-2025-add', 'Customs', '30/2025 (ADD)', 2025, '4-digit-year', '2025-10-27', 'G.S.R. 793(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-add-sunset-extensions'),
+  ('cus-19-2026-add', 'Customs', '19/2026 (ADD)', 2026, '4-digit-year', '2026-07-31', 'G.S.R. 693(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-add-sunset-extensions'),
+  ('cus-60-2021-add', 'Customs', '60/2021 (ADD)', 2021, '4-digit-year', '2021-10-14', 'G.S.R. 739(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-add-sunset-extensions'),
+  ('cus-6-2026-add', 'Customs', '06/2026 (ADD)', 2026, '4-digit-year', '2026-04-30', 'G.S.R. 331(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-add-sunset-extensions'),
+  ('cus-17-2026-add', 'Customs', '17/2026 (ADD)', 2026, '4-digit-year', '2026-07-10', 'G.S.R. 612(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-add-sunset-extensions'),
+  ('cus-11-2018', 'Customs', '11/2018', 2018, '4-digit-year', '2018-02-02', 'G.S.R. 114(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-44-2025-companion'),
+  ('cus-8-2020', 'Customs', '8/2020', 2020, '4-digit-year', '2020-02-02', 'G.S.R. 68(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-44-2025-companion'),
+  ('cus-11-2021', 'Customs', '11/2021', 2021, '4-digit-year', '2021-02-01', 'G.S.R. 69(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-44-2025-companion'),
+  ('cus-44-2025', 'Customs', '44/2025', 2025, '4-digit-year', '2025-10-24', 'G.S.R. 782(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-44-2025-companion'),
+  ('cus-corr-44-2025', 'Customs', 'Corrigendum', 2025, 'bare', '2025-10-31', 'G.S.R. 808(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-44-2025-companion');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('cus-corr-45-2025-a', 'cus-45-2025', 'corrigendum', 'research-agent-quoted', '2026-09-05'),
+  ('cus-48-2025', 'cus-45-2025', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-6-2026', 'cus-45-2025', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-corr-14-2026', 'cus-14-2026', 'corrigendum', 'research-agent-quoted', '2026-09-05'),
+  ('cus-14-2026', 'cus-45-2025', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-15-2026', 'cus-45-2025', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-corr-45-2025-b', 'cus-45-2025', 'corrigendum', 'research-agent-quoted', '2026-09-05'),
+  ('cus-25-2026', 'cus-45-2025', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-31-2025', 'cus-50-2017', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-39-2025', 'cus-50-2017', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-39-2025', 'cus-31-2025', 'cites', 'research-agent-quoted', '2026-09-05'),
+  ('cus-40-2025', 'cus-50-2017', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-40-2025', 'cus-39-2025', 'cites', 'research-agent-quoted', '2026-09-05'),
+  ('cus-30-2025-add', 'cus-66-2021-add', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-19-2026-add', 'cus-66-2021-add', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-19-2026-add', 'cus-30-2025-add', 'cites', 'research-agent-quoted', '2026-09-05'),
+  ('cus-6-2026-add', 'cus-60-2021-add', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-17-2026-add', 'cus-60-2021-add', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-17-2026-add', 'cus-6-2026-add', 'cites', 'research-agent-quoted', '2026-09-05'),
+  ('cus-44-2025', 'cus-11-2018', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-44-2025', 'cus-8-2020', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-44-2025', 'cus-11-2021', 'amends', 'research-agent-quoted', '2026-09-05'),
+  ('cus-44-2025', 'cus-45-2025', 'cites', 'research-agent-quoted', '2026-09-05'),
+  ('cus-corr-44-2025', 'cus-44-2025', 'corrigendum', 'research-agent-quoted', '2026-09-05');
+

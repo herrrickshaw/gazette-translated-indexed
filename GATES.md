@@ -1,40 +1,50 @@
-# Gates: depth-pass batch 9 — Parliamentary Affairs, Personnel (DoPT), Petroleum, Ports & Shipping, Posts
+# Gates: depth-pass batch 11 (final) — Space, Steel, Textiles, Tribal Affairs, WCD, Youth Affairs & Sports, CBIC
 
 OWNS: db/**, docs/**
 
-Scope: depth-pass batch 9 of `docs/DEPTH_PASS_PLAN.md` — go substantially deeper on five already-modeled ministries. No new extractor code this batch: every real shape fit an existing shared template, generic note-chain, or seed-only modeling. Three seed files (Ports, Posts, Personnel) were generated from the research logs by one-off scripts to avoid transcription error across ~900 rows.
+Scope: the last batch of the depth pass — the six remaining unvisited ministries plus a return trip to CBIC (the project's original pilot ministry), completing all 53 of 53. No new extractor code this batch: every real shape fit an existing shared template, generic note-chain/corrigendum/supersession pattern, or seed-only modeling. Textiles, Steel, Tribal Affairs, and Railways seeds were assembled from the research logs by one-off generator scripts to avoid transcription error across ~190 rows combined. Two of the seven agents (Space, WCD) hit the session rate limit mid-run and were retried with the token-efficiency policy adopted mid-batch (5-agent concurrency cap, trafilatura extraction-before-reading). Railways' depth-pass report (received at the start of this batch, from a prior wave) was processed into its seed only now, having been set aside; its report covered ~3,300 items and only a bounded subset was modeled, documented as such in the seed's own header.
 
-- [x] G1: Ministry of Parliamentary Affairs — re-checked, corpus exhausted: all 28 tracker notifications re-opened plus 18 egazette PDFs read through the login-truncated tails; both known pairs closed at 2 nodes; the Leader of Opposition lead re-tested against the bare-form rule and still fails (citing texts name the Speaker's act, not any notification number/date). Header note updated, no data change.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM gazette_notification WHERE ministry_id='parliamentary-affairs';"
+- [x] G1: Department of Space — the "Login to read full text" gate on gazettetracker turned out to be CSS-only, not an actual auth wall; the previously-PARTIAL 39-row Note table is now fully transcribed and its column semantics resolved (file number/signing date vs. S.O. number/gazette date), with two of its rows (36, 38) independently confirmed as their own separately-fetched primary documents and modeled as real edges. `publish_date` on the existing 2025 node corrected from its signing date to its actual gazette date.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM gazette_notification WHERE ministry_id='department-of-space';"
   EXPECT: 4
-  EVIDENCE: met — db/seed_parliamentary_affairs.sql header records the eight title-only Recruitment Rules supersessions and the S.O. 2457(E) cross-document inference deliberately not drawn.
+  EVIDENCE: met — db/seed_space.sql; full 39-row table transcribed in the header comment, two rows (S.O. 424(E)/2018, S.O. 4235(E)/2019) independently verified and modeled.
 
-- [x] G2: Ministry of Personnel, Public Grievances and Pensions — the CCS (CCA) chain gained its real intermediate (G.S.R. 18(E), from G.S.R. 337(E)'s own Note); the already-modeled G.S.R. 331(E) identified from its own text and re-parented into the IPS cadre-strength Telangana chain; 23 further subject threads incl. CAT s.14(3)/s.18 hubs (spot-checked against official PDFs), UPSC Members' 25-node chain, IAS/IPS/IFS Pay and cadre-strength tables, and the Appointment-by-Promotion twin lists modeled as chain segments around file-number-only items.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM cross_reference WHERE source_gazette_id='dopt-gsr-337-2024' AND target_gazette_id='dopt-gsr-18-2023';"
+- [x] G2: Ministry of Steel — the pre-2020 QCO layer (missing from gazettetracker's single-page listing) recovered via archive.org's Gazette mirror; ten new subject threads added incl. the full QCO supersession spine 2018-2024 chaining into the already-modeled S.O. 3716(E), the Stainless Steel Products QCO chain, the DMI&SP Policy extension history, a Green Steel Taxonomy rescission, and a bounded subset of the Factories Act "occupier" amendment chains.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM cross_reference WHERE source_gazette_id='steel-so-3716-2024' AND target_gazette_id='steel-so-574-2024' AND relation_type='supersedes';"
   EXPECT: 1
-  EVIDENCE: met — db/seed_personnel.sql (487 notifications). The CCS (Pension) October-2022 amendment cited as both 770(E) and 710(E) by two DoPPW Notes is deferred, not guessed; G.S.R. 635(E)'s West-Bengal-labeled table skipped.
+  EVIDENCE: met — db/seed_steel.sql (65 notifications, 48 cross-references, up from 5/3).
 
-- [x] G3: Ministry of Petroleum and Natural Gas — two CORRECTIONS (the draft G.S.R. 781(E) is dated 3 September 2026 per the official PDF, not 3 August; the Petroleum Rules chain was missing G.S.R. 196(E) and its draft precursor); 11 new subject threads incl. two 12-node Essential Commodities Order chains and the Oilfields Act Schedule chain. PNGRB regulations deferred pending an issuer-taxonomy decision rather than mis-attributed to the ministry.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT publish_date FROM gazette_notification WHERE gazette_id='mopng-gsr-781-2026';"
-  EXPECT: 2026-09-03
-  EVIDENCE: met — db/seed_petroleum.sql (73 notifications).
+- [x] G3: Ministry of Textiles — 145-item tracker corpus fully read; 18 new subject threads incl. a Jute Packaging Materials reservation-order chain spanning 2023-2026, a Jute Commissioner stock-limit chain ending in a six-target rescission, and the Central Silk Board Rules 1955 Note-chain. The Hank Yarn Packing deferred lead (2/TDRO/8/2003) was resolved as a matter of fact, not left open by omission: confirmed via the Textile Commissioner's own PDF that the whole chain is Part I Section 1, which carries no S.O./G.S.R. number at all.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM gazette_notification WHERE ministry_id='textiles';"
+  EXPECT: 73
+  EVIDENCE: met — db/seed_textiles.sql (73 notifications, 61 cross-references, up from 8/6).
 
-- [x] G3b: Three real citation collisions within Petroleum (G.S.R. 730(E) 2007/2026, G.S.R. 781(E) 2013/2026, 814(E) as G.S.R. 2004, G.S.R. 2023 and S.O. 2023) kept as six distinct rows.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT COUNT(DISTINCT gazette_id) FROM gazette_notification WHERE ministry_id='petroleum-and-natural-gas' AND gsr_or_so IN ('G.S.R. 730(E)','G.S.R. 781(E)','G.S.R. 814(E)','S.O. 814(E)');"
-  EXPECT: 7
-  EVIDENCE: met — 730x2, 781x2, G.S.R. 814x2, S.O. 814x1.
+- [x] G4: Ministry of Tribal Affairs — gazettetracker's listing (still just 2 items, but a different pair than the prior pass described) was re-confirmed genuinely thin; ~1,470 titles across 8 other ministries' listings swept for misfiled material (none found); the real expansion came from archive.org, recovering the NCST Chairperson/Member appointment chain back to 2004, a 2002-2004 Scheduled Areas Commission tenure-extension chain, and the 2007-2008 Forest Rights Rules draft-to-final pair with its corrigendum.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM gazette_notification WHERE ministry_id='tribal-affairs';"
+  EXPECT: 20
+  EVIDENCE: met — db/seed_tribal_affairs.sql (20 notifications, 19 cross-references, up from 2/1).
 
-- [x] G4: Ministry of Ports, Shipping and Waterways — the tracker's full 216-notification corpus enumerated; ~45 new chains across Inland Vessels rule families (draft->final cycles), Major Port Authorities Act board-seat supersessions for eleven ports, nine Petroleum Rules r.16 port-of-import continuation chains, Merchant Shipping and Indian Ports / Coastal Shipping / Marine AtoN rulemaking. The already-modeled Chennai chain gained its 2022 root and the Safe Navigation pair its draft precursor.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT COUNT(DISTINCT gazette_id) FROM gazette_notification WHERE ministry_id='ports-shipping-waterways' AND gsr_or_so IN ('G.S.R. 155(E)','G.S.R. 347(E)','G.S.R. 333(E)','G.S.R. 395(E)','G.S.R. 217(E)','G.S.R. 262(E)');"
-  EXPECT: 12
-  EVIDENCE: met — db/seed_ports_shipping.sql (164 notifications); six in-ministry collisions each kept as two rows. G.S.R. 391(E)'s mis-dated citation of its target recorded, modeled to the real document.
+- [x] G5: Ministry of Women and Child Development — the Juvenile Justice (Care and Protection of Children) Rules repeal/amendment chain (2007→2011→2016→2022) recovered from wcd.gov.in and archive.org; a POCSO Rules 2020 corrigendum and the Adoption Guidelines 2015→Regulations 2017 supersession added. Two WCD-issued commencement notifications citing Law & Justice-published Acts were found but deliberately not modeled, applying the same out-of-scope precedent already recorded for Tribal Affairs rather than treating it as a fresh judgment call.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM gazette_notification WHERE ministry_id='women-child-development';"
+  EXPECT: 20
+  EVIDENCE: met — db/seed_wcd.sql (20 notifications, 15 cross-references, up from 10/8).
 
-- [x] G5: Department of Posts — the Post Office Regulations, 2024 chain is 15 nodes, not 4 (the previously-modeled S.O. 4053(E) is the Fifth Amendment 2026, re-parented onto the Fourth); the Indian Post Office Rules, 1933's 207-entry official amendment history transcribed in full and modeled with position-encoded ids (the Finance Act entry left as an honest gap); three Recruitment Rules chains, a Hindi-only RPLI corrigendum, and two bare-file-number PLI threads.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM gazette_notification WHERE gazette_id LIKE 'dop-ipo-%';"
-  EXPECT: 206
-  EVIDENCE: met — db/seed_posts.sql (242 notifications); 207 entries minus the one that is an Act. The Second Amendment 2025 modeled as G.S.R. 263(E) per its own text though a later Note cites it as "S.O. 263(E)".
+- [x] G6: Ministry of Youth Affairs and Sports — the ministry's entire 24-item tracked corpus was re-read in full (egazette PDF-verified where the tracker's Full Text was truncated for logged-out users); genuinely no new number/date-cited cross-reference exists beyond the already-modeled S.O. 2292(E) cluster. Two candidate edges (National Sports Governance rules citing each other by title) and the Khelo India Directorate renaming lead were confirmed real but unmodelable, not silently dropped.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM gazette_notification WHERE ministry_id='youth-affairs-and-sports';"
+  EXPECT: 4
+  EVIDENCE: met — db/seed_youth_affairs_sports.sql header updated with the full re-check; no data change (4 notifications, 3 cross-references, unchanged).
 
-- [x] G6: Foreign-key integrity holds and the full suite passes after this batch's additions across 5 ministries — seeds loaded with sqlite3 -bail so any statement error is fatal, not silent.
-  CHECK: cd /Users/umashankar/gazette-translated-indexed && rm -f gazette.db && sqlite3 gazette.db < db/schema.sql && for f in db/seed_*.sql; do sqlite3 -bail gazette.db < "$f" || echo "FAILED: $f"; done && sqlite3 gazette.db "PRAGMA foreign_key_check;" > /tmp/fk_check_gates17.txt; [ ! -s /tmp/fk_check_gates17.txt ] && echo FK_CLEAN; /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/ -q; rm -f /tmp/fk_check_gates17.txt
+- [x] G7: CBIC (Customs) — both previously-NULL G.S.R. numbers on the pilot's own consolidating instruments confirmed from primary egazette PDFs (45/2025-Customs = G.S.R. 781(E); 02/2026-Customs = G.S.R. 83(E)); the assumption that 02/2026 was 45/2025's first amendment corrected — a 31 Oct 2025 corrigendum and No. 48/2025-Customs both preceded it. Full amendment/corrigendum history of 45/2025 through 8 Jul 2026 modeled, plus three further chains (the last amendments to No. 50/2017-Customs, two anti-dumping sunset-extension chains, and No. 44/2025-Customs' companion history).
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT gsr_or_so FROM gazette_notification WHERE gazette_id='cus-45-2025';"
+  EXPECT: G.S.R. 781(E)
+  EVIDENCE: met — db/seed_cbic.sql (55 notifications, 56 cross-references, up from 33/32).
+
+- [x] G8: Ministry of Railways — the depth-pass report from this batch's own dispatch wave (a ~3,300-item survey across zonal railways and the Railway Board) was correctly processed into its seed rather than left unapplied: a South Central Railway ROB corrigendum chain, a North Western Railway land-acquisition cluster including a novel CANCELLATION shape, two North East Frontier Railway corrigenda, and ten Railway Board G.S.R. Note-chain pairs. The original flagged date inconsistency (S.O. 2950(E) "dated 08.09.2026") was resolved as a dd.mm typo for 08.06.2026, and `publish_date` corrected accordingly.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && sqlite3 gazette.db "SELECT count(*) FROM gazette_notification WHERE ministry_id='railways';"
+  EXPECT: 37
+  EVIDENCE: met — db/seed_railways.sql (37 notifications, 25 cross-references, up from 2/1).
+
+- [x] G9: Foreign-key integrity holds and the full suite passes after this batch's additions across 8 ministries — seeds loaded with sqlite3 -bail so any statement error is fatal, not silent. This is the FINAL depth-pass batch: 53 of 53 ministries now deepened.
+  CHECK: cd /Users/umashankar/gazette-translated-indexed && rm -f gazette.db && sqlite3 gazette.db < db/schema.sql && for f in db/seed_*.sql; do sqlite3 -bail gazette.db < "$f" || echo "FAILED: $f"; done && sqlite3 gazette.db "PRAGMA foreign_key_check;" > /tmp/fk_check_gates_b11.txt; [ ! -s /tmp/fk_check_gates_b11.txt ] && echo FK_CLEAN; /Users/umashankar/.venvs/gazette-trail/bin/python3 -m pytest tests/ -q; rm -f /tmp/fk_check_gates_b11.txt
   EXPECT: FK_CLEAN
-  EVIDENCE: met — 53 ministries, 2265 notifications, 1845 cross-references; 141 tests passed.
+  EVIDENCE: met — 53 ministries, 2591 notifications, 2113 cross-references; 141 tests passed.
