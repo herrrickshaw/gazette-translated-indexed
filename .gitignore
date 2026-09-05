@@ -6,3 +6,6 @@ gazette.db
 # never committed. Extracted transcripts in data/raw_md/ ARE committed.
 data/raw/
 data/exports/
+# Bulk-translation output (render/bulk_translate.py) — re-derivable by
+# re-running against whichever backend is configured, same as data/exports/.
+data/translations/
