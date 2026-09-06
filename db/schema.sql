@@ -57,3 +57,28 @@ CREATE TABLE IF NOT EXISTS cross_reference (
 CREATE INDEX IF NOT EXISTS idx_cross_ref_source ON cross_reference(source_gazette_id);
 CREATE INDEX IF NOT EXISTS idx_cross_ref_target ON cross_reference(target_gazette_id);
 CREATE INDEX IF NOT EXISTS idx_notification_thread ON gazette_notification(thread_id);
+
+-- Cached translations of a notification's *generated* text (ministry name,
+-- instrument title, thread summary, one-line summary -- see
+-- render/llm_export.py's build_record) into another language. Never the
+-- notification's own legal text -- see render/translate.py's module
+-- docstring for why. One row per (gazette_id, lang); a NULL field means
+-- that field hasn't been translated for that language yet (e.g. the bulk
+-- job in render/bulk_translate.py only populates `summary`), not that the
+-- language itself is unsupported for this notification. render/query_translation.py
+-- is the read/fill path: it serves from this table first and translates
+-- on demand (backend-permitting) to fill gaps, so a query gets faster and
+-- more complete over time instead of re-translating from scratch each time.
+CREATE TABLE IF NOT EXISTS notification_translation (
+    gazette_id     TEXT NOT NULL REFERENCES gazette_notification(gazette_id),
+    lang           TEXT NOT NULL,   -- code from render/translate.py's SUPPORTED_LANGUAGES
+    ministry       TEXT,
+    instrument     TEXT,
+    thread         TEXT,
+    summary        TEXT,
+    backend        TEXT NOT NULL,   -- 'gemini' | 'libretranslate' | 'krutrim' -- whichever wrote the newest field
+    translated_at  TEXT NOT NULL,   -- ISO datetime of the last write to this row
+    PRIMARY KEY (gazette_id, lang)
+);
+
+CREATE INDEX IF NOT EXISTS idx_translation_lang ON notification_translation(lang);

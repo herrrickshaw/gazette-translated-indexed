@@ -266,36 +266,123 @@ def translate_record_libretranslate(record: dict, lang: str, url: str | None = N
     return out
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("gazette_id", nargs="?", help="required unless --list-languages")
-    lang_group = parser.add_mutually_exclusive_group()
-    lang_group.add_argument("--lang", choices=sorted(SUPPORTED_LANGUAGES), help="target language code from the priority list")
-    lang_group.add_argument("--lang-name", help='any other language by name, e.g. "Swahili" -- no code needed')
-    parser.add_argument("--list-languages", action="store_true", help="print the priority language list and exit")
-    parser.add_argument("--backend", choices=["gemini", "libretranslate"], default="gemini",
-                         help="gemini (default, all SUPPORTED_LANGUAGES) or libretranslate "
-                              "(self-hosted, no per-call quota, LIBRETRANSLATE_CODES languages only -- "
-                              "needs a LibreTranslate server, default http://127.0.0.1:5001)")
-    parser.add_argument("--db", default="gazette.db")
-    args = parser.parse_args()
+DEFAULT_KRUTRIM_URL = "http://127.0.0.1:5002"
 
-    if args.list_languages:
-        print("Indian languages (Eighth Schedule, priority 1):")
-        for code, name in sorted(INDIAN_LANGUAGES.items(), key=lambda kv: kv[1]):
-            print(f"  {code:5s} {name}")
-        print("\nForeign languages (priority 2):")
-        for code, name in sorted(FOREIGN_LANGUAGES.items(), key=lambda kv: kv[1]):
-            print(f"  {code:5s} {name}")
-        print('\nAny other language: pass --lang-name "<language>" instead of --lang')
-        return
+# krutrim-ai-labs/Krutrim-Translate (extends AI4Bharat/IndicTrans2's
+# architecture with a longer context window, served via CTranslate2 --
+# confirmed live to run cleanly on CPU, no GPU needed, ~0.1-0.2s/call).
+# Unlike the raw IndicTrans2-via-transformers path (abandoned, see
+# notebooks/serve_indictrans2_colab.ipynb), CTranslate2 is a standalone C++
+# inference engine with no trust_remote_code/transformers-version
+# fragility -- confirmed by getting it running end-to-end where the
+# transformers path could not. Covers 9 of 22 INDIAN_LANGUAGES (all 5 of
+# this project's priority languages -- hi/bn/mr/te/ta -- plus kn/ml/gu/pa);
+# no FOREIGN_LANGUAGES. License: Krutrim Community License (free for
+# non-commercial/research use under 1M MAU, requires attribution to
+# Krutrim -- see ~/krutrim-translate/LICENSE.md).
+#
+# Codes are IndicTrans2's own FLORES-200-style codes (language_Script),
+# matching the mapping the abandoned indictrans2 backend used.
+KRUTRIM_CODES = {
+    "bn": "ben_Beng", "gu": "guj_Gujr", "hi": "hin_Deva", "kn": "kan_Knda",
+    "ml": "mal_Mlym", "mr": "mar_Deva", "pa": "pan_Guru", "ta": "tam_Taml",
+    "te": "tel_Telu",
+}
 
-    if not args.gazette_id or not (args.lang or args.lang_name):
-        parser.error("gazette_id and one of --lang/--lang-name are required unless --list-languages")
-    if args.backend == "libretranslate" and not args.lang:
-        parser.error("--backend libretranslate requires --lang (a code from LIBRETRANSLATE_CODES, not --lang-name)")
 
-    conn = sqlite3.connect(args.db)
+def krutrim_status(timeout: float = 5.0) -> str:
+    """One of: 'endpoint_down', 'ready'. Never raises."""
+    url = _read_credential("KRUTRIM_URL") or DEFAULT_KRUTRIM_URL
+    try:
+        with urllib.request.urlopen(f"{url.rstrip('/')}/health", timeout=timeout):
+            return "ready"
+    except Exception:
+        return "endpoint_down"
+
+
+def _translate_text_krutrim(text: str, tgt_flores: str, url: str, timeout: int = 30, retries: int = 3) -> str:
+    payload = json.dumps({"text": text, "tgt_lang": tgt_flores}).encode()
+    endpoint = f"{url.rstrip('/')}/translate"
+    last_error: Exception | None = None
+    for attempt in range(retries + 1):
+        try:
+            req = urllib.request.Request(endpoint, data=payload, headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return json.loads(resp.read())["translation"].strip()
+        except (TimeoutError, urllib.error.URLError, urllib.error.HTTPError) as e:
+            last_error = e
+            if attempt < retries:
+                time.sleep(2 ** (attempt + 1))
+    raise TimeoutError(f"Krutrim call failed after {retries + 1} attempts: {last_error}")
+
+
+def translate_record_krutrim(record: dict, lang: str, url: str | None = None,
+                              fields: tuple[str, ...] = TRANSLATABLE_FIELDS) -> dict:
+    """Same contract as translate_record(), served by a local Krutrim-Translate
+    CTranslate2 server (~/krutrim-translate/server.py) instead of Gemini -- no
+    per-call quota, only KRUTRIM_CODES languages (all 9 of this project's
+    priority Indian languages). Defaults to DEFAULT_KRUTRIM_URL (localhost:5002);
+    override via url= or the KRUTRIM_URL credential for a non-default host/port."""
+    if lang not in KRUTRIM_CODES:
+        raise ValueError(f"krutrim backend only supports {sorted(KRUTRIM_CODES)}, got {lang!r}")
+    endpoint = url or _read_credential("KRUTRIM_URL") or DEFAULT_KRUTRIM_URL
+    tgt_flores = KRUTRIM_CODES[lang]
+
+    out = dict(record)
+    out["lang"] = lang
+    for field in fields:
+        value = record.get(field)
+        if not value:
+            continue
+        out[f"{field}_en"] = value
+        out[field] = _translate_text_krutrim(value, tgt_flores, endpoint)
+    return out
+
+
+BACKEND_FNS = {
+    "krutrim": translate_record_krutrim,
+    "libretranslate": translate_record_libretranslate,
+    "gemini": translate_record,
+}
+
+
+def resolve_backend(lang: str) -> str:
+    """Pick the best backend for `lang` automatically, so a caller doesn't need
+    to know which self-hosted service happens to cover which language: krutrim
+    first (self-hosted, no quota, covers this project's 5 priority Indian
+    languages at the best quality available), then libretranslate (self-hosted,
+    no quota, covers the foreign-language tier and a couple of Indian
+    languages krutrim doesn't), then gemini as the fallback that covers
+    everything else in SUPPORTED_LANGUAGES but is quota-limited. Raises
+    ValueError if `lang` isn't in SUPPORTED_LANGUAGES at all."""
+    if lang in KRUTRIM_CODES:
+        return "krutrim"
+    if lang in LIBRETRANSLATE_CODES:
+        return "libretranslate"
+    if lang in SUPPORTED_LANGUAGES:
+        return "gemini"
+    raise ValueError(f"unsupported language code {lang!r}; choose from {sorted(SUPPORTED_LANGUAGES)}")
+
+
+def translate_record_auto(record: dict, lang: str, fields: tuple[str, ...] = TRANSLATABLE_FIELDS) -> dict:
+    """translate_record() with the backend picked automatically via resolve_backend().
+    Every backend here shares the same (record, lang=..., fields=...) call shape,
+    so this is a thin dispatch, not a re-implementation."""
+    backend = resolve_backend(lang)
+    return BACKEND_FNS[backend](record, lang=lang, fields=fields)
+
+
+def _print_language_list() -> None:
+    print("Indian languages (Eighth Schedule, priority 1):")
+    for code, name in sorted(INDIAN_LANGUAGES.items(), key=lambda kv: kv[1]):
+        print(f"  {code:5s} {name}")
+    print("\nForeign languages (priority 2):")
+    for code, name in sorted(FOREIGN_LANGUAGES.items(), key=lambda kv: kv[1]):
+        print(f"  {code:5s} {name}")
+    print('\nAny other language: pass --lang-name "<language>" instead of --lang')
+
+
+def _fetch_record(conn: sqlite3.Connection, gazette_id: str) -> dict:
     conn.row_factory = sqlite3.Row
     row = conn.execute(
         """
@@ -306,16 +393,52 @@ def main() -> None:
         LEFT JOIN subject_thread t ON t.thread_id = g.thread_id
         WHERE g.gazette_id = ?
         """,
-        (args.gazette_id,),
+        (gazette_id,),
     ).fetchone()
     if row is None:
-        raise SystemExit(f"no notification found for gazette_id {args.gazette_id!r}")
+        raise SystemExit(f"no notification found for gazette_id {gazette_id!r}")
+    return build_record(conn, dict(row))
 
-    record = build_record(conn, dict(row))
-    if args.backend == "libretranslate":
-        translated = translate_record_libretranslate(record, lang=args.lang)
-    else:
-        translated = translate_record(record, lang=args.lang, lang_name=args.lang_name)
+
+def _dispatch(record: dict, args: argparse.Namespace) -> dict:
+    if args.backend in ("krutrim", "libretranslate"):
+        return BACKEND_FNS[args.backend](record, lang=args.lang)
+    return translate_record(record, lang=args.lang, lang_name=args.lang_name)
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("gazette_id", nargs="?", help="required unless --list-languages")
+    lang_group = parser.add_mutually_exclusive_group()
+    lang_group.add_argument("--lang", choices=sorted(SUPPORTED_LANGUAGES), help="target language code from the priority list")
+    lang_group.add_argument("--lang-name", help='any other language by name, e.g. "Swahili" -- no code needed')
+    parser.add_argument("--list-languages", action="store_true", help="print the priority language list and exit")
+    parser.add_argument("--backend", choices=["gemini", "libretranslate", "krutrim"], default="gemini",
+                         help="gemini (default, all SUPPORTED_LANGUAGES), libretranslate "
+                              "(self-hosted, LIBRETRANSLATE_CODES languages only, needs a server on "
+                              "http://127.0.0.1:5001), or krutrim (self-hosted, KRUTRIM_CODES languages "
+                              "only -- covers all 5 priority Indian languages -- needs "
+                              "~/krutrim-translate/server.py running on http://127.0.0.1:5002)")
+    parser.add_argument("--db", default="gazette.db")
+    return parser
+
+
+def main() -> None:
+    parser = _build_parser()
+    args = parser.parse_args()
+
+    if args.list_languages:
+        _print_language_list()
+        return
+
+    if not args.gazette_id or not (args.lang or args.lang_name):
+        parser.error("gazette_id and one of --lang/--lang-name are required unless --list-languages")
+    if args.backend in ("libretranslate", "krutrim") and not args.lang:
+        parser.error(f"--backend {args.backend} requires --lang, not --lang-name")
+
+    conn = sqlite3.connect(args.db)
+    record = _fetch_record(conn, args.gazette_id)
+    translated = _dispatch(record, args)
     print(json.dumps(translated, indent=2, ensure_ascii=False))
 
 

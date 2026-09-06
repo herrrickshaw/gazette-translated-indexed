@@ -175,18 +175,33 @@ Two separate tools, for two separate things:
 
   Default backend is Gemini (`GEMINI_API_KEY`, environment or
   `~/.config/market-secrets/credentials.env`) -- zero setup, adequate
-  quality, a paid per-call API. Two self-hosted alternatives are
-  documented as extension points in the module's own docstring rather
-  than wired in (each is a real infrastructure decision):
-  [AI4Bharat/IndicTrans2](https://github.com/AI4Bharat/IndicTrans2) (MIT,
-  purpose-built for these exact 22 languages by IIT Madras -- the right
-  choice if Indian-language quality or cost-at-volume ever matters more
-  than zero setup) and
-  [LibreTranslate](https://github.com/LibreTranslate/LibreTranslate)
-  (AGPL, 100+ languages, Docker-simple -- the right choice for the
-  foreign-language tier at volume). Meta's NLLB-200 covers 200+ languages
-  but ships CC-BY-NC-4.0 (non-commercial only), so it's noted, not
-  adopted, for a public repo.
+  quality, a paid per-call API capped at Google AI Studio's free-tier
+  quota of 20 requests/day per model. For bulk translation at corpus
+  scale, `--backend krutrim` is the self-hosted alternative actually in
+  use: [Krutrim-Translate](https://huggingface.co/krutrim-ai-labs/Krutrim-Translate)
+  (Krutrim Community License, attribution required -- see
+  `~/krutrim-translate/LICENSE.md`), Ola Krutrim's extension of
+  AI4Bharat/IndicTrans2, served locally via
+  [CTranslate2](https://github.com/OpenNMT/CTranslate2) with no GPU and
+  no per-call quota (confirmed live at ~0.1-0.2s/call on CPU). It covers
+  all 9 languages `render/bulk_translate.py` runs against the corpus
+  (Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Kannada, Malayalam,
+  Punjabi). Two other
+  paths were tried and are documented, not wired in as the default:
+  **AI4Bharat/IndicTrans2 via HuggingFace `transformers`** was attempted
+  first, but its remote model code proved incompatible with current
+  `transformers`' reworked KV-cache internals in a way that went past
+  reasonable monkey-patching (see `render/translate.py`'s module
+  docstring and `notebooks/serve_indictrans2_colab.ipynb` for the full
+  diagnosis) -- Krutrim's CTranslate2 serving path sidesteps this
+  entirely. `--backend libretranslate`
+  ([LibreTranslate](https://github.com/LibreTranslate/LibreTranslate),
+  AGPL) is self-hosted too, but its underlying Argos Translate models
+  cover only 3 of the 22 Eighth Schedule languages (Bengali, Hindi, Urdu)
+  and 8 of 11 foreign languages -- kept as a documented alternative for
+  the foreign-language tier. Meta's NLLB-200 covers 200+ languages but
+  ships CC-BY-NC-4.0 (non-commercial only), so it's noted, not adopted,
+  for a public repo.
 
 - **`render/pages.py --translate-widget`** puts Google's own
   `translate.google.com` page widget on a *rendered page*, for a human

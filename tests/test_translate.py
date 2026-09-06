@@ -5,8 +5,10 @@ from render.translate import (
     FOREIGN_LANGUAGES,
     SUPPORTED_LANGUAGES,
     LIBRETRANSLATE_CODES,
+    KRUTRIM_CODES,
     translate_record,
     translate_record_libretranslate,
+    translate_record_krutrim,
 )
 
 
@@ -66,3 +68,25 @@ def test_translate_record_libretranslate_rejects_unsupported_language():
         assert False, "should have raised for a language with no Argos model (Marathi)"
     except ValueError as e:
         assert "mr" in str(e)
+
+
+def test_krutrim_codes_cover_all_five_priority_languages():
+    # confirmed live against krutrim-ai-labs/Krutrim-Translate: hi/bn/mr/te/ta
+    # (this project's priority languages) plus kn/ml/gu/pa -- 9 of 22
+    # INDIAN_LANGUAGES total, no FOREIGN_LANGUAGES.
+    assert {"hi", "bn", "mr", "te", "ta"} <= set(KRUTRIM_CODES)
+    assert set(KRUTRIM_CODES) <= set(INDIAN_LANGUAGES)
+    assert KRUTRIM_CODES == {
+        "bn": "ben_Beng", "gu": "guj_Gujr", "hi": "hin_Deva", "kn": "kan_Knda",
+        "ml": "mal_Mlym", "mr": "mar_Deva", "pa": "pan_Guru", "ta": "tam_Taml",
+        "te": "tel_Telu",
+    }
+
+
+def test_translate_record_krutrim_rejects_unsupported_language():
+    record = {"gazette_id": "x", "summary": "test"}
+    try:
+        translate_record_krutrim(record, lang="fr", url="http://example.invalid")
+        assert False, "should have raised for a non-Indian language code"
+    except ValueError as e:
+        assert "fr" in str(e)

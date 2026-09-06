@@ -122,6 +122,24 @@ def get_notification(conn: sqlite3.Connection, gazette_id: str, include_archived
     return d
 
 
+def get_notification_by_number(conn: sqlite3.Connection, series: str, number: str,
+                                include_archived: bool = True) -> dict | None:
+    """Single-row read by the human-facing identifier (e.g. series='Customs',
+    number='45/2025') instead of the internal gazette_id -- the lookup a
+    reader who has an actual gazette in hand would use. Matches series
+    case-insensitively (as printed on the notification, capitalization is
+    inconsistent across sources); number must match exactly."""
+    _row(conn)
+    row = conn.execute(
+        'SELECT * FROM gazette_notification WHERE series = ? COLLATE NOCASE AND number = ?',
+        (series, number),
+    ).fetchone()
+    d = _as_dict(row)
+    if d and not include_archived and d['archived_at'] is not None:
+        return None
+    return d
+
+
 def list_notifications(
     conn: sqlite3.Connection, ministry_id: str | None = None,
     thread_id: str | None = None, include_archived: bool = False,
