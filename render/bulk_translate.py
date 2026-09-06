@@ -3,7 +3,8 @@ Translate the whole corpus's one-line summary into a set of priority
 languages, checkpointed so a long-running or interrupted job can resume
 without re-translating what's already done.
 
-    python3 -m render.bulk_translate --langs hi,bn,mr,te,ta --db gazette.db --out data/translations
+    python3 -m render.bulk_translate --backend krutrim --langs hi,bn,mr,te,ta,gu,kn,ml,pa
+    python3 -m render.bulk_translate --langs hi,bn,mr,te,ta,gu,kn,ml,pa --db gazette.db --out data/translations
     python3 -m render.bulk_translate --backend libretranslate --langs hi,bn
 
 Scope decision: only `summary` (render.llm_export's generated one-sentence
@@ -15,21 +16,25 @@ them in even 5 languages is ~52,000 calls. summary-only cuts that to
 full record translated live via `render.translate`; this script is for
 bulk *search-result* coverage, not per-record depth.
 
-Language choice: the 5 languages with the most native speakers in India
-(Hindi, Bengali, Marathi, Telugu, Tamil per the 2011 Census) -- together
-the first language of roughly 60% of the population.
+Language choice: TOP_LANGUAGES covers every language KRUTRIM_CODES
+supports (Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Kannada,
+Malayalam, Punjabi), ordered by native speakers in India per the 2011
+Census -- the first 5 alone already cover roughly 60% of the population;
+the full 9 push well past that. Krutrim's coverage is the ceiling here,
+not the target: Urdu and Odia are both larger by speaker count than some
+languages in this list but aren't in KRUTRIM_CODES, so they stay out of
+bulk translation until a backend supports them.
 
-Backend: defaults to Gemini (--backend gemini), but that backend is capped
-at Google AI Studio's free-tier quota of 20 requests/day *per model* --
-confirmed by exhausting it on two different model names in the same day
-while running this exact job. --backend libretranslate uses a self-hosted
-LibreTranslate instance instead (no daily call ceiling, run locally: e.g.
-`libretranslate --port 5001 --load-only en,hi,bn`) -- but its underlying
-Argos Translate models only cover LIBRETRANSLATE_CODES, which is just
-Hindi and Bengali of the 5 TOP_LANGUAGES above (no Marathi/Telugu/Tamil
-Argos model exists at all; AI4Bharat/IndicTrans2 was tried for full
-coverage first and found incompatible with current transformers -- see
-render/translate.py's module docstring for that diagnosis).
+Backend: --backend krutrim is the recommended choice -- a self-hosted
+CTranslate2 server (~/krutrim-translate/server.py) covering all 9
+TOP_LANGUAGES with no per-call quota, confirmed running at ~0.1-0.2s/call
+on CPU (no GPU needed). --backend gemini is capped at Google AI Studio's
+free-tier quota of 20 requests/day *per model* -- confirmed by exhausting
+it on two different model names in the same day while running this exact
+job. --backend libretranslate (self-hosted, `libretranslate --port 5001
+--load-only en,hi,bn`) only covers Hindi and Bengali of the 9
+TOP_LANGUAGES -- kept as a documented alternative, superseded by krutrim
+for this project's language set.
 
 Checkpointing: each language writes to its own JSONL file
 (<out>/<lang>.jsonl), one line per successfully translated notification.
@@ -52,17 +57,25 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from render.llm_export import build_record  # noqa: E402
 from render.translate import (  # noqa: E402
+    KRUTRIM_CODES,
     LIBRETRANSLATE_CODES,
     SUPPORTED_LANGUAGES,
     translate_record,
+    translate_record_krutrim,
     translate_record_libretranslate,
 )
 
-# Hindi, Bengali, Marathi, Telugu, Tamil -- India's five largest languages
-# by native speakers (2011 Census), in that order.
-TOP_LANGUAGES = ["hi", "bn", "mr", "te", "ta"]
+# Every language KRUTRIM_CODES supports, ordered by native speakers in
+# India (2011 Census): Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati,
+# Kannada, Malayalam, Punjabi.
+TOP_LANGUAGES = ["hi", "bn", "mr", "te", "ta", "gu", "kn", "ml", "pa"]
 
 FIELDS = ("summary",)
+
+BACKEND_FNS = {
+    "krutrim": translate_record_krutrim,
+    "libretranslate": translate_record_libretranslate,
+}
 
 
 def _all_notifications(conn: sqlite3.Connection) -> list[dict]:
@@ -103,6 +116,7 @@ def run(db: str, out_dir: str, langs: list[str], delay: float, backend: str) -> 
 
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
+    backend_fn = BACKEND_FNS.get(backend)
 
     for lang in langs:
         lang_name = SUPPORTED_LANGUAGES[lang]
@@ -115,8 +129,8 @@ def run(db: str, out_dir: str, langs: list[str], delay: float, backend: str) -> 
         with open(out_file, "a", encoding="utf-8") as out_f, open(fail_file, "a", encoding="utf-8") as fail_f:
             for i, record in enumerate(remaining, 1):
                 try:
-                    if backend == "libretranslate":
-                        translated = translate_record_libretranslate(record, lang=lang, fields=FIELDS)
+                    if backend_fn is not None:
+                        translated = backend_fn(record, lang=lang, fields=FIELDS)
                     else:
                         translated = translate_record(record, lang=lang, fields=FIELDS)
                     out_f.write(json.dumps(translated, ensure_ascii=False) + "\n")
@@ -137,21 +151,24 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--langs", default=",".join(TOP_LANGUAGES),
                          help=f"comma-separated language codes, default: {','.join(TOP_LANGUAGES)}")
-    parser.add_argument("--backend", choices=["gemini", "libretranslate"], default="gemini")
+    parser.add_argument("--backend", choices=["gemini", "libretranslate", "krutrim"], default="gemini")
     parser.add_argument("--db", default="gazette.db")
     parser.add_argument("--out", default="data/translations")
     parser.add_argument("--delay", type=float, default=None,
                          help="seconds to sleep between calls; default 1.5 for gemini (proactive quota throttle), "
-                              "0 for libretranslate (self-hosted, no shared quota to protect)")
+                              "0 for krutrim/libretranslate (self-hosted, no shared quota to protect)")
     args = parser.parse_args()
 
     langs = [c.strip() for c in args.langs.split(",") if c.strip()]
-    valid = LIBRETRANSLATE_CODES if args.backend == "libretranslate" else SUPPORTED_LANGUAGES
+    valid = {
+        "krutrim": KRUTRIM_CODES,
+        "libretranslate": LIBRETRANSLATE_CODES,
+    }.get(args.backend, SUPPORTED_LANGUAGES)
     for c in langs:
         if c not in valid:
             parser.error(f"unsupported language code {c!r} for --backend {args.backend}; choose from {sorted(valid)}")
 
-    delay = args.delay if args.delay is not None else (0.0 if args.backend == "libretranslate" else 1.5)
+    delay = args.delay if args.delay is not None else (0.0 if args.backend in ("krutrim", "libretranslate") else 1.5)
     run(args.db, args.out, langs, delay, args.backend)
 
 
