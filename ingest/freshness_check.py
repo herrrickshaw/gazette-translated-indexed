@@ -8,13 +8,29 @@ follow-up -- this never writes to the database itself.
     python3 -m ingest.freshness_check --db gazette.db --extract          # also run each new
                                                                           # item through the
                                                                           # Mistral extractor
+    python3 -m ingest.freshness_check --db gazette.db --tracker-only     # skip the official-source query
 
 Design: for each ministry, take MAX(publish_date) already in the DB as a
-high-water mark, fetch gazettetracker.com's listing page 1 for that
-ministry (most-recent-first, not rate-limited per this project's own
-findings), and report every item newer than the mark. With --extract,
-each new item's Full Text is pulled (curl, never WebFetch -- this
-project's token-efficiency policy) and run through
+high-water mark, then query TWO independent sources for anything newer --
+gazettetracker.com's listing page 1 for that ministry (most-recent-first,
+not rate-limited per this project's own findings) via `fetch_listing()`,
+and egazette.gov.in's own "Search by Ministry" via
+`ingest.egazette_search.search_by_ministry_since()` (see
+`db/egazette_ministry_map.py` for the ministry_id -> official dropdown
+value mapping) via `fetch_official()`. `check_ministry()` reports a
+three-way diff, not just a union: items **both** sources agree are new
+(the common case -- most confidence), items **only the tracker** has
+(expected sometimes -- the tracker updates faster than a from-scratch
+official-site query), and items **only the official source** has --
+the signal actually worth watching for, since it means the third-party
+aggregator missed something this project would otherwise never notice.
+`docs/DATA_PIPELINE.md`'s Gap 1 describes the reasoning behind running
+both rather than trusting either alone. `--tracker-only` restores the
+original single-source behavior (e.g. if egazette.gov.in is unreachable).
+
+With --extract, each new item's Full Text is pulled (curl, never
+WebFetch -- this project's token-efficiency policy; only tracker items
+have a fetchable "Full Text" browser page today) and run through
 ingest.mistral_extract for a first-pass read: does it look like it cites
 something already in this ministry's corpus?
 
@@ -42,6 +58,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from db.tracker_slugs import MINISTRY_TRACKER_SLUGS  # noqa: E402
+from db.egazette_ministry_map import EGAZETTE_MINISTRY_VALUES  # noqa: E402
+from ingest.egazette import gazette_id_to_pdf_url  # noqa: E402
+from ingest.egazette_search import EGazetteSearchError, search_by_ministry_since  # noqa: E402
 
 BROWSE_ITEM_RE = re.compile(
     r'<time class="browse-item-date">([^<]+)</time>.*?'
@@ -76,6 +95,35 @@ def fetch_listing(slug: str, page: int = 1, timeout: int = 20) -> list[TrackerIt
     return items
 
 
+def fetch_official(ministry_id: str, since: date, until: date | None = None) -> tuple[list[TrackerItem], list[tuple[int, int]]]:
+    """Query egazette.gov.in directly for one ministry via
+    `ingest.egazette_search.search_by_ministry_since()`, merging across
+    every dropdown value `db/egazette_ministry_map.py` lists for this
+    ministry_id (some ministries, e.g. atomic-energy, appear under more
+    than one historical name). Returns results reshaped into the same
+    `TrackerItem` shape `fetch_listing()` uses -- `url` is the deterministic
+    official PDF URL (`ingest.egazette.gazette_id_to_pdf_url`), not a
+    tracker page -- plus the list of (year, month) that hit the site's
+    15-row page cap and may be incomplete (see
+    `ingest.egazette_search`'s module docstring)."""
+    values = EGAZETTE_MINISTRY_VALUES.get(ministry_id)
+    if not values:
+        raise EGazetteSearchError(f'no egazette.gov.in ddlMinistry value mapped for {ministry_id!r}')
+    by_id: dict[str, TrackerItem] = {}
+    all_truncated: list[tuple[int, int]] = []
+    for value in values:
+        results, truncated = search_by_ministry_since(value, since, until)
+        all_truncated.extend(truncated)
+        for r in results:
+            by_id[r.gazette_id] = TrackerItem(
+                gazette_id=r.gazette_id,
+                url=gazette_id_to_pdf_url(r.gazette_id),
+                title=r.subject,
+                date=r.publish_date,
+            )
+    return sorted(by_id.values(), key=lambda i: i.date), sorted(set(all_truncated))
+
+
 def high_water_mark(conn: sqlite3.Connection, ministry_id: str) -> date | None:
     row = conn.execute(
         "SELECT MAX(publish_date) FROM gazette_notification WHERE ministry_id = ? AND archived_at IS NULL",
@@ -95,26 +143,56 @@ def fetch_fulltext(gazette_url: str, timeout: int = 20) -> str:
     return trafilatura.stdout.strip()
 
 
-def check_ministry(conn: sqlite3.Connection, ministry_id: str, do_extract: bool) -> dict:
+def check_ministry(conn: sqlite3.Connection, ministry_id: str, do_extract: bool, tracker_only: bool = False) -> dict:
     slug = MINISTRY_TRACKER_SLUGS.get(ministry_id)
     if not slug:
         return {"ministry_id": ministry_id, "status": "no_slug_mapped", "new_items": []}
     mark = high_water_mark(conn, ministry_id)
     if mark is None:
         return {"ministry_id": ministry_id, "status": "no_existing_data", "new_items": []}
+
     try:
-        items = fetch_listing(slug)
+        tracker_items = fetch_listing(slug)
+        tracker_new = {i.gazette_id: i for i in tracker_items if i.date > mark}
+        tracker_status = "ok"
     except Exception as e:
-        return {"ministry_id": ministry_id, "status": f"fetch_failed: {e}", "new_items": []}
-    new_items = [i for i in items if i.date > mark]
-    result = {"ministry_id": ministry_id, "status": "ok", "high_water_mark": mark.isoformat(), "new_items": []}
-    for item in new_items:
-        entry = {"gazette_id": item.gazette_id, "title": item.title, "date": item.date.isoformat(), "url": item.url}
-        if do_extract:
+        tracker_new = {}
+        tracker_status = f"tracker_fetch_failed: {e}"
+
+    official_new: dict[str, TrackerItem] = {}
+    truncated_months: list[tuple[int, int]] = []
+    official_status = "skipped"
+    if not tracker_only:
+        try:
+            official_items, truncated_months = fetch_official(ministry_id, mark)
+            official_new = {i.gazette_id: i for i in official_items if i.date > mark}
+            official_status = "ok"
+        except Exception as e:
+            official_status = f"official_fetch_failed: {e}"
+
+    if tracker_status != "ok" and official_status not in ("ok", "skipped"):
+        return {"ministry_id": ministry_id, "status": f"{tracker_status}; {official_status}", "new_items": []}
+
+    both_ids = tracker_new.keys() & official_new.keys()
+    only_tracker_ids = tracker_new.keys() - official_new.keys()
+    only_official_ids = official_new.keys() - tracker_new.keys()
+    merged = {**tracker_new, **official_new}  # official's url (a real PDF link) wins on overlap
+
+    result = {
+        "ministry_id": ministry_id, "status": "ok", "high_water_mark": mark.isoformat(),
+        "tracker_status": tracker_status, "official_status": official_status,
+        "truncated_months": truncated_months, "new_items": [],
+    }
+    for gazette_id in sorted(merged, key=lambda g: merged[g].date):
+        item = merged[gazette_id]
+        source = "both" if gazette_id in both_ids else ("tracker_only" if gazette_id in only_tracker_ids else "official_only")
+        entry = {"gazette_id": item.gazette_id, "title": item.title, "date": item.date.isoformat(),
+                 "url": item.url, "source": source}
+        if do_extract and gazette_id in tracker_new:  # only tracker items have a Full Text page to pull
             try:
                 from ingest.mistral_extract import extract_candidates
 
-                text = fetch_fulltext(item.url)
+                text = fetch_fulltext(tracker_new[gazette_id].url)
                 entry["candidates"] = extract_candidates(text) if text else []
             except Exception as e:
                 entry["candidates_error"] = str(e)
@@ -122,33 +200,46 @@ def check_ministry(conn: sqlite3.Connection, ministry_id: str, do_extract: bool)
     return result
 
 
+_SOURCE_LABEL = {"both": "", "tracker_only": " (tracker only)", "official_only": " (**official source only** -- tracker may have missed this)"}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--db", default="gazette.db")
     parser.add_argument("--ministry", default=None, help="ministry_id to check (default: all mapped ministries)")
     parser.add_argument("--extract", action="store_true", help="also run each new item through the Mistral extractor")
+    parser.add_argument("--tracker-only", action="store_true",
+                         help="skip the egazette.gov.in official-source query (original single-source behavior)")
     args = parser.parse_args()
 
     conn = sqlite3.connect(args.db)
     ministry_ids = [args.ministry] if args.ministry else sorted(MINISTRY_TRACKER_SLUGS.keys())
 
     total_new = 0
+    total_official_only = 0
     print("# Freshness check\n")
     for mid in ministry_ids:
-        result = check_ministry(conn, mid, args.extract)
+        result = check_ministry(conn, mid, args.extract, tracker_only=args.tracker_only)
         if result["status"] != "ok":
             print(f"- **{mid}**: {result['status']}")
             continue
+        if result.get("official_status", "").startswith("official_fetch_failed"):
+            print(f"- **{mid}**: {result['official_status']} (tracker-only result below)")
+        if result.get("truncated_months"):
+            print(f"- **{mid}**: possibly-truncated official-source months (hit the page cap): "
+                  f"{result['truncated_months']}")
         if not result["new_items"]:
             continue
         total_new += len(result["new_items"])
+        total_official_only += sum(1 for item in result["new_items"] if item["source"] == "official_only")
         print(f"## {mid} (high-water mark: {result['high_water_mark']})\n")
         for item in result["new_items"]:
-            print(f"- [{item['date']}] {item['title']}\n  {item['url']}")
+            print(f"- [{item['date']}] {item['title']}{_SOURCE_LABEL[item['source']]}\n  {item['url']}")
             if "candidates" in item and item["candidates"]:
                 print(f"  candidates: {json.dumps(item['candidates'], ensure_ascii=False)}")
         print()
-    print(f"\n{total_new} new item(s) found across {len(ministry_ids)} ministry(ies) checked.", file=sys.stderr)
+    print(f"\n{total_new} new item(s) found across {len(ministry_ids)} ministry(ies) checked "
+          f"({total_official_only} seen only by the official source).", file=sys.stderr)
 
 
 if __name__ == "__main__":
