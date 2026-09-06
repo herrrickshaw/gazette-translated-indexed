@@ -21,10 +21,14 @@ Record shape:
   "amends": [...], "amended_by": [...], "supersedes": [...], ... one key
     per relation_type actually present, each a list of
     {"gazette_id", "number", "publish_date", "gsr_or_so"},
-  "summary": "No. 45/2025-Customs (G.S.R. 781(E), 2025-10-24) supersedes
-    31 notifications; amended by 5 notifications; corrigendum issued by 2
-    notifications." -- one plain-English sentence per relation direction,
-    for keyword/semantic retrieval without re-deriving it from the lists.
+  "summary": "Ministry of Finance 45/2025-Customs (G.S.R. 781(E), 2025-10-24)
+    supersedes 31 notifications; amended by 5 notifications; corrigendum
+    issued by 2 notifications." -- one plain-English sentence per relation
+    direction, for keyword/semantic retrieval without re-deriving it from
+    the lists. Leads with the full ministry name (falls back to the bare
+    `series` value when ministry_id is unlinked) so a downstream
+    translation doesn't have to guess "Customs" -> "Ministry of Finance"
+    from an abbreviation alone.
 }
 """
 from __future__ import annotations
@@ -82,7 +86,8 @@ def build_record(conn: sqlite3.Connection, notif: dict) -> dict:
         by_relation.setdefault(key, []).append(_peer_summary(conn, ref["source_gazette_id"]))
     record.update(by_relation)
 
-    label = f"{notif['series']} {notif['number']} ({notif['gsr_or_so'] or 'no G.S.R./S.O. confirmed'}, {notif['publish_date']})"
+    ministry_label = notif.get("ministry_name") or notif["series"]
+    label = f"{ministry_label} {notif['number']} ({notif['gsr_or_so'] or 'no G.S.R./S.O. confirmed'}, {notif['publish_date']})"
     clauses = []
     for key, vals in by_relation.items():
         phrase = REVERSE_PHRASING[key[: -len(REVERSE_SUFFIX)]] if key.endswith(REVERSE_SUFFIX) else key
