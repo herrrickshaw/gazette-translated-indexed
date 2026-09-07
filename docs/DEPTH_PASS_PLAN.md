@@ -186,3 +186,29 @@ visible and queryable -- 181 raw hits against 32 modeled citations is a
 starting point for spot-checking against another source (a ministry's own
 press releases, PIB) if a specific gap is ever suspected, not a backlog to
 clear by force.
+
+**Update (2026-09-07): extended back to 2013-01-01.** The ledger now
+covers 2013-01-01..2026-09-07 for all 6 (two windows,
+2013-01-01..2022-12-31 and 2023-01-01..2026-09-07, split to keep each
+`egazette_search` run to a manageable size). Raw-volume-vs-modeled ratios
+hold up the same way further back:
+
+| Ministry | Raw gazettes (2013-2026) | Modeled notifications | Ratio |
+|---|---:|---:|---:|
+| Ministry of Defence | 275 | 32 | ~8.6:1 |
+| Consumer Affairs, Food and Public Distribution | 288 | 52 | ~5.5:1 |
+| Ministry of External Affairs | 131 | 37 | ~3.5:1 |
+| Ministry of Women and Child Development | 42 | 20 | ~2.1:1 |
+| Ministry of Youth Affairs and Sports | 29 | 4 | ~7.3:1 |
+| Department of Space | 5 | 5 | ~1:1 |
+
+Department of Space's near-1:1 ratio is the clearest confirmation yet that
+its depth pass really did reach exhaustion (a ministry this small has
+almost nothing left for the schema to miss); Youth Affairs and Sports'
+high ratio (29 raw vs. only 4 modeled) is consistent with its own depth
+pass's finding -- a real, checked absence of citable material, not an
+unexamined ministry. This run hit zero `failed_months` across all 6
+ministries and both windows, confirming the per-month retry fix
+(`ingest/egazette_search.py`, commit `554bedf`) actually holds up under a
+sustained multi-hour scan, not just the shorter one that first exposed the
+bug.
