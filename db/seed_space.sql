@@ -108,14 +108,38 @@
 --
 --   `ingest.egazette_search`'s dropdown (607 entries) has exactly one
 --   Department of Space entry (value 71) — no separate ISRO/NSIL/IN-SPACe
---   ministry listing exists to check. A full month-by-month scan of that
---   one entry from 2013-01 through 2026-09 (the entire span this ministry's
---   file-number series E.14015/1/2012-IV covers, per the Note table) found
---   no further notification beyond the ones already known from
---   gazettetracker (S.O. 2018(E) above, and the already-checked National
---   Space Day declaration) — see this file's git history for the full
---   scan output. This ministry's real, tracked corpus is now genuinely
---   exhausted: every citable notification in it is modeled.
+--   ministry listing exists to check. A month-by-month scan of that one
+--   entry across 2013-01..2022-12 and 2023-01..2026-09 (two runs, after a
+--   single 2013-2026 request hit a transient egazette.gov.in connection
+--   failure partway through and had to be split) turned up two further
+--   real Department of Space items neither gazettetracker nor the Note
+--   table names — but neither is modelable under this project's
+--   citation-chain schema, so neither gets a gazette_notification row:
+--
+--     - G.S.R. 778(E), 18.12.2020 (gazette_id CG-DL-E-21122020-223816,
+--       text in data/raw_md/CG-DL-E-21122020-223816.md): "Department of
+--       Space Recruitment Rules, 2020" for the Principal Staff Officer
+--       post. A fresh rule-making notification, not an amendment/
+--       supersession of anything — cites no other notification. Same
+--       "checked, not modeled" category as National Space Day.
+--     - No. DS_3P-16011/1/2020-Sec.3, 06.09.2021 (gazette_id
+--       CG-KA-W-04102021-230126, a WEEKLY multi-ministry compiled gazette;
+--       text in data/raw_md/CG-KA-W-04102021-230126.md): the Department of
+--       Space RESOLUTION founding IN-SPACe (Indian National Space
+--       Promotion and Authorisation Centre) as an autonomous agency.
+--       Historically significant, but file-number-only (no G.S.R./S.O. on
+--       either side) and cites nothing — same unmodelable shape as every
+--       other file-number-only lead already documented in this project.
+--
+--   Beyond those two, the scan found no further notification. Curiously,
+--   the search did NOT surface S.O. 424(E)/2018 or S.O. 4235(E)/2019 at
+--   all, despite both being independently confirmed real (see above) —
+--   egazette.gov.in's own ministry-tagging is evidently incomplete for at
+--   least some already-known items, so this scan is corroborating
+--   evidence, not a certified-complete inventory. Given that, and that
+--   gazettetracker.com's own listing is independently confirmed exhausted,
+--   this ministry's corpus is treated as exhausted for this depth pass —
+--   every citable, schema-fitting notification found so far is modeled.
 --
 -- Extractor: this Note's "vide No.S.O.270(E) dated ..." phrasing (right
 -- before the table) already fits the existing "bare-citation-reference"
