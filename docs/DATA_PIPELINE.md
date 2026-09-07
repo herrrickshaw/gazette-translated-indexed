@@ -227,10 +227,68 @@ makes this cheap already exists — what's missing is the trigger.
   per already-modeled ministry (using `db/tracker_slugs.py`'s existing
   `MINISTRY_TRACKER_SLUGS` mapping), not as a blind full-corpus crawl.
 
+## Prior art: Querido Diário's architecture
+
+[Querido Diário](https://github.com/okfn-brasil/querido-diario) (Open
+Knowledge Brasil, MIT, 1,300+ stars, Digital Public Good-recognized) is
+the most mature civic-tech gazette project found while researching
+whether other countries have gazette-tracking gaps similar to this
+project's own (see the cross-country research this session). It doesn't
+do citation-chain tracking -- Brazil's ~5,570 municipalities each publish
+independently, so its whole problem is closer to this project's `ingest/`
+layer than to `extract/`'s citation graph -- but its architecture is a
+useful reference precisely because that ingestion problem is harder than
+India's: one central portal (egazette.gov.in) vs. thousands of
+independent municipal publishers with no shared format. It's split into
+separate repos by stage, each independently maintained:
+
+- **`censo-querido-diario`** -- a crowdsourced *census*, run once, up
+  front, before any scraping: where does each of ~5,570 municipalities
+  actually publish its gazette? This is a step this project has never
+  needed (egazette.gov.in is the one authoritative source for all 53
+  modeled ministries), but it's exactly the missing piece the earlier
+  cross-country research flagged for Nigeria, Pakistan, and
+  Bangladesh -- countries with no confirmed single searchable portal --
+  and for India's *state* gazettes specifically (`ramSeraph/indian_gazettes`
+  scrapes state gazettes without, as far as could be determined, first
+  mapping which of India's states publish where in a structured way).
+- **`querido-diario`** -- the scrapers themselves (Scrapy, one spider per
+  municipality), generated from a shared template
+  (`scrapy genspider -t qdtemplate`) rather than written from scratch
+  each time -- the same instinct behind this project's shared
+  `extract/common_templates.py`, just applied to *fetching* instead of
+  *citation extraction*.
+- **`querido-diario-data-processing`** -- normalizes whatever closed
+  format each municipality happens to publish in (PDF, proprietary CMS
+  exports, etc.) into usable text, as its own separate stage rather than
+  bolted onto the scraper -- roughly this project's `ingest/pdf_text.py`
+  role, but built to handle far more format variety since there's no
+  single publisher to standardize against.
+- **`querido-diario-backend` / `querido-diario-api` / `querido-diario-frontend`**
+  -- search index, public API, and UI as three separate repos -- a
+  heavier separation than this project needs at its current scale
+  (`render/pages.py` and `render/llm_export.py` cover the equivalent
+  ground in one repo), but the boundary itself (index/store, API, UI)
+  mirrors the current db/ + render/ split.
+- **`querido-diario-toolbox`** -- a separate library specifically for
+  *other people* to run their own analysis on the collected data, kept
+  apart from the ingestion pipeline itself -- closest existing analog
+  here is `render/llm_export.py`'s JSONL export, though that's one
+  format rather than a toolbox.
+
+Nothing here changes this project's current design -- India's single
+authoritative portal makes the census step unnecessary today -- but the
+census-before-scraping pattern is the concrete piece to reach for first
+if this project (or a sibling one) ever takes on a source with no single
+searchable index, exactly the situation the cross-country research found
+for Nigeria, Pakistan, Bangladesh, and India's own state gazettes.
+
 ## Open follow-ups (not started)
 
-- Writing `ingest/register_new.py` (Gap 2) — the one genuinely new piece
-  of write code this model calls for.
+- ~~Writing `ingest/register_new.py` (Gap 2)~~ -- done (2026-09-07): it
+  registers a bare notification row for every genuinely new gazette_id a
+  freshness check turns up, keyed by the official egazette.gov.in id, per
+  the design above.
 - Deciding on and installing an actual schedule (launchd, matching this
   environment's existing convention for other recurring jobs) — needs an
   explicit go-ahead before anything gets installed, since a standing
