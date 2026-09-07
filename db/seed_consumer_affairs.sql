@@ -52,15 +52,14 @@
 --    Rules, 2017 (Department of Food and Public Distribution, under the
 --    Warehousing (Development and Regulation) Act, 2007) — an entirely new
 --    subject thread. One 2023 amendment's own Note recovers this
---    instrument's full 2017-2022 amendment history (six real citations) in
---    a single primary-text quote, the same kind of gap-closing find as
+--    instrument's full 2017-2022 amendment history (seven real citations)
+--    in a single primary-text quote, the same kind of gap-closing find as
 --    Ministry of Coal's 18-item pension-scheme Note elsewhere in this
 --    project. That Note's own principal citation is printed as "G.S.R -
---    165(E)" (a hyphen where the live citation regex requires a period
---    directly after "R") — the regex silently drops only that one item;
---    modeled here as a bare row per the same precedent already used for
---    this file's own Sugarcane principal citation, evidenced by the same
---    Note a human reader (and the research agent) can plainly read it in.
+--    165(E)" (a hyphen where the citation regex used to require a period
+--    directly after "R") — confirmed here, and fixed 2026-09-07 in
+--    extract/citation_patterns.py's _GSR_RE (see that file's comment) so
+--    the regex now recovers it like every other citation in this Note.
 --    A separate, later real amendment (G.S.R. 791(E)) names its own
 --    immediate predecessor as G.S.R. 503(E), dated 12th July 2023 — a real
 --    notification this pass did not independently locate and confirm, so

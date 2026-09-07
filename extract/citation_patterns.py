@@ -50,7 +50,15 @@ _CITATION_RE = re.compile(
 # Empowerment Note clause writes "S.O. No. 1436 (E)" — an extra "No." that
 # every other ministry modeled so far omits. Optional, so it doesn't
 # require the word to be present for the (far more common) plain form.
-_GSR_RE = re.compile(r'G\.\s*S\.\s*R\.?[.,]?\s*(?:No\.?\s*)?(\d+)\s*\(([A-Z])\)')
+#
+# `\s*[.,-]?\s*` after "R" (not the tighter `[.,]?` immediately following
+# `R\.?`, with no whitespace allowance): a real Ministry of Consumer
+# Affairs, Food and Public Distribution Note clause writes "G.S.R - 165(E)"
+# — a hyphen, with a space on each side, standing in for the period. Same
+# class of real-text defect as the S.O. comma variant above; only
+# confirmed so far for G.S.R., so only added here rather than speculatively
+# to S.O./S.R.O. as well.
+_GSR_RE = re.compile(r'G\.\s*S\.\s*R\.?\s*[.,-]?\s*(?:No\.?\s*)?(\d+)\s*\(([A-Z])\)')
 _SO_RE = re.compile(r'S\.\s*O\.?[.,]?\s*(?:No\.?\s*)?(\d+)\s*\(([A-Z])\)')
 
 # S.R.O. ("Statutory Rules and Orders") is a third standard Gazette-of-India

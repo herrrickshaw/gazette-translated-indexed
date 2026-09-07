@@ -87,16 +87,11 @@ def test_further_amendment_variant_is_found():
 # (whitespace only) from the notification's own "Full Text" section.
 #
 # The principal citation is printed as "G.S.R - 165(E)" — a hyphen standing
-# in for the "." this project's _GSR_RE requires directly after "R" (same
-# class of real drafting defect as the AYUSH comma-for-period typo already
-# handled elsewhere), so the live regex silently drops only that first
-# item; the other six real citations in the same Note all use the standard
-# "G.S.R. NNN(E)" form and are recovered correctly. Per the same precedent
-# already used for the Sugarcane (Control) Order's own non-standard
-# principal citation (see db/seed_consumer_affairs.sql), G.S.R. 165(E) is
-# still modeled in the seed as a bare row, evidenced by this Note, rather
-# than silently dropped — this test documents what the live extractor
-# actually recovers, not what a human reader can additionally see.
+# in for the "." previously required directly after "R" (same class of real
+# drafting defect as the AYUSH comma-for-period typo already handled
+# elsewhere). _GSR_RE was extended to tolerate this (see its own comment in
+# extract/citation_patterns.py), so all seven real citations in this Note,
+# including the hyphenated principal, are now recovered correctly.
 WAREHOUSING_RULES_NOTE = (
     "Note: The principal rules were published in the Gazette of India, Extraordinary, Part II, Section 3, "
     "Subsection (i) vide number G.S.R - 165(E), dated the 23rd February, 2017 and subsequently amended vide "
@@ -106,12 +101,14 @@ WAREHOUSING_RULES_NOTE = (
 )
 
 
-def test_warehousing_rules_note_chain_recovers_six_of_seven_real_items():
-    # The bare non-standard principal ("G.S.R - 165(E)") is not among these
-    # six — see the module-level comment above for why, and
-    # db/seed_consumer_affairs.sql for how it is still modeled.
+def test_warehousing_rules_note_chain_recovers_all_seven_real_items():
+    # The non-standard hyphenated principal ("G.S.R - 165(E)") is now
+    # recovered too, since extract.citation_patterns._GSR_RE was extended
+    # to tolerate a hyphen standing in for the period after "R" — see that
+    # module's comment for the evidence. db/seed_consumer_affairs.sql's own
+    # header still narrates the fix's history.
     assert find_note_chain(WAREHOUSING_RULES_NOTE) == [
-        'G.S.R. 1040(E)', 'G.S.R. 251(E)', 'G.S.R. 782(E)',
+        'G.S.R. 165(E)', 'G.S.R. 1040(E)', 'G.S.R. 251(E)', 'G.S.R. 782(E)',
         'G.S.R. 786(E)', 'G.S.R. 287(E)', 'G.S.R. 788(E)',
     ]
 

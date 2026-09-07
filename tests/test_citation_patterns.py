@@ -72,6 +72,16 @@ def test_extracts_gsr_numbers():
     assert 'G.S.R. 63(E)' in ids
 
 
+def test_gsr_hyphen_variant_is_recognized():
+    # Real text, Ministry of Consumer Affairs, Food and Public Distribution
+    # (see db/seed_consumer_affairs.sql): a Note prints its principal
+    # citation as "G.S.R - 165(E)", a hyphen (with surrounding spaces)
+    # standing in for the period after "R" — this citation was previously
+    # silently dropped by find_gazette_ids.
+    text = 'In exercise of the powers conferred by G.S.R - 165(E), dated the 23rd February, 2017'
+    assert 'G.S.R. 165(E)' in find_gazette_ids(text)
+
+
 def test_bare_number_not_confused_with_slash_year():
     # "No.3-Customs" must not be parsed as if '3' were a year fragment of
     # some other citation, and a real slash/4-digit-year citation nearby
