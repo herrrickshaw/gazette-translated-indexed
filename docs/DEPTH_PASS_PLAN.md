@@ -166,3 +166,23 @@ just re-stamping the earlier "done" verdict. Same discipline as the rest of
 this document: a ministry marked "exhausted" here has been checked twice
 now, by two separate passes, not assumed complete because a table row says
 so.
+
+### Coverage ledger for these 6 (2026-09-07)
+
+`ingest.coverage_ledger` logged a 2023-01-01..2026-09-07 `egazette_search`
+scan for all 6 -- see `docs/EXTRACTION_COVERAGE.md` for the regenerated
+table. One number there is worth reading carefully rather than at face
+value: **Ministry of Defence's official search found 181 gazettes in this
+~3.75-year window alone (with 4 months hitting the page cap, so the real
+figure is higher), against only 32 modeled notifications across this
+ministry's *entire* 47-year span.** This is not a sign the depth pass
+missed material -- most of a ministry's raw gazette volume is routine,
+non-citational content (appointments, promotions, retirements, land
+notifications) this project's schema deliberately doesn't model, exactly
+the same pattern the depth pass itself found and documented (Defence's own
+"deliberately NOT modeled" section; Women and Child Development's "8
+confirmed non-citational" items). The ledger's job is to make that scale
+visible and queryable -- 181 raw hits against 32 modeled citations is a
+starting point for spot-checking against another source (a ministry's own
+press releases, PIB) if a specific gap is ever suspected, not a backlog to
+clear by force.
