@@ -5,7 +5,7 @@ without re-translating what's already done.
 
     python3 -m render.bulk_translate --backend krutrim --langs hi,bn,mr,te,ta,gu,kn,ml,pa
     python3 -m render.bulk_translate --langs hi,bn,mr,te,ta,gu,kn,ml,pa --db gazette.db --out data/translations
-    python3 -m render.bulk_translate --backend libretranslate --langs hi,bn
+    python3 -m render.bulk_translate --backend libretranslate --langs ur,fr,es,ar,zh,ru,pt,de,ja
 
 Scope decision: only `summary` (render.llm_export's generated one-sentence
 description -- the line a reader scans to judge relevance in a search
@@ -21,20 +21,26 @@ supports (Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Kannada,
 Malayalam, Punjabi), ordered by native speakers in India per the 2011
 Census -- the first 5 alone already cover roughly 60% of the population;
 the full 9 push well past that. Krutrim's coverage is the ceiling here,
-not the target: Urdu and Odia are both larger by speaker count than some
-languages in this list but aren't in KRUTRIM_CODES, so they stay out of
-bulk translation until a backend supports them.
+not the target: Odia is larger by speaker count than some languages in
+this list but isn't in KRUTRIM_CODES, so it stays out of bulk translation
+until a backend supports it. Urdu -- also larger than several
+TOP_LANGUAGES entries -- is covered separately, via --backend
+libretranslate (see below), since Krutrim doesn't reach it either.
 
-Backend: --backend krutrim is the recommended choice -- a self-hosted
-CTranslate2 server (~/krutrim-translate/server.py) covering all 9
-TOP_LANGUAGES with no per-call quota, confirmed running at ~0.1-0.2s/call
-on CPU (no GPU needed). --backend gemini is capped at Google AI Studio's
+Backend: --backend krutrim is the recommended choice for TOP_LANGUAGES --
+a self-hosted CTranslate2 server (~/krutrim-translate/server.py) covering
+all 9 with no per-call quota, confirmed running at ~0.1-0.2s/call on CPU
+(no GPU needed). --backend gemini is capped at Google AI Studio's
 free-tier quota of 20 requests/day *per model* -- confirmed by exhausting
 it on two different model names in the same day while running this exact
 job. --backend libretranslate (self-hosted, `libretranslate --port 5001
---load-only en,hi,bn`) only covers Hindi and Bengali of the 9
-TOP_LANGUAGES -- kept as a documented alternative, superseded by krutrim
-for this project's language set.
+--load-only en,ur,fr,es,ar,zh,ru,pt,de,ja`, Argos Translate models) is
+the *complementary* run this project actually uses for the languages
+Krutrim doesn't cover: Urdu, plus the 8-of-11 foreign-language tier
+(French, Spanish, Arabic, Chinese, Russian, Portuguese, German,
+Japanese) -- confirmed live for the full 2,591-notification corpus in
+all 9, zero failures. Not a fallback for TOP_LANGUAGES; a second,
+disjoint language set.
 
 Checkpointing: each language writes to its own JSONL file
 (<out>/<lang>.jsonl), one line per successfully translated notification.

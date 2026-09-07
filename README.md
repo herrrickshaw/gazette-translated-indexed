@@ -177,31 +177,41 @@ Two separate tools, for two separate things:
   `~/.config/market-secrets/credentials.env`) -- zero setup, adequate
   quality, a paid per-call API capped at Google AI Studio's free-tier
   quota of 20 requests/day per model. For bulk translation at corpus
-  scale, `--backend krutrim` is the self-hosted alternative actually in
-  use: [Krutrim-Translate](https://huggingface.co/krutrim-ai-labs/Krutrim-Translate)
-  (Krutrim Community License, attribution required -- see
-  `~/krutrim-translate/LICENSE.md`), Ola Krutrim's extension of
-  AI4Bharat/IndicTrans2, served locally via
-  [CTranslate2](https://github.com/OpenNMT/CTranslate2) with no GPU and
-  no per-call quota (confirmed live at ~0.1-0.2s/call on CPU). It covers
-  all 9 languages `render/bulk_translate.py` runs against the corpus
-  (Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Kannada, Malayalam,
-  Punjabi). Two other
-  paths were tried and are documented, not wired in as the default:
-  **AI4Bharat/IndicTrans2 via HuggingFace `transformers`** was attempted
-  first, but its remote model code proved incompatible with current
-  `transformers`' reworked KV-cache internals in a way that went past
-  reasonable monkey-patching (see `render/translate.py`'s module
-  docstring and `notebooks/serve_indictrans2_colab.ipynb` for the full
-  diagnosis) -- Krutrim's CTranslate2 serving path sidesteps this
-  entirely. `--backend libretranslate`
-  ([LibreTranslate](https://github.com/LibreTranslate/LibreTranslate),
-  AGPL) is self-hosted too, but its underlying Argos Translate models
-  cover only 3 of the 22 Eighth Schedule languages (Bengali, Hindi, Urdu)
-  and 8 of 11 foreign languages -- kept as a documented alternative for
-  the foreign-language tier. Meta's NLLB-200 covers 200+ languages but
-  ships CC-BY-NC-4.0 (non-commercial only), so it's noted, not adopted,
-  for a public repo.
+  scale, the whole 2,591-notification summary corpus is translated into
+  **18 languages across two self-hosted backends**, both with no
+  per-call quota:
+
+  - `--backend krutrim` covers the 9 Indian languages with the most
+    native speakers (Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati,
+    Kannada, Malayalam, Punjabi):
+    [Krutrim-Translate](https://huggingface.co/krutrim-ai-labs/Krutrim-Translate)
+    (Krutrim Community License, attribution required -- see
+    `~/krutrim-translate/LICENSE.md`), Ola Krutrim's extension of
+    AI4Bharat/IndicTrans2, served locally via
+    [CTranslate2](https://github.com/OpenNMT/CTranslate2) with no GPU
+    (confirmed live at ~0.1-0.2s/call on CPU). **AI4Bharat/IndicTrans2 via
+    HuggingFace `transformers`** was attempted first, but its remote model
+    code proved incompatible with current `transformers`' reworked
+    KV-cache internals in a way that went past reasonable monkey-patching
+    (see `render/translate.py`'s module docstring and
+    `notebooks/serve_indictrans2_colab.ipynb` for the full diagnosis) --
+    Krutrim's CTranslate2 serving path sidesteps this entirely.
+  - `--backend libretranslate`
+    ([LibreTranslate](https://github.com/LibreTranslate/LibreTranslate),
+    AGPL, self-hosted, Argos Translate models) covers the 9 languages
+    Krutrim doesn't reach: Urdu (the one remaining Eighth Schedule
+    language its models support) plus the 8-of-11 foreign-language tier
+    (French, Spanish, Arabic, Chinese, Russian, Portuguese, German,
+    Japanese).
+
+  Together the two backends translate every summary in the corpus into
+  all 18 languages; the remaining 12 Eighth Schedule languages
+  (Assamese, Bodo, Dogri, Kashmiri, Konkani, Maithili, Manipuri, Nepali,
+  Odia, Sanskrit, Santali, Sindhi) have no self-hosted option today and
+  are only reachable via Gemini's live per-record path, not bulk
+  translation, given its 20-request/day quota. Meta's NLLB-200 covers
+  200+ languages but ships CC-BY-NC-4.0 (non-commercial only), so it's
+  noted, not adopted, for a public repo.
 
 - **`render/pages.py --translate-widget`** puts Google's own
   `translate.google.com` page widget on a *rendered page*, for a human
