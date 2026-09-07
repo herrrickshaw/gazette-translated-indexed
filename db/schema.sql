@@ -82,3 +82,27 @@ CREATE TABLE IF NOT EXISTS notification_translation (
 );
 
 CREATE INDEX IF NOT EXISTS idx_translation_lang ON notification_translation(lang);
+
+-- Coverage ledger: which (ministry, date-range) windows this project has
+-- actually searched via ingest.egazette_search or gazettetracker.com, and
+-- what each search found. This is deliberately NOT a record of what's
+-- modeled (gazette_notification/cross_reference already track that) -- it
+-- answers "have we looked here at all" and "what came back", so a later
+-- session can see at a glance which date ranges have never been checked
+-- by either source and are worth cross-referencing against a completely
+-- different one (a ministry's own website, PIB releases, an official
+-- gazette index) instead of re-polling the same two sources again. See
+-- ingest/coverage_ledger.py.
+CREATE TABLE IF NOT EXISTS extraction_coverage (
+    coverage_id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    ministry_id         TEXT NOT NULL REFERENCES ministry(ministry_id),
+    source              TEXT NOT NULL,   -- 'egazette_search' | 'gazettetracker'
+    date_from           TEXT NOT NULL,   -- ISO 'YYYY-MM-DD', inclusive
+    date_to             TEXT NOT NULL,   -- ISO 'YYYY-MM-DD', inclusive
+    gazette_ids_found   TEXT NOT NULL,   -- JSON array of gazette_ids this scan returned (may be [])
+    possibly_truncated  TEXT,            -- JSON array of [year, month] pairs that hit a page cap, or NULL
+    checked_at          TEXT NOT NULL    -- ISO datetime this scan was run
+);
+
+CREATE INDEX IF NOT EXISTS idx_coverage_ministry ON extraction_coverage(ministry_id);
+CREATE INDEX IF NOT EXISTS idx_coverage_dates ON extraction_coverage(date_from, date_to);
