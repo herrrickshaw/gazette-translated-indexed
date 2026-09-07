@@ -212,3 +212,131 @@ ministries and both windows, confirming the per-month retry fix
 (`ingest/egazette_search.py`, commit `554bedf`) actually holds up under a
 sustained multi-hour scan, not just the shorter one that first exposed the
 bug.
+
+## Coverage ledger extended to all 53 ministries (2026-09-07)
+
+Ran the same `egazette_search` scan (`--since 2013-01-01`, one call per
+ministry covering the full 2013-01-01..2026-09-07 span) across the
+remaining 47 ministries, in 7 batches of ~7, sequentially and politely (one
+request at a time, never in parallel against the live site). Every batch
+finished cleanly except one real, notable event:
+
+**Batch 5 hit a sustained site-side outage.** `petroleum-and-natural-gas`
+and `ports-shipping-waterways` both came back with 0 gazettes and *every
+single month* in `failed_months` -- not the occasional bad month the retry
+logic is designed for, but total failure across their entire 13-year
+ranges. A live isolated test confirmed both `ddlMinistry` values worked
+fine again minutes later, so this was egazette.gov.in itself being
+unreachable or throttling hard for a sustained stretch, not a broken
+mapping. Both were re-scanned successfully once the site recovered
+(petroleum-and-natural-gas: 1154 gazettes; ports-shipping-waterways: 402),
+and the old all-zero coverage rows were deleted rather than left alongside
+the real ones. This is exactly the failure mode the per-month retry fix
+was built for, one level up: retry handles a bad month, a human (or a
+later automated version of this check) has to notice and re-run when the
+whole site is down for a while.
+
+`docs/EXTRACTION_COVERAGE.md` is the full regenerated ledger. The table
+below joins it against `gazette_notification`'s modeled count per
+ministry -- **raw total across all 53: 16,904; modeled total: 2,637**
+(the ministry pairs sharing one official `ddlMinistry` entry --
+Communications/Posts on value 294, and the two Finance departments on
+value 18 -- are scanned and counted once per `ministry_id`, so their raw
+figures are identical by construction, not a coincidence):
+
+| Ministry | Raw (2013-2026) | Modeled | Ratio | Truncated months |
+|---|---:|---:|---:|---:|
+| **Original 6 (recently deepened)** | | | | |
+| Department of Space | 5 | 5 | 1.00 | — |
+| Ministry of Youth Affairs and Sports | 29 | 4 | 7.25 | — |
+| Ministry of Consumer Affairs, Food and Public Distribution | 288 | 52 | 5.54 | — |
+| Ministry of Defence | 275 | 32 | 8.59 | 4 |
+| Ministry of External Affairs | 131 | 37 | 3.54 | — |
+| Ministry of Women and Child Development | 42 | 20 | 2.10 | — |
+| **Batch 1** | | | | |
+| Ministry of Agriculture and Farmers Welfare | 504 | 32 | 15.75 | 2 |
+| Department of Atomic Energy | 37 | 14 | 2.64 | — |
+| Ministry of Ayush | 125 | 29 | 4.31 | — |
+| Ministry of Chemicals and Fertilizers | 406 | 58 | 7.00 | 2 |
+| Ministry of Civil Aviation | 175 | 24 | 7.29 | — |
+| Ministry of Coal | 318 | 41 | 7.76 | — |
+| Ministry of Commerce and Industry | 1204 | 32 | 37.62 | 80 |
+| **Batch 2** | | | | |
+| Ministry of Communications (Dept. of Telecommunications) | 279 | 21 | 13.29 | 1 |
+| Ministry of Cooperation | 21 | 8 | 2.62 | — |
+| Ministry of Corporate Affairs | 416 | 60 | 6.93 | 1 |
+| Ministry of Culture | 156 | 27 | 5.78 | — |
+| Ministry of Development of North Eastern Region | 4 | 3 | 1.33 | — |
+| Ministry of Earth Sciences | 15 | 2 | 7.50 | — |
+| Ministry of Education | 122 | 36 | 3.39 | — |
+| **Batch 3** | | | | |
+| Ministry of Electronics and Information Technology | 218 | 29 | 7.52 | — |
+| Ministry of Environment, Forest and Climate Change | 887 | 24 | 36.96 | 27 |
+| Ministry of Finance (Economic Affairs/Expenditure/Financial Services/DIPAM) | 1212 | 112 | 10.82 | 80 |
+| Ministry of Finance (Revenue/CBIC) | 1212 | 55 | 22.04 | 80 |
+| Ministry of Fisheries, Animal Husbandry and Dairying | 178 | 40 | 4.45 | — |
+| Ministry of Food Processing Industries | 16 | 2 | 8.00 | — |
+| Ministry of Health and Family Welfare | 640 | 34 | 18.82 | 10 |
+| **Batch 4** | | | | |
+| Ministry of Heavy Industries | 77 | 29 | 2.66 | — |
+| Ministry of Home Affairs | 851 | 49 | 17.37 | 21 |
+| Ministry of Housing and Urban Affairs | 139 | 46 | 3.02 | — |
+| Ministry of Information and Broadcasting | 72 | 61 | 1.18 | — |
+| Ministry of Jal Shakti | 88 | 94 | 0.94 | — |
+| Ministry of Labour and Employment | 541 | 28 | 19.32 | 3 |
+| Ministry of Mines | 273 | 62 | 4.40 | 2 |
+| **Batch 5** | | | | |
+| Ministry of Minority Affairs | 38 | 24 | 1.58 | — |
+| Ministry of Micro, Small and Medium Enterprises | 66 | 12 | 5.50 | — |
+| Ministry of New and Renewable Energy | 23 | 9 | 2.56 | — |
+| Ministry of Parliamentary Affairs | 29 | 4 | 7.25 | — |
+| Ministry of Personnel, Public Grievances and Pensions | 305 | 487 | 0.63 | 1 |
+| Ministry of Petroleum and Natural Gas | 1154 | 73 | 15.81 | 72 |
+| Ministry of Ports, Shipping and Waterways | 402 | 164 | 2.45 | 6 |
+| **Batch 6** | | | | |
+| Ministry of Communications (Dept. of Posts) | 279 | 242 | 1.15 | 1 |
+| Ministry of Power | 538 | 34 | 15.82 | 5 |
+| Ministry of Railways | 1188 | 37 | 32.11 | 74 |
+| Ministry of Road Transport and Highways | 1216 | 20 | 60.80 | 81 |
+| Ministry of Rural Development | 56 | 29 | 1.93 | — |
+| Ministry of Science and Technology | 80 | 24 | 3.33 | — |
+| Ministry of Skill Development and Entrepreneurship | 33 | 26 | 1.27 | — |
+| **Batch 7** | | | | |
+| Ministry of Social Justice and Empowerment | 138 | 76 | 1.82 | 1 |
+| Ministry of Statistics and Programme Implementation | 74 | 16 | 4.62 | — |
+| Ministry of Steel | 82 | 65 | 1.26 | — |
+| Ministry of Textiles | 241 | 73 | 3.30 | — |
+| Ministry of Tribal Affairs | 6 | 20 | 0.30 | — |
+
+**Highest ratios** -- Road Transport and Highways (60.8:1), Commerce and
+Industry (37.6:1), Environment, Forest and Climate Change (37.0:1),
+Railways (32.1:1), Finance/CBIC (22.0:1) -- all large infrastructure or
+regulatory ministries whose real gazette volume is dominated by routine,
+non-citational content (land acquisitions, standard notifications,
+individual company/scheme orders) this project's citation-chain schema
+was never meant to capture. Consistent with every depth pass's own
+"deliberately NOT modeled" findings, just visible now at a much larger
+scale.
+
+**Lowest ratios -- read differently, not as "well covered."** Tribal
+Affairs (0.30:1), Personnel, Public Grievances and Pensions (0.63:1), and
+Jal Shakti (0.94:1) all have *more* modeled notifications than this
+ledger's 2013-2026 window found. That is not a contradiction: `docs/
+MINISTRY_COVERAGE_PLAN.md` and this file both record that Personnel's
+real history reaches back to 1954, Tribal Affairs' NCST appointment chain
+was recovered from archive.org back to 2004, and several ministries'
+oldest material predates 2013 entirely (see `docs/HISTORICAL_COVERAGE.md`
+-- 27 of 53 ministries have a 25+ year span). This ledger only ever
+queried egazette.gov.in's ministry-tagged search from 2013 onward, so a
+ratio under 1 means "most of this ministry's real modeled history is
+older than what this specific tool can see," never "this ministry's
+citation graph is more complete than its raw gazette count."
+
+**Systemic truncation** (the site's own ministry+month page consistently
+returning the full 15-row cap, meaning the true volume is higher than
+reported): Road Transport and Highways (81 of ~165 months), Commerce and
+Industry (80), both Finance departments (80 each), Petroleum and Natural
+Gas (72, after the outage), Railways (74), Environment/Forest/Climate
+Change (27), Home Affairs (21). 21 of 53 ministries hit the cap at least
+once; these seven hit it often enough that their reported raw counts
+should be read as floors, not totals.
