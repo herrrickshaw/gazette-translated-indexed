@@ -5,16 +5,28 @@ are real markup excerpts captured live from egazette.gov.in while building
 this module (Sep 2026, "Search by Publish Date" for 2026-09-01..2026-09-06
 and "Search by Ministry" for Ministry of Steel / January 2026) — these
 tests pin the parsing against real site output, not synthetic HTML.
+
+The one exception is the per-month retry/failure tests below, which mock
+search_by_ministry() itself (no real network either way) to exercise
+search_by_ministry_since()'s retry-and-continue behavior -- confirmed
+necessary live on 2026-09-07, when a multi-year scan hit both a transient
+connection failure and a real server 500 partway through and, before this
+fix, lost every already-fetched month along with it.
 """
 from datetime import date
+from unittest.mock import patch
 
 from ingest.egazette_search import (
+    MONTH_RETRIES,
     PAGE_SIZE,
+    EGazetteSearchError,
+    GazetteSearchResult,
     _egz_date,
     _extract_hidden,
     _iter_months,
     _rows_from_results_page,
     _strptime_egz,
+    search_by_ministry_since,
 )
 
 # Two real rows from a live "Search by Publish Date" result page (2026-09-01..2026-09-06).
@@ -135,3 +147,58 @@ def test_iter_months_single_month_yields_one_entry():
 def test_page_size_constant_matches_the_site_grid():
     # confirmed live: SearchPublishDate.aspx and SearchMinistry.aspx both page at exactly this size
     assert PAGE_SIZE == 15
+
+
+def _fake_result(month: int, year: int) -> GazetteSearchResult:
+    return GazetteSearchResult(
+        gazette_id=f"CG-DL-E-01{month:02d}{year}-100000", ministry="Ministry of Steel",
+        department=None, office=None, subject="s", category=None, part_section=None,
+        issue_date=date(year, month, 1), publish_date=date(year, month, 1),
+    )
+
+
+def test_search_by_ministry_since_continues_past_a_month_that_fails_every_retry(monkeypatch):
+    # Confirmed live 2026-09-07: a multi-year scan hit a real server 500 for
+    # one month in the middle of the range. Before this fix, that single
+    # month's exception propagated all the way up and discarded every
+    # month already successfully fetched.
+    calls = []
+
+    def flaky(ministry_value, month, year, timeout=30.0):
+        calls.append((year, month))
+        if (year, month) == (2020, 6):
+            raise EGazetteSearchError("searching ministry=34 6/2020: egazette.gov.in returned status 500")
+        return [_fake_result(month, year)]
+
+    monkeypatch.setattr("ingest.egazette_search.search_by_ministry", flaky)
+    monkeypatch.setattr("ingest.egazette_search.time.sleep", lambda _: None)  # skip real backoff delays
+
+    results, truncated, failed = search_by_ministry_since("34", date(2020, 5, 1), date(2020, 7, 31))
+
+    assert failed == [(2020, 6)]
+    assert truncated == []
+    assert {r.gazette_id for r in results} == {
+        "CG-DL-E-01052020-100000", "CG-DL-E-01072020-100000",
+    }
+    # the failing month was attempted MONTH_RETRIES times, not once
+    assert calls.count((2020, 6)) == MONTH_RETRIES
+
+
+def test_search_by_ministry_since_retries_and_recovers_a_transient_failure(monkeypatch):
+    attempts = {"n": 0}
+
+    def flaky_then_ok(ministry_value, month, year, timeout=30.0):
+        if (year, month) == (2020, 6):
+            attempts["n"] += 1
+            if attempts["n"] < MONTH_RETRIES:  # fails every attempt except the last
+                raise EGazetteSearchError("curl failed: connection reset")
+        return [_fake_result(month, year)]
+
+    monkeypatch.setattr("ingest.egazette_search.search_by_ministry", flaky_then_ok)
+    monkeypatch.setattr("ingest.egazette_search.time.sleep", lambda _: None)
+
+    results, truncated, failed = search_by_ministry_since("34", date(2020, 6, 1), date(2020, 6, 30))
+
+    assert failed == []
+    assert {r.gazette_id for r in results} == {"CG-DL-E-01062020-100000"}
+    assert attempts["n"] == MONTH_RETRIES

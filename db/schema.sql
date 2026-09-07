@@ -101,6 +101,10 @@ CREATE TABLE IF NOT EXISTS extraction_coverage (
     date_to             TEXT NOT NULL,   -- ISO 'YYYY-MM-DD', inclusive
     gazette_ids_found   TEXT NOT NULL,   -- JSON array of gazette_ids this scan returned (may be [])
     possibly_truncated  TEXT,            -- JSON array of [year, month] pairs that hit a page cap, or NULL
+    failed_months       TEXT,            -- JSON array of [year, month] pairs never successfully searched
+                                          -- (network/server errors survived MONTH_RETRIES attempts each), or
+                                          -- NULL -- these months are NOT covered despite falling inside
+                                          -- [date_from, date_to]; see ingest/coverage_ledger.py
     checked_at          TEXT NOT NULL    -- ISO datetime this scan was run
 );
 

@@ -95,7 +95,9 @@ def fetch_listing(slug: str, page: int = 1, timeout: int = 20) -> list[TrackerIt
     return items
 
 
-def fetch_official(ministry_id: str, since: date, until: date | None = None) -> tuple[list[TrackerItem], list[tuple[int, int]]]:
+def fetch_official(
+    ministry_id: str, since: date, until: date | None = None,
+) -> tuple[list[TrackerItem], list[tuple[int, int]], list[tuple[int, int]]]:
     """Query egazette.gov.in directly for one ministry via
     `ingest.egazette_search.search_by_ministry_since()`, merging across
     every dropdown value `db/egazette_ministry_map.py` lists for this
@@ -104,16 +106,19 @@ def fetch_official(ministry_id: str, since: date, until: date | None = None) -> 
     `TrackerItem` shape `fetch_listing()` uses -- `url` is the deterministic
     official PDF URL (`ingest.egazette.gazette_id_to_pdf_url`), not a
     tracker page -- plus the list of (year, month) that hit the site's
-    15-row page cap and may be incomplete (see
-    `ingest.egazette_search`'s module docstring)."""
+    15-row page cap and may be incomplete, plus the list of (year, month)
+    that failed outright after retries and were not searched at all (see
+    `ingest.egazette_search.search_by_ministry_since`'s docstring for both)."""
     values = EGAZETTE_MINISTRY_VALUES.get(ministry_id)
     if not values:
         raise EGazetteSearchError(f'no egazette.gov.in ddlMinistry value mapped for {ministry_id!r}')
     by_id: dict[str, TrackerItem] = {}
     all_truncated: list[tuple[int, int]] = []
+    all_failed: list[tuple[int, int]] = []
     for value in values:
-        results, truncated = search_by_ministry_since(value, since, until)
+        results, truncated, failed = search_by_ministry_since(value, since, until)
         all_truncated.extend(truncated)
+        all_failed.extend(failed)
         for r in results:
             by_id[r.gazette_id] = TrackerItem(
                 gazette_id=r.gazette_id,
@@ -121,7 +126,7 @@ def fetch_official(ministry_id: str, since: date, until: date | None = None) -> 
                 title=r.subject,
                 date=r.publish_date,
             )
-    return sorted(by_id.values(), key=lambda i: i.date), sorted(set(all_truncated))
+    return sorted(by_id.values(), key=lambda i: i.date), sorted(set(all_truncated)), sorted(set(all_failed))
 
 
 def high_water_mark(conn: sqlite3.Connection, ministry_id: str) -> date | None:
@@ -161,10 +166,11 @@ def check_ministry(conn: sqlite3.Connection, ministry_id: str, do_extract: bool,
 
     official_new: dict[str, TrackerItem] = {}
     truncated_months: list[tuple[int, int]] = []
+    failed_months: list[tuple[int, int]] = []
     official_status = "skipped"
     if not tracker_only:
         try:
-            official_items, truncated_months = fetch_official(ministry_id, mark)
+            official_items, truncated_months, failed_months = fetch_official(ministry_id, mark)
             official_new = {i.gazette_id: i for i in official_items if i.date > mark}
             official_status = "ok"
         except Exception as e:
@@ -181,7 +187,7 @@ def check_ministry(conn: sqlite3.Connection, ministry_id: str, do_extract: bool,
     result = {
         "ministry_id": ministry_id, "status": "ok", "high_water_mark": mark.isoformat(),
         "tracker_status": tracker_status, "official_status": official_status,
-        "truncated_months": truncated_months, "new_items": [],
+        "truncated_months": truncated_months, "failed_months": failed_months, "new_items": [],
     }
     for gazette_id in sorted(merged, key=lambda g: merged[g].date):
         item = merged[gazette_id]
@@ -228,6 +234,9 @@ def main() -> None:
         if result.get("truncated_months"):
             print(f"- **{mid}**: possibly-truncated official-source months (hit the page cap): "
                   f"{result['truncated_months']}")
+        if result.get("failed_months"):
+            print(f"- **{mid}**: official-source months that failed after retries (not searched at all): "
+                  f"{result['failed_months']}")
         if not result["new_items"]:
             continue
         total_new += len(result["new_items"])

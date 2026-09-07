@@ -283,31 +283,59 @@ def _iter_months(since: date, until: date):
             m, y = 1, y + 1
 
 
+MONTH_RETRIES = 3  # per-month attempts before giving up on that one month and moving on
+
+
 def search_by_ministry_since(
     ministry_value: str, since: date, until: date | None = None, *,
     delay_s: float = DEFAULT_DELAY_S, timeout: float = 30.0,
-) -> tuple[list[GazetteSearchResult], list[tuple[int, int]]]:
+) -> tuple[list[GazetteSearchResult], list[tuple[int, int]], list[tuple[int, int]]]:
     """Every result for one ministry from `since` through `until`
     (default: today), inclusive, queried one month at a time and filtered
     down to `publish_date >= since` / `<= until` (month granularity
     naturally over-fetches at the edges). Returns `(results,
-    possibly_truncated_months)` — the second list names any (year, month)
-    that came back with exactly `PAGE_SIZE` rows, i.e. might have more that
-    this client can't see (see the module docstring's pagination note)."""
+    possibly_truncated_months, failed_months)`:
+
+    - `possibly_truncated_months` names any (year, month) that came back
+      with exactly `PAGE_SIZE` rows, i.e. might have more that this client
+      can't see (see the module docstring's pagination note).
+    - `failed_months` names any (year, month) that never produced a result
+      after `MONTH_RETRIES` attempts each (a transient network drop or a
+      real server 500 -- confirmed live: egazette.gov.in does both over a
+      long multi-year scan). A wide date range is many independent
+      requests; one bad month used to take the whole range down with it,
+      discarding every month already fetched. Now a stuck month is
+      retried with backoff, then skipped and reported -- the caller
+      decides whether to re-run just those months later, same "report
+      honestly rather than force it" discipline as everywhere else in
+      this project (e.g. render/bulk_translate.py's own *.failed.jsonl)."""
     until = until or date.today()
     seen: dict[str, GazetteSearchResult] = {}
     truncated: list[tuple[int, int]] = []
+    failed: list[tuple[int, int]] = []
     months = list(_iter_months(since, until))
     for i, (y, m) in enumerate(months):
-        rows = search_by_ministry(ministry_value, m, y, timeout=timeout)
-        if len(rows) == PAGE_SIZE:
-            truncated.append((y, m))
-        for r in rows:
-            if r.publish_date and since <= r.publish_date <= until:
-                seen[r.gazette_id] = r
+        rows: list[GazetteSearchResult] | None = None
+        last_error: Exception | None = None
+        for attempt in range(MONTH_RETRIES):
+            try:
+                rows = search_by_ministry(ministry_value, m, y, timeout=timeout)
+                break
+            except EGazetteSearchError as e:
+                last_error = e
+                if attempt < MONTH_RETRIES - 1:
+                    time.sleep(2 ** (attempt + 1))
+        if rows is None:
+            failed.append((y, m))
+        else:
+            if len(rows) == PAGE_SIZE:
+                truncated.append((y, m))
+            for r in rows:
+                if r.publish_date and since <= r.publish_date <= until:
+                    seen[r.gazette_id] = r
         if i < len(months) - 1:
             time.sleep(delay_s)
-    return sorted(seen.values(), key=lambda r: r.publish_date or date.min), truncated
+    return sorted(seen.values(), key=lambda r: r.publish_date or date.min), truncated, failed
 
 
 def search_by_publish_date(date_from: date, date_to: date, *, timeout: float = 30.0) -> list[GazetteSearchResult]:
@@ -359,11 +387,14 @@ def main() -> int:
             return 2
         since = datetime.strptime(args.since, '%Y-%m-%d').date()
         until = datetime.strptime(args.until, '%Y-%m-%d').date() if args.until else None
-        results, truncated = search_by_ministry_since(args.ministry_value, since, until)
+        results, truncated, failed = search_by_ministry_since(args.ministry_value, since, until)
         for r in results:
             print(f'{r.gazette_id}\t{r.publish_date}\t{r.ministry}\t{r.subject[:80]}')
         if truncated:
             print(f'WARNING: possibly-truncated months (hit the {PAGE_SIZE}-row page limit): {truncated}',
+                  file=sys.stderr)
+        if failed:
+            print(f'WARNING: months that failed after {MONTH_RETRIES} attempts each (not covered at all): {failed}',
                   file=sys.stderr)
         return 0
 
