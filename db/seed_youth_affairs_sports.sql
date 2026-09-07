@@ -32,6 +32,34 @@
 -- not a gap to close, there is no number to find. The 2026 Khelo India
 -- Scheme renewal (F. No. K-15018/8/2026-KID) does not cite its 2022
 -- predecessor at all, gazetted or otherwise.
+--
+-- Second depth-pass re-check (2026-09-07): dispatched independently of the
+-- 2026-09-05 pass above, before knowing it had already run. gazettetracker.com's
+-- ministry listing for Youth Affairs and Sports still shows the identical
+-- 24 items (same gazette IDs, same dates) -- no new notification has been
+-- indexed since 2026-09-05. Its "Full Text" section is now gated behind a
+-- login wall on every item (a real site change from when the first depth
+-- pass ran, worth recording for future batches), so this re-check instead
+-- fetched the primary source directly -- egazette.gov.in's deterministic
+-- WriteReadData/<year>/<gazette-id>.pdf URL -- for all 20 of the 24 items
+-- not already modeled above, and grepped the extracted text (pdftotext) for
+-- every citation/amendment keyword this project's templates recognize
+-- (G.S.R./S.O., "supersession", "partial modification", "rescind",
+-- "corrigendum", "substituted", "Note:", "last amended", "vide", etc.).
+-- None hit. Concretely: the NSGA/NADA rule-making wave (G.S.R. 404(E)/
+-- 405(E)/637(E)/638(E)/641(E)/678(E), S.O. 3898(E)/3929(E)/2406(E)/4566(E))
+-- is each a first-instance rule or bare commencement notification citing
+-- only its own parent Act section, not any prior numbered notification.
+-- The Aadhaar-DBT notifications (ANSF, Scouting & Guiding, Academic
+-- Training, Youth Hostel, Scholarship, National Youth Corps, plus SAI
+-- Aadhaar authentication) each cite only a bare Cabinet Secretariat Office
+-- Memorandum (No. D-26011/04/2017-DBT, dated 19th December, 2017) -- a
+-- file-numbered OM, not a G.S.R./S.O./S.R.O., so correctly out of this
+-- schema's scope per the same rule used throughout this project. G.S.R.
+-- 404(E) (NSB Rules 2026) was independently re-read in full from the PDF
+-- and still only names its two sibling instruments by title (no number),
+-- confirming rather than adding to the 2026-09-05 finding. No file in this
+-- repo besides this paragraph was changed by this second check.
 
 INSERT OR IGNORE INTO ministry (ministry_id, name, department) VALUES
   ('youth-affairs-and-sports', 'Ministry of Youth Affairs and Sports', NULL);

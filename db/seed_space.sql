@@ -78,6 +78,55 @@
 -- item is a separate, unrelated file-number-only notification (National
 -- Space Day declaration, F. No. DS_5-18013/8/2023-V, 13 Oct 2023, no
 -- S.O./G.S.R. at all, cites nothing) — checked, not modeled (no edge).
+--
+-- Second depth pass (2026-09-06/07): gazettetracker.com itself is
+-- genuinely exhausted for this ministry — re-checked live, it still lists
+-- only the same 2 items above (verified via get_page_text against
+-- https://gazettetracker.com's Department of Space listing). Went to the
+-- primary source instead: `ingest.egazette_search` (egazette.gov.in's own
+-- "Search by Ministry" form, ministry dropdown value 71) was used to pull
+-- this ministry's full indexed history, closing row 39 of the Note table
+-- above — previously flagged "not independently located":
+--
+--   S.O. 2018(E), signed Bangalore 25.04.2022, Gazette No. 1918 dated
+--   29.04.2022 (gazette_id CG-KA-E-30042022-235463, fetched directly from
+--   egazette.gov.in/WriteReadData/2022/235463.pdf via `ingest.egazette`,
+--   text in data/raw_md/CG-KA-E-30042022-235463.md) amends S.O. 270(E),
+--   same NRSC designation-substitution pattern as every other amendment in
+--   this chain. `publish_date` below is the Gazette's own issue date
+--   (29.04.2022), not the 30.04.2022 digital-signature timestamp the
+--   search index reports nor the 25.04.2022 signing dateline, same
+--   convention already applied to S.O. 5979(E) above. Modeled below as
+--   dos-so-2018-2022.
+--
+--   This document's own Note table also reprints row 25 as "2/5(1)/95-V"
+--   (not "98-V") — a third independent source now agreeing with the two
+--   already noted (2018/2019 printings), against the 2025 printing's lone
+--   "98-V". Kept as-is (no citation modeled either way; this is a bare
+--   file-number row, not a G.S.R./S.O. citation) — noted here only to
+--   strengthen the existing collision note, not to change anything.
+--
+--   `ingest.egazette_search`'s dropdown (607 entries) has exactly one
+--   Department of Space entry (value 71) — no separate ISRO/NSIL/IN-SPACe
+--   ministry listing exists to check. A full month-by-month scan of that
+--   one entry from 2013-01 through 2026-09 (the entire span this ministry's
+--   file-number series E.14015/1/2012-IV covers, per the Note table) found
+--   no further notification beyond the ones already known from
+--   gazettetracker (S.O. 2018(E) above, and the already-checked National
+--   Space Day declaration) — see this file's git history for the full
+--   scan output. This ministry's real, tracked corpus is now genuinely
+--   exhausted: every citable notification in it is modeled.
+--
+-- Extractor: this Note's "vide No.S.O.270(E) dated ..." phrasing (right
+-- before the table) already fits the existing "bare-citation-reference"
+-- shared template (extract.common_templates.find_bare_citation_links,
+-- anchor 'vide') rather than needing a new one — confirmed live against
+-- the real S.O. 2018(E) text, which correctly returns only 'S.O. 270(E)'
+-- and none of the table's own row values (most lack the "(E)" suffix this
+-- project's citation regex always requires; the ones that do have it sit
+-- outside the 60-char 'vide' window). See extract/space_patterns.py
+-- (new — this ministry didn't have one before) and
+-- tests/test_space_patterns.py.
 
 INSERT OR IGNORE INTO ministry (ministry_id, name, department) VALUES
   ('department-of-space', 'Department of Space', NULL);
@@ -95,9 +144,13 @@ VALUES
   -- publish_date corrected 2026-09-05: 2025-12-24 (Gazette No. 5780 issue date), not the 15 Dec signing date
   ('dos-so-5979-2025', 'DoS', 'S.O. 5979(E)', 2025, 'so-only', '2025-12-24', 'S.O. 5979(E)', 'department-of-space', 'dos-employees-cca-rules-1976', 'dos-cca-rules-amendments'),
   ('dos-so-424-2018',  'DoS', 'S.O. 424(E)',  2018, 'so-only', '2018-01-30', 'S.O. 424(E)',  'department-of-space', 'dos-employees-cca-rules-1976', 'dos-cca-rules-amendments'),
-  ('dos-so-4235-2019', 'DoS', 'S.O. 4235(E)', 2019, 'so-only', '2019-11-22', 'S.O. 4235(E)', 'department-of-space', 'dos-employees-cca-rules-1976', 'dos-cca-rules-amendments');
+  ('dos-so-4235-2019', 'DoS', 'S.O. 4235(E)', 2019, 'so-only', '2019-11-22', 'S.O. 4235(E)', 'department-of-space', 'dos-employees-cca-rules-1976', 'dos-cca-rules-amendments'),
+  -- row 39 of the Note table, closed 2026-09-07: fetched as its own primary
+  -- PDF via ingest.egazette (see header comment above)
+  ('dos-so-2018-2022', 'DoS', 'S.O. 2018(E)', 2022, 'so-only', '2022-04-29', 'S.O. 2018(E)', 'department-of-space', 'dos-employees-cca-rules-1976', 'dos-cca-rules-amendments');
 
 INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
   ('dos-so-5979-2025', 'dos-so-270-1976', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('dos-so-424-2018',  'dos-so-270-1976', 'amends', 'primary-source-egazette', '2026-09-05'),
-  ('dos-so-4235-2019', 'dos-so-270-1976', 'amends', 'primary-source-egazette', '2026-09-05');
+  ('dos-so-4235-2019', 'dos-so-270-1976', 'amends', 'primary-source-egazette', '2026-09-05'),
+  ('dos-so-2018-2022', 'dos-so-270-1976', 'amends', 'primary-source-egazette', '2026-09-07');

@@ -6,11 +6,17 @@ speculatively ahead of that evidence.
 Two templates confirmed so far:
 
 1. "amendment-in-notification": the citing document says it "hereby makes
-   the following amendment[s] in the notification of the Government of
-   India ... Ministry of <name> ... [vide] number <citation>, dated
-   <date>". Confirmed for MoRTH (extract.morth_patterns) and Ministry of
-   Home Affairs (extract.mha_patterns) — same shape, different ministry
-   name and singular/plural "amendment(s)".
+   the following [further] amendment[s] in the notification of the
+   Government of India ... Ministry of <name> ... [vide] number
+   <citation>, dated <date>". Confirmed for MoRTH (extract.morth_patterns)
+   and Ministry of Home Affairs (extract.mha_patterns) — same shape,
+   different ministry name and singular/plural "amendment(s)". The
+   "further" variant ("makes the following further amendments") was
+   confirmed separately across seven real Ministry of Consumer Affairs,
+   Food and Public Distribution notifications (the S.O. 371(E) Aadhaar-
+   seeding deadline-extension chain, extract.consumer_affairs_patterns) —
+   handled as a second literal anchor, not a regex, per
+   find_amendment_in_notification_links's own comment.
 
 2. "corrigendum-substitution": the citing document says "In the
    notification of the Government of India in the Ministry of <name>
@@ -142,14 +148,36 @@ def find_amendment_in_notification_links(
     # enough to avoid false positives, and is a strict substring of every
     # correctly-spelled example already verified, so this only adds
     # coverage, it doesn't remove any.
-    anchor = 'makes the following amendment'
+    #
+    # A second anchor, "makes the following further amendment", is needed
+    # separately rather than folding "further" into the first anchor as an
+    # optional word: this is a literal-substring scan, not a regex, so an
+    # inserted word breaks the match outright rather than partially
+    # matching. Confirmed real across seven independent Ministry of
+    # Consumer Affairs, Food and Public Distribution notifications (the
+    # S.O. 371(E) Aadhaar-seeding deadline-extension series, each one
+    # reading "...hereby makes the following further amendments in the
+    # notification of the Government of India in the Ministry of ...
+    # vide number S.O. 371(E) ...") — see db/seed_consumer_affairs.sql.
+    # Anchoring on the shorter, "further"-free phrase first and treating
+    # "further" as a second literal anchor (rather than one regex with an
+    # optional group) keeps this function's existing literal-substring
+    # contract intact for every other ministry already relying on it.
+    anchors = ('makes the following amendment', 'makes the following further amendment')
     # Anchor on the ministry-name fragment too, so a document that mentions
     # amendments to some OTHER ministry's notification doesn't false-positive.
     # Checked against normalized text for the same reason as the anchor
     # itself — a long ministry name can wrap across a line too.
     if ministry_name.lower() not in _normalize(text).lower():
         return []
-    return find_after_anchor(text, anchor, self_citation)
+    out: list[TemplateLink] = []
+    seen = set()
+    for anchor in anchors:
+        for link in find_after_anchor(text, anchor, self_citation):
+            if link.target_citation not in seen:
+                seen.add(link.target_citation)
+                out.append(link)
+    return out
 
 
 def find_corrigendum_substitution_links(

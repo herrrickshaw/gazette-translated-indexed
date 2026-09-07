@@ -140,3 +140,29 @@ Token-efficiency policy adopted mid-pass (2026-09-05, batch 11): research agents
 The depth pass took 11 batches (a full research-agent call per ministry, often
 150-250K tokens of agent work each), on the order of the entire original
 coverage-plan effort again. It is now complete for all 53 ministries.
+
+## Return passes on old-but-thin ministries (2026-09-07)
+
+`docs/HISTORICAL_COVERAGE.md` re-examined the completed depth pass through a
+different lens — not "has this ministry been through a pass" but "does its
+notification count look thin relative to how long the ministry has
+existed" — and flagged 6 ministries as real candidates for more material
+despite already being marked "done" above. One parallel batch of 6
+research agents (one per ministry) ran a further return pass on exactly
+these 6, following the same rhythm as every batch above:
+
+| Ministry | Result | Count | Notes |
+|---|---|---|---|
+| Department of Space | done (2nd return pass) | 4 → 5 | row 39 of the existing Note table closed via `ingest.egazette_search`'s live ministry-search, confirmed exhausted afterward (full 2013-2026 span scanned, no further material) |
+| Youth Affairs and Sports | re-confirmed exhausted | 4 → 4 | independent re-check (gazettetracker Full Text now login-gated; verified all 20 remaining items directly against egazette.gov.in PDFs instead) — same conclusion as the original pass |
+| Consumer Affairs, Food and Public Distribution | done (2nd return pass) | 26 → 52 | 3 new chains: 8-node Aadhaar-seeding deadline-extension series, 10-node Warehousing Rules chain, 4-node NCDRC Recruitment Rules; found and fixed a real extractor gap ("further amendments" anchor) in the shared `amendment-in-notification` template |
+| Defence | done (2nd return pass) | 27 → 32 | new drafting convention found: Cantonment Board "constitution" notifications citing the preceding "variation" notification (`cites`, not amendment); a third Recruitment Rules chain |
+| External Affairs | done (2nd return pass) | 23 → 37 | closed all 4 UNSC-sanctions Order leads (DRC, Libya, Haiti, Iraq) flagged-not-fabricated by the original pass, plus one gap closure on the existing baseline-coordinates thread |
+| Women and Child Development | re-confirmed exhausted | 20 → 20 | independent third-pass check; the 3 amendment-sounding titles in the remaining corpus all turned out to already be modeled, the rest confirmed non-citational |
+
+Net: +26 notifications across the 4 ministries with real material left, 2
+ministries independently re-confirmed as genuinely exhausted rather than
+just re-stamping the earlier "done" verdict. Same discipline as the rest of
+this document: a ministry marked "exhausted" here has been checked twice
+now, by two separate passes, not assumed complete because a table row says
+so.

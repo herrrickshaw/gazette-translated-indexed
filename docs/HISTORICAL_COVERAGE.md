@@ -104,3 +104,12 @@ Ministry of Defence (47 years, N=27), Ministry of External Affairs
 `DEPTH_PASS_PLAN.md`'s existing pilot (Ministry of Power, 6→34 notifications)
 is exactly this kind of gap-closing pass; these six are where the same
 treatment would likely find the most.
+
+**Update (2026-09-07):** all six got a return pass — see
+`DEPTH_PASS_PLAN.md`'s "Return passes on old-but-thin ministries" section
+for the full results. Four had real material (Department of Space 4→5,
+Consumer Affairs 26→52, Defence 27→32, External Affairs 23→37); two
+(Youth Affairs and Sports, Women and Child Development) were independently
+re-checked and confirmed genuinely exhausted. The `N` values in the table
+above and the "oldest/newest" audit itself are unchanged snapshots from
+2026-09-06 — re-run the query at the top of this file for current counts.

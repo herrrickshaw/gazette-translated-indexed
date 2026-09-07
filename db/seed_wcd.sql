@@ -30,6 +30,38 @@
 -- Justice is out of scope for this project); a body-closure notification
 -- citing only "Gazette Notification dated 16.06.2021" with no number,
 -- not locatable in the Extraordinary-series sources this pass searched.
+--
+-- Second depth pass (2026-09-07): checked honestly for material beyond the
+-- 2026-09-05 pass, found nothing new to add. gazettetracker.com's tracked
+-- WCD corpus (still 11 items) was re-read via its Full Text sections (not
+-- summaries) end to end: the two items with amendment-sounding titles
+-- (a further amendment to the National Children's Fund notification, and a
+-- Hindi Advisory Committee resolution "in partial modification to
+-- Resolution ... dated 06.09.2025") turned out, on reading their primary
+-- text, to be the SAME S.O. 4423(E) (2026-06-08) and F. No. O.L. 11011/1/
+-- 2015 (2026-07-03) notifications already modeled below, just re-surfaced
+-- by the tracker's live feed under a later index/publish date; the NCPCR
+-- (Amendment) Rules, 2025 item is likewise the same G.S.R. 75(E) already
+-- modeled. The remaining 8 items (NCW chairperson/member appointments,
+-- NCPCR member-secretary tenure and resignation, NIPCCD's renaming to
+-- SPNIWCD, and the FNB/CSWB/RMK closure notifications) are confirmed
+-- non-citational — no amendment/supersession/corrigendum relationship to
+-- another notification anywhere in their text. Also re-checked, via
+-- wcd.gov.in/CARA primary text (not the aggregator), whether the deferred
+-- Adoption Regulations, 2022 (G.S.R. 726(E), 23 September 2022, in
+-- supersession of the Adoption Regulations, 2017) lead had since become
+-- locatable by number: its preamble still cites the 2017 Regulations by
+-- title only, no G.S.R. number anywhere in the text, so it remains
+-- correctly deferred, not modeled. Checked three more WCD-administered
+-- instruments for any real numbered amendment chain this project might
+-- have missed — the Protection of Women from Domestic Violence Rules, 2006
+-- (G.S.R. 644(E)), the Prohibition of Child Marriage Act (whose 2021
+-- Amendment Bill lapsed with the 17th Lok Sabha and was never notified),
+-- and any Juvenile Justice Rules or NCPCR Rules amendment later than the
+-- ones already modeled (G.S.R. 678(E)/2022 and G.S.R. 75(E)/2026
+-- respectively, both independently confirmed still current as of this
+-- pass) — none yielded a second real numbered notification to link
+-- against. No files besides this comment were changed this pass.
 
 INSERT OR IGNORE INTO ministry (ministry_id, name, department) VALUES
   ('women-child-development', 'Ministry of Women and Child Development', NULL);

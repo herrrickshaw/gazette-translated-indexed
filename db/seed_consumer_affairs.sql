@@ -21,6 +21,75 @@
 -- One further real lead (a Sugar (Control) Order, 2025 supersession of
 -- two predecessor orders) cites both superseded orders by title/year only
 -- — no G.S.R./S.O. number for either — deliberately not modeled.
+--
+-- Second depth pass (2026-09-07 — going beyond the 2026-09-04 pass above,
+-- per docs/DEPTH_PASS_PLAN.md's standing invitation for a ministry to be
+-- revisited more than once). Read gazettetracker.com's full 120-item,
+-- three-page listing for this ministry (2023-2026 coverage; the tracker's
+-- indexing does not reach this ministry's full 1966-2026 span) and fetched
+-- primary "Full Text" for every promising lead, never the AI summary.
+-- Three substantial new real chains found, none previously modeled:
+--
+-- 1. Aadhaar-seeding notification S.O. 371(E) (Department of Food and
+--    Public Distribution, under section 7 of the Aadhaar Act, 2016) — a
+--    running deadline-extension series. Seven consecutive real amendments
+--    (2023-2025) fully confirmed by primary text, each one both citing
+--    S.O. 371(E) directly in its body and naming its own immediate
+--    predecessor in its closing Note, giving an unbroken verified chain.
+--    This is also the pass that found a real extractor gap: every one of
+--    these seven notifications reads "...hereby makes the following
+--    FURTHER amendments..." rather than plain "...following amendment...",
+--    which the shared amendment-in-notification template's literal anchor
+--    did not match. Fixed at the shared-template level in
+--    extract/common_templates.py (a second literal anchor, since the
+--    scanner does substring matching, not regex) rather than in this
+--    ministry's own module, because every ministry reusing that template
+--    was silently affected the same way. See
+--    extract/consumer_affairs_patterns.py's docstring and
+--    tests/test_consumer_affairs_patterns.py for the confirming test.
+--
+-- 2. Warehousing (Development and Regulation) Registration of Warehouses
+--    Rules, 2017 (Department of Food and Public Distribution, under the
+--    Warehousing (Development and Regulation) Act, 2007) — an entirely new
+--    subject thread. One 2023 amendment's own Note recovers this
+--    instrument's full 2017-2022 amendment history (six real citations) in
+--    a single primary-text quote, the same kind of gap-closing find as
+--    Ministry of Coal's 18-item pension-scheme Note elsewhere in this
+--    project. That Note's own principal citation is printed as "G.S.R -
+--    165(E)" (a hyphen where the live citation regex requires a period
+--    directly after "R") — the regex silently drops only that one item;
+--    modeled here as a bare row per the same precedent already used for
+--    this file's own Sugarcane principal citation, evidenced by the same
+--    Note a human reader (and the research agent) can plainly read it in.
+--    A separate, later real amendment (G.S.R. 791(E)) names its own
+--    immediate predecessor as G.S.R. 503(E), dated 12th July 2023 — a real
+--    notification this pass did not independently locate and confirm, so
+--    it is modeled as a bare row with only the one edge actually evidenced
+--    (791(E) amends it), not backdated onto G.S.R. 788(E) despite being
+--    chronologically plausible — that specific link is not stated in any
+--    primary text read. A separate 2023 amendment (G.S.R. 676(E)) is
+--    modeled as its own branch off G.S.R. 788(E) exactly as its own Note
+--    states, even though this leaves it visibly parallel to, not
+--    sequential with, the G.S.R. 503(E)/791(E) branch — the two branches'
+--    real Notes simply disagree about which amendment came "last" as of
+--    September/October 2023, an apparent Ministry drafting inconsistency
+--    left as found rather than resolved by invention.
+--
+-- 3. National Consumer Disputes Redressal Commission (Group 'A' posts)
+--    Recruitment Rules, 2023 (Department of Consumer Affairs, under the
+--    Consumer Protection Act, 2019) — this ministry's first modeled chain
+--    from the Consumer Affairs side rather than Food and Public
+--    Distribution. Four real amendments (2024-2025) confirmed by primary
+--    text; the body text in every one names only the Rules' own title
+--    ("...hereby makes the following rules further to amend the National
+--    Consumer Disputes Redressal Commission (Group 'A' posts) Recruitment
+--    Rules, 2023...") with no "vide number" citation at all — only each
+--    document's own closing Note carries any citable number — so this
+--    chain is read via extract.common_templates.find_note_chain directly,
+--    no new extraction code needed. One intermediate amendment,
+--    G.S.R. 746(E) dated 3rd December 2024, is known only from being
+--    named in two later documents' own Notes and is modeled as a bare row
+--    on that evidence, per the same precedent as above.
 
 INSERT OR IGNORE INTO ministry (ministry_id, name, department) VALUES
   ('consumer-affairs-food-public-distribution', 'Ministry of Consumer Affairs, Food and Public Distribution', 'Department of Food and Public Distribution; Department of Consumer Affairs');
@@ -34,7 +103,10 @@ INSERT OR IGNORE INTO act_or_rule (instrument_id, title, year) VALUES
   ('vegetable-oil-products-order-2011', 'Vegetable Oil Products Production and Availability (Regulation) Order, 2011', 2011),
   ('sugarcane-control-order-1966', 'Sugarcane (Control) Order, 1966', 1966),
   ('food-security-assistance-rules-2015', 'Food Security (Assistance to State Governments) Rules, 2015', 2015),
-  ('tpds-control-order-2015', 'Targeted Public Distribution System (Control) Order, 2015', 2015);
+  ('tpds-control-order-2015', 'Targeted Public Distribution System (Control) Order, 2015', 2015),
+  ('aadhaar-s7-tpds-scheme-2017', 'Aadhaar (Targeted Delivery of Financial and Other Subsidies, Benefits and Services) Act, 2016 s.7 -- TPDS Aadhaar-seeding notification (S.O. 371(E))', 2017),
+  ('warehousing-development-regulation-registration-rules-2017', 'Warehousing (Development and Regulation) Registration of Warehouses Rules, 2017', 2017),
+  ('ncdrc-group-a-recruitment-rules-2023', 'National Consumer Disputes Redressal Commission (Group ''A'' posts) Recruitment Rules, 2023', 2023);
 
 INSERT OR IGNORE INTO subject_thread (thread_id, subject_summary, status) VALUES
   ('wheat-stock-limit-order', 'Wheat stock-limit order and its amendments', 'active'),
@@ -45,7 +117,10 @@ INSERT OR IGNORE INTO subject_thread (thread_id, subject_summary, status) VALUES
   ('vegetable-oil-order-amendment', 'Vegetable Oil Products Order amendment', 'active'),
   ('sugarcane-control-order-amendments', 'Sugarcane (Control) Order and its amendments', 'active'),
   ('food-security-assistance-rules-amendments', 'Food Security Assistance Rules and its amendments', 'active'),
-  ('tpds-control-order-amendments', 'TPDS Control Order and its amendments', 'active');
+  ('tpds-control-order-amendments', 'TPDS Control Order and its amendments', 'active'),
+  ('aadhaar-seeding-notification-so-371-amendments', 'Aadhaar-seeding notification S.O. 371(E) and its deadline-extension amendments', 'active'),
+  ('warehousing-registration-rules-amendments', 'Warehousing (Development and Regulation) Registration of Warehouses Rules, 2017 and its amendments', 'active'),
+  ('ncdrc-group-a-recruitment-rules-amendments', 'National Consumer Disputes Redressal Commission (Group A posts) Recruitment Rules, 2023 and its amendments', 'active');
 
 INSERT OR IGNORE INTO gazette_notification
   (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
@@ -82,7 +157,36 @@ VALUES
   -- TPDS Control Order chain
   ('cafpd-gsr-213-2015', 'Consumer Affairs', 'G.S.R. 213(E)', 2015, 'so-only', '2015-03-20', 'G.S.R. 213(E)', 'consumer-affairs-food-public-distribution', 'tpds-control-order-2015', 'tpds-control-order-amendments'),
   ('cafpd-gsr-43-2024',  'Consumer Affairs', 'G.S.R. 43(E)',  2024, 'so-only', '2024-01-15', 'G.S.R. 43(E)',  'consumer-affairs-food-public-distribution', 'tpds-control-order-2015', 'tpds-control-order-amendments'),
-  ('cafpd-gsr-488-2025', 'Consumer Affairs', 'G.S.R. 488(E)', 2025, 'so-only', '2025-07-22', 'G.S.R. 488(E)', 'consumer-affairs-food-public-distribution', 'tpds-control-order-2015', 'tpds-control-order-amendments');
+  ('cafpd-gsr-488-2025', 'Consumer Affairs', 'G.S.R. 488(E)', 2025, 'so-only', '2025-07-22', 'G.S.R. 488(E)', 'consumer-affairs-food-public-distribution', 'tpds-control-order-2015', 'tpds-control-order-amendments'),
+  -- Aadhaar-seeding notification S.O. 371(E) chain (depth pass 2026-09-07)
+  ('cafpd-so-371-2017',  'Consumer Affairs', 'S.O. 371(E)',  2017, 'so-only', '2017-02-08', 'S.O. 371(E)',  'consumer-affairs-food-public-distribution', 'aadhaar-s7-tpds-scheme-2017', 'aadhaar-seeding-notification-so-371-amendments'),
+  ('cafpd-so-2659-2023', 'Consumer Affairs', 'S.O. 2659(E)', 2023, 'so-only', '2023-06-15', 'S.O. 2659(E)', 'consumer-affairs-food-public-distribution', 'aadhaar-s7-tpds-scheme-2017', 'aadhaar-seeding-notification-so-371-amendments'),
+  ('cafpd-so-4099-2023', 'Consumer Affairs', 'S.O. 4099(E)', 2023, 'so-only', '2023-09-19', 'S.O. 4099(E)', 'consumer-affairs-food-public-distribution', 'aadhaar-s7-tpds-scheme-2017', 'aadhaar-seeding-notification-so-371-amendments'),
+  ('cafpd-so-5367-2023', 'Consumer Affairs', 'S.O. 5367(E)', 2023, 'so-only', '2023-12-18', 'S.O. 5367(E)', 'consumer-affairs-food-public-distribution', 'aadhaar-s7-tpds-scheme-2017', 'aadhaar-seeding-notification-so-371-amendments'),
+  ('cafpd-so-1355-2024', 'Consumer Affairs', 'S.O. 1355(E)', 2024, 'so-only', '2024-03-14', 'S.O. 1355(E)', 'consumer-affairs-food-public-distribution', 'aadhaar-s7-tpds-scheme-2017', 'aadhaar-seeding-notification-so-371-amendments'),
+  ('cafpd-so-2236-2024', 'Consumer Affairs', 'S.O. 2236(E)', 2024, 'so-only', '2024-06-11', 'S.O. 2236(E)', 'consumer-affairs-food-public-distribution', 'aadhaar-s7-tpds-scheme-2017', 'aadhaar-seeding-notification-so-371-amendments'),
+  ('cafpd-so-3959-2024', 'Consumer Affairs', 'S.O. 3959(E)', 2024, 'so-only', '2024-09-17', 'S.O. 3959(E)', 'consumer-affairs-food-public-distribution', 'aadhaar-s7-tpds-scheme-2017', 'aadhaar-seeding-notification-so-371-amendments'),
+  ('cafpd-so-5506-2024', 'Consumer Affairs', 'S.O. 5506(E)', 2024, 'so-only', '2024-12-18', 'S.O. 5506(E)', 'consumer-affairs-food-public-distribution', 'aadhaar-s7-tpds-scheme-2017', 'aadhaar-seeding-notification-so-371-amendments'),
+  ('cafpd-so-1459-2025', 'Consumer Affairs', 'S.O. 1459(E)', 2025, 'so-only', '2025-03-26', 'S.O. 1459(E)', 'consumer-affairs-food-public-distribution', 'aadhaar-s7-tpds-scheme-2017', 'aadhaar-seeding-notification-so-371-amendments'),
+  -- Warehousing (Development and Regulation) Registration of Warehouses Rules, 2017 chain (depth pass 2026-09-07)
+  ('cafpd-gsr-165-2017', 'Consumer Affairs', 'G.S.R. 165(E)', 2017, 'so-only', '2017-02-23', 'G.S.R. 165(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-1040-2017', 'Consumer Affairs', 'G.S.R. 1040(E)', 2017, 'so-only', '2017-08-22', 'G.S.R. 1040(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-251-2018', 'Consumer Affairs', 'G.S.R. 251(E)', 2018, 'so-only', '2018-03-20', 'G.S.R. 251(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-782-2020', 'Consumer Affairs', 'G.S.R. 782(E)', 2020, 'so-only', '2020-12-21', 'G.S.R. 782(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-786-2021', 'Consumer Affairs', 'G.S.R. 786(E)', 2021, 'so-only', '2021-11-03', 'G.S.R. 786(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-287-2022', 'Consumer Affairs', 'G.S.R. 287(E)', 2022, 'so-only', '2022-04-05', 'G.S.R. 287(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-788-2022', 'Consumer Affairs', 'G.S.R. 788(E)', 2022, 'so-only', '2022-10-14', 'G.S.R. 788(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-676-2023', 'Consumer Affairs', 'G.S.R. 676(E)', 2023, 'so-only', '2023-09-18', 'G.S.R. 676(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-503-2023', 'Consumer Affairs', 'G.S.R. 503(E)', 2023, 'so-only', '2023-07-12', 'G.S.R. 503(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-791-2023', 'Consumer Affairs', 'G.S.R. 791(E)', 2023, 'so-only', '2023-10-20', 'G.S.R. 791(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-311-2024', 'Consumer Affairs', 'G.S.R. 311(E)', 2024, 'so-only', '2024-06-04', 'G.S.R. 311(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  ('cafpd-gsr-137-2025', 'Consumer Affairs', 'G.S.R. 137(E)', 2025, 'so-only', '2025-02-13', 'G.S.R. 137(E)', 'consumer-affairs-food-public-distribution', 'warehousing-development-regulation-registration-rules-2017', 'warehousing-registration-rules-amendments'),
+  -- NCDRC (Group A posts) Recruitment Rules, 2023 chain (depth pass 2026-09-07)
+  ('cafpd-gsr-120-2023', 'Consumer Affairs', 'G.S.R. 120(E)', 2023, 'so-only', '2023-02-22', 'G.S.R. 120(E)', 'consumer-affairs-food-public-distribution', 'ncdrc-group-a-recruitment-rules-2023', 'ncdrc-group-a-recruitment-rules-amendments'),
+  ('cafpd-gsr-588-2024', 'Consumer Affairs', 'G.S.R. 588(E)', 2024, 'so-only', '2024-09-24', 'G.S.R. 588(E)', 'consumer-affairs-food-public-distribution', 'ncdrc-group-a-recruitment-rules-2023', 'ncdrc-group-a-recruitment-rules-amendments'),
+  ('cafpd-gsr-746-2024', 'Consumer Affairs', 'G.S.R. 746(E)', 2024, 'so-only', '2024-12-03', 'G.S.R. 746(E)', 'consumer-affairs-food-public-distribution', 'ncdrc-group-a-recruitment-rules-2023', 'ncdrc-group-a-recruitment-rules-amendments'),
+  ('cafpd-gsr-378-2025', 'Consumer Affairs', 'G.S.R. 378(E)', 2025, 'so-only', '2025-06-10', 'G.S.R. 378(E)', 'consumer-affairs-food-public-distribution', 'ncdrc-group-a-recruitment-rules-2023', 'ncdrc-group-a-recruitment-rules-amendments'),
+  ('cafpd-gsr-436-2025', 'Consumer Affairs', 'G.S.R. 436(E)', 2025, 'so-only', '2025-07-01', 'G.S.R. 436(E)', 'consumer-affairs-food-public-distribution', 'ncdrc-group-a-recruitment-rules-2023', 'ncdrc-group-a-recruitment-rules-amendments');
 
 INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
   ('cafpd-so-3926-2025', 'cafpd-so-2359-2025', 'amends', 'research-agent-quoted', '2026-09-03'),
@@ -101,4 +205,29 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('cafpd-gsr-384-2022', 'cafpd-gsr-636-2015', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('cafpd-gsr-544-2026', 'cafpd-gsr-384-2022', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('cafpd-gsr-43-2024',  'cafpd-gsr-213-2015', 'amends', 'research-agent-quoted', '2026-09-04'),
-  ('cafpd-gsr-488-2025', 'cafpd-gsr-43-2024',  'amends', 'research-agent-quoted', '2026-09-04');
+  ('cafpd-gsr-488-2025', 'cafpd-gsr-43-2024',  'amends', 'research-agent-quoted', '2026-09-04'),
+  -- Aadhaar-seeding notification S.O. 371(E) chain (depth pass 2026-09-07)
+  ('cafpd-so-2659-2023', 'cafpd-so-371-2017',  'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-so-4099-2023', 'cafpd-so-2659-2023', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-so-5367-2023', 'cafpd-so-4099-2023', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-so-1355-2024', 'cafpd-so-5367-2023', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-so-2236-2024', 'cafpd-so-1355-2024', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-so-3959-2024', 'cafpd-so-2236-2024', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-so-5506-2024', 'cafpd-so-3959-2024', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-so-1459-2025', 'cafpd-so-5506-2024', 'amends', 'research-agent-quoted', '2026-09-07'),
+  -- Warehousing (Development and Regulation) Registration of Warehouses Rules, 2017 chain (depth pass 2026-09-07)
+  ('cafpd-gsr-1040-2017', 'cafpd-gsr-165-2017',  'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-251-2018',  'cafpd-gsr-1040-2017', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-782-2020',  'cafpd-gsr-251-2018',  'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-786-2021',  'cafpd-gsr-782-2020',  'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-287-2022',  'cafpd-gsr-786-2021',  'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-788-2022',  'cafpd-gsr-287-2022',  'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-676-2023',  'cafpd-gsr-788-2022',  'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-791-2023',  'cafpd-gsr-503-2023',  'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-311-2024',  'cafpd-gsr-791-2023',  'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-137-2025',  'cafpd-gsr-311-2024',  'amends', 'research-agent-quoted', '2026-09-07'),
+  -- NCDRC (Group A posts) Recruitment Rules, 2023 chain (depth pass 2026-09-07)
+  ('cafpd-gsr-588-2024', 'cafpd-gsr-120-2023', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-746-2024', 'cafpd-gsr-588-2024', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-378-2025', 'cafpd-gsr-746-2024', 'amends', 'research-agent-quoted', '2026-09-07'),
+  ('cafpd-gsr-436-2025', 'cafpd-gsr-378-2025', 'amends', 'research-agent-quoted', '2026-09-07');
