@@ -1,5 +1,9 @@
 # Gazette Trail
 
+<!-- how-to-use-with-ai -->
+> **New here?** See [How to use this repo with AI (Claude, Gemini, ChatGPT)](HOW_TO_USE_WITH_AI.md) — clone it, paste it into an AI tool, and ask in plain English.
+
+
 A citation index for Indian gazette notifications: what a notification amends,
 what amended it before, and what it will be superseded by next — none of which
 is visible when you read a single notification on its own.
