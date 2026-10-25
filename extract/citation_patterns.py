@@ -153,6 +153,10 @@ def find_gazette_citations(text: str) -> list[GazetteCitation]:
             kind='S.R.O.', normalized=f'S.R.O. {m.group(1)}({m.group(2)})',
             start=m.start(), end=m.end(),
         ))
+    # Document order, not grouped by series: callers such as
+    # common_templates.find_note_chain rely on printed order to build
+    # amends-chains, and a Note can mix S.O. and G.S.R. items.
+    out.sort(key=lambda c: c.start)
     return out
 
 
