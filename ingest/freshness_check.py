@@ -62,9 +62,12 @@ from db.egazette_ministry_map import EGAZETTE_MINISTRY_VALUES  # noqa: E402
 from ingest.egazette import gazette_id_to_pdf_url  # noqa: E402
 from ingest.egazette_search import EGazetteSearchError, search_by_ministry_since  # noqa: E402
 
+# gazettetracker.com moved from a "browse-item" list to "feed-card" markup by
+# Oct 2026; the old pattern matched nothing, so every tracker query silently
+# returned [] and the check ran official-source-only without saying so.
 BROWSE_ITEM_RE = re.compile(
-    r'<time class="browse-item-date">([^<]+)</time>.*?'
-    r'<a href="(https://gazettetracker\.com/g/([A-Za-z0-9-]+))">([^<]+)</a>',
+    r'data-date="([^"]+)".*?'
+    r'<a href="(https://gazettetracker\.com/g/([A-Za-z0-9-]+))" class="feed-subject">([^<]+)</a>',
     re.DOTALL,
 )
 
