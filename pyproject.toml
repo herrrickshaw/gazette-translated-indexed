@@ -1,0 +1,10 @@
+[tool.ruff]
+target-version = "py39"
+line-length = 140
+extend-exclude = ["graphify-out", "notebooks"]
+
+[tool.ruff.lint]
+select = ["E9", "F", "I"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

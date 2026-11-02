@@ -57,8 +57,8 @@ from datetime import date, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from db.tracker_slugs import MINISTRY_TRACKER_SLUGS  # noqa: E402
 from db.egazette_ministry_map import EGAZETTE_MINISTRY_VALUES  # noqa: E402
+from db.tracker_slugs import MINISTRY_TRACKER_SLUGS  # noqa: E402
 from ingest.egazette import gazette_id_to_pdf_url  # noqa: E402
 from ingest.egazette_search import EGazetteSearchError, search_by_ministry_since  # noqa: E402
 
@@ -181,7 +181,6 @@ def check_ministry(conn: sqlite3.Connection, ministry_id: str, do_extract: bool,
 
     both_ids = tracker_new.keys() & official_new.keys()
     only_tracker_ids = tracker_new.keys() - official_new.keys()
-    only_official_ids = official_new.keys() - tracker_new.keys()
     merged = {**tracker_new, **official_new}  # official's url (a real PDF link) wins on overlap
 
     result = {

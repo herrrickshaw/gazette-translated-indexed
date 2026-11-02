@@ -22,6 +22,7 @@ from __future__ import annotations
 
 from .common_templates import (
     TemplateLink,
+    dedupe_links,
     find_amendment_in_notification_links,
     find_corrigendum_substitution_links,
 )
@@ -34,10 +35,4 @@ def find_candidate_links(text: str, self_citation: str | None = None) -> list[Te
     for name in _MINISTRY_NAMES:
         links += find_amendment_in_notification_links(text, name, self_citation=self_citation)
     links += find_corrigendum_substitution_links(text, 'education', self_citation=self_citation)
-    seen = set()
-    out = []
-    for l in links:
-        if l.target_citation not in seen:
-            seen.add(l.target_citation)
-            out.append(l)
-    return out
+    return dedupe_links(links)

@@ -43,30 +43,21 @@ never printed, read line-by-line for just the one key needed.
 from __future__ import annotations
 
 import json
-import os
 import sys
 import urllib.request
+
+from ingest.credentials import read_credential
 
 OLLAMA_PATH = "/api/generate"
 LOCAL_OLLAMA_URL = "http://127.0.0.1:11434"
 MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions"
 OLLAMA_MODEL = "mistral"
 MISTRAL_CLOUD_MODEL = "mistral-small-latest"
-CREDENTIALS_FILE = os.path.expanduser("~/.config/market-secrets/credentials.env")
 
 RELATION_TYPES = ("amends", "supersedes", "corrigendum", "rescinds", "repeals", "cites")
 
 
-def _read_credential(name: str) -> str | None:
-    value = os.environ.get(name)
-    if value:
-        return value
-    if os.path.exists(CREDENTIALS_FILE):
-        with open(CREDENTIALS_FILE, encoding="utf-8") as f:
-            for line in f:
-                if line.startswith(f"{name}="):
-                    return line.split("=", 1)[1].strip()
-    return None
+_read_credential = read_credential  # kept for existing callers
 
 
 def _load_api_key() -> str | None:

@@ -92,7 +92,29 @@ def _pdf_path(pdf_dir: Path, gazette_id: str) -> Path:
     return pdf_dir / parse_gazette_id(gazette_id)['yyyy'] / f'{gazette_id}.pdf'
 
 
+def _write_transcript(md_dir: Path, gazette_id: str, text: str) -> None:
+    """Write the extracted text under md_dir with a provenance front-matter block."""
+    parts = parse_gazette_id(gazette_id)
+    md_dir.mkdir(parents=True, exist_ok=True)
+    (md_dir / f'{gazette_id}.md').write_text(
+        f'---\nsource_url: https://egazette.gov.in/WriteReadData/{parts["yyyy"]}/'
+        f'{parts["fileid"]}.pdf\ngazette_id: {gazette_id}\n'
+        f'extraction_method: ingest.pdf_text (PyMuPDF)\n---\n\n{text}'
+    )
+
+
+def _classify(expected: list[str], recovered: list[str], missing: list[str]) -> str:
+    """Status for a row that used its ministry's own extractor."""
+    if expected and not missing:
+        return 'RECOVERED'
+    if expected:
+        return 'PARTIAL' if recovered else 'MISSED'
+    return 'TARGET_ONLY'
+
+
 def parse_row(row: dict, pdf_dir: Path, md_dir: Path) -> dict:
+    """Check one manifest row against its official PDF; returns the row plus
+    status/self_found/citations/recovered/missing (and found_all when parsed)."""
     gid = row['gazette_id']
     out = {**row, 'status': '', 'self_found': None, 'citations': [], 'recovered': [], 'missing': []}
     pdf = _pdf_path(pdf_dir, gid)
@@ -104,31 +126,20 @@ def parse_row(row: dict, pdf_dir: Path, md_dir: Path) -> dict:
     except LikelyScannedError:
         out['status'] = 'NEEDS_OCR'
         return out
-    md_dir.mkdir(parents=True, exist_ok=True)
-    (md_dir / f'{gid}.md').write_text(
-        f'---\nsource_url: https://egazette.gov.in/WriteReadData/{parse_gazette_id(gid)["yyyy"]}/'
-        f'{parse_gazette_id(gid)["fileid"]}.pdf\ngazette_id: {gid}\n'
-        f'extraction_method: ingest.pdf_text (PyMuPDF)\n---\n\n{text}'
-    )
+    _write_transcript(md_dir, gid, text)
     cites = [c.normalized for c in find_gazette_citations(text)]
     out['citations'] = sorted(set(cites))
     if row['self_citation']:
         out['self_found'] = row['self_citation'] in cites
     expected = [t for t in row['expected_targets'].split(';') if t]
     found = _run_extractor(row['ministry_id'], text, row['self_citation'])
-    if found is None:
+    generic = found is None
+    if generic:
         found = [c for c in out['citations'] if c != row['self_citation']]  # generic fallback
-        out['status'] = 'GENERIC'
     out['recovered'] = [t for t in expected if t in found]
     out['missing'] = [t for t in expected if t not in found]
     out['found_all'] = found
-    if not out['status']:
-        if expected and not out['missing']:
-            out['status'] = 'RECOVERED'
-        elif expected:
-            out['status'] = 'PARTIAL' if out['recovered'] else 'MISSED'
-        else:
-            out['status'] = 'TARGET_ONLY'
+    out['status'] = 'GENERIC' if generic else _classify(expected, out['recovered'], out['missing'])
     return out
 
 
@@ -180,7 +191,8 @@ def main() -> int:
     ap.add_argument('--update-db')
     args = ap.parse_args()
 
-    rows = list(csv.DictReader(open(args.manifest, newline='')))
+    with open(args.manifest, newline='') as f:
+        rows = list(csv.DictReader(f))
     results = [parse_row(r, Path(args.pdf_dir), Path(args.md_dir)) for r in rows]
     write_report(results, Path(args.report))
     for r in results:
