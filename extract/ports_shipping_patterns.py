@@ -20,6 +20,7 @@ modeled via extract.common_templates.find_note_chain instead.
 from __future__ import annotations
 
 from .common_templates import (
+    dedupe_links,
     TemplateLink,
     find_bare_citation_links,
     find_corrigendum_substitution_links,
@@ -33,10 +34,4 @@ def find_candidate_links(text: str, self_citation: str | None = None) -> list[Te
     links = find_corrigendum_substitution_links(text, MINISTRY_NAME, self_citation=self_citation)
     links += find_supersession_links(text, self_citation=self_citation)
     links += find_bare_citation_links(text, self_citation=self_citation)
-    seen = set()
-    out = []
-    for l in links:
-        if l.target_citation not in seen:
-            seen.add(l.target_citation)
-            out.append(l)
-    return out
+    return dedupe_links(links)

@@ -106,15 +106,21 @@ class TemplateLink:
     target_citation: str
 
 
-def find_after_anchor(text: str, anchor: str, self_citation: str | None,
-                       window_chars: int = _WINDOW_CHARS) -> list[TemplateLink]:
-    """Shared anchor-then-nearby-citation scan, normalizing whitespace first.
-    Public (no leading underscore) so extract.railways_patterns can reuse it
-    with its own anchor/window instead of maintaining a parallel copy of
-    this loop with its own copy of the same whitespace bug."""
-    text = _normalize(text)
-    lower = text.lower()
-    citations = find_gazette_citations(text)
+def dedupe_links(links: list[TemplateLink]) -> list[TemplateLink]:
+    """Drop repeat links to the same target citation, keeping first-seen order."""
+    seen: set[str] = set()
+    deduped: list[TemplateLink] = []
+    for link in links:
+        if link.target_citation not in seen:
+            seen.add(link.target_citation)
+            deduped.append(link)
+    return deduped
+
+
+def _collect_after_anchor(lower: str, citations: list, anchor: str, window_chars: int,
+                          self_citation: str | None) -> list[TemplateLink]:
+    """Every non-self citation starting within `window_chars` after each
+    occurrence of `anchor` in the already-lowercased, whitespace-normalized text."""
     out: list[TemplateLink] = []
     start = 0
     while True:
@@ -126,14 +132,19 @@ def find_after_anchor(text: str, anchor: str, self_citation: str | None,
             if idx < c.start < window_end and c.normalized != self_citation:
                 out.append(TemplateLink(target_citation=c.normalized))
         start = idx + len(anchor)
+    return out
 
-    seen = set()
-    deduped = []
-    for link in out:
-        if link.target_citation not in seen:
-            seen.add(link.target_citation)
-            deduped.append(link)
-    return deduped
+
+def find_after_anchor(text: str, anchor: str, self_citation: str | None,
+                       window_chars: int = _WINDOW_CHARS) -> list[TemplateLink]:
+    """Shared anchor-then-nearby-citation scan, normalizing whitespace first.
+    Public (no leading underscore) so extract.railways_patterns can reuse it
+    with its own anchor/window instead of maintaining a parallel copy of
+    this loop with its own copy of the same whitespace bug."""
+    text = _normalize(text)
+    lower = text.lower()
+    citations = find_gazette_citations(text)
+    return dedupe_links(_collect_after_anchor(lower, citations, anchor, window_chars, self_citation))
 
 
 def find_amendment_in_notification_links(
@@ -170,14 +181,10 @@ def find_amendment_in_notification_links(
     # itself — a long ministry name can wrap across a line too.
     if ministry_name.lower() not in _normalize(text).lower():
         return []
-    out: list[TemplateLink] = []
-    seen = set()
+    links: list[TemplateLink] = []
     for anchor in anchors:
-        for link in find_after_anchor(text, anchor, self_citation):
-            if link.target_citation not in seen:
-                seen.add(link.target_citation)
-                out.append(link)
-    return out
+        links += find_after_anchor(text, anchor, self_citation)
+    return dedupe_links(links)
 
 
 def find_corrigendum_substitution_links(
@@ -225,13 +232,7 @@ def find_supersession_links(text: str, self_citation: str | None = None) -> list
                 out.append(TemplateLink(target_citation=c.normalized))
         start = search_from
 
-    seen = set()
-    deduped = []
-    for link in out:
-        if link.target_citation not in seen:
-            seen.add(link.target_citation)
-            deduped.append(link)
-    return deduped
+    return dedupe_links(out)
 
 
 # Two different real lead-ins, both with no ministry name in between the
@@ -248,24 +249,8 @@ def find_bare_citation_links(text: str, self_citation: str | None = None) -> lis
     citations = find_gazette_citations(text)
     out: list[TemplateLink] = []
     for anchor in _BARE_CITATION_ANCHORS:
-        start = 0
-        while True:
-            idx = lower.find(anchor, start)
-            if idx == -1:
-                break
-            window_end = idx + len(anchor) + _BARE_CITATION_WINDOW_CHARS
-            for c in citations:
-                if idx < c.start < window_end and c.normalized != self_citation:
-                    out.append(TemplateLink(target_citation=c.normalized))
-            start = idx + len(anchor)
-
-    seen = set()
-    deduped = []
-    for link in out:
-        if link.target_citation not in seen:
-            seen.add(link.target_citation)
-            deduped.append(link)
-    return deduped
+        out += _collect_after_anchor(lower, citations, anchor, _BARE_CITATION_WINDOW_CHARS, self_citation)
+    return dedupe_links(out)
 
 
 # \b?note\b (optional boundary before, not just after) — a real Ministry
@@ -303,10 +288,4 @@ def find_note_chain(text: str) -> list[str]:
     if not m:
         return []
     tail = text[m.end():]
-    seen = set()
-    out = []
-    for c in find_gazette_citations(tail):
-        if c.normalized not in seen:
-            seen.add(c.normalized)
-            out.append(c.normalized)
-    return out
+    return list(dict.fromkeys(c.normalized for c in find_gazette_citations(tail)))

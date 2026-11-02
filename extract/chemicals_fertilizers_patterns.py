@@ -28,6 +28,7 @@ addenda and Quality Control Order rescissions.
 from __future__ import annotations
 
 from .common_templates import (
+    dedupe_links,
     TemplateLink,
     find_after_anchor,
     find_corrigendum_substitution_links,
@@ -40,10 +41,4 @@ _NPPA_WINDOW_CHARS = 150  # the citation follows almost immediately: "...Authori
 def find_candidate_links(text: str, self_citation: str | None = None) -> list[TemplateLink]:
     links = find_after_anchor(text, _NPPA_ANCHOR, self_citation, window_chars=_NPPA_WINDOW_CHARS)
     links += find_corrigendum_substitution_links(text, 'chemicals and fertilizers', self_citation=self_citation)
-    seen = set()
-    out = []
-    for l in links:
-        if l.target_citation not in seen:
-            seen.add(l.target_citation)
-            out.append(l)
-    return out
+    return dedupe_links(links)
