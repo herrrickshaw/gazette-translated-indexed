@@ -37,8 +37,8 @@ Verified against real examples (see db/seed_external_affairs.sql).
 from __future__ import annotations
 
 from .common_templates import (
-    dedupe_links,
     TemplateLink,
+    dedupe_links,
     find_amendment_in_notification_links,
     find_corrigendum_substitution_links,
     find_note_chain,

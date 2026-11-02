@@ -316,13 +316,11 @@ def search_by_ministry_since(
     months = list(_iter_months(since, until))
     for i, (y, m) in enumerate(months):
         rows: list[GazetteSearchResult] | None = None
-        last_error: Exception | None = None
         for attempt in range(MONTH_RETRIES):
             try:
                 rows = search_by_ministry(ministry_value, m, y, timeout=timeout)
                 break
-            except EGazetteSearchError as e:
-                last_error = e
+            except EGazetteSearchError:
                 if attempt < MONTH_RETRIES - 1:
                     time.sleep(2 ** (attempt + 1))
         if rows is None:

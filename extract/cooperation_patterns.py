@@ -21,8 +21,8 @@ Verified against real examples (see db/seed_cooperation.sql).
 from __future__ import annotations
 
 from .common_templates import (
-    dedupe_links,
     TemplateLink,
+    dedupe_links,
     find_amendment_in_notification_links,
     find_supersession_links,
 )

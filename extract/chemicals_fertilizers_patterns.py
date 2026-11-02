@@ -28,8 +28,8 @@ addenda and Quality Control Order rescissions.
 from __future__ import annotations
 
 from .common_templates import (
-    dedupe_links,
     TemplateLink,
+    dedupe_links,
     find_after_anchor,
     find_corrigendum_substitution_links,
 )

@@ -20,8 +20,8 @@ modeled via extract.common_templates.find_note_chain instead.
 from __future__ import annotations
 
 from .common_templates import (
-    dedupe_links,
     TemplateLink,
+    dedupe_links,
     find_bare_citation_links,
     find_corrigendum_substitution_links,
     find_supersession_links,

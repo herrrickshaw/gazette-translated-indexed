@@ -80,8 +80,8 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from typing import Callable
 from pathlib import Path
+from typing import Callable
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ingest.credentials import read_credential  # noqa: E402

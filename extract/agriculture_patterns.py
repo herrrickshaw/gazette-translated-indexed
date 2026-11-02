@@ -25,8 +25,8 @@ extract.common_templates.find_note_chain instead — no new code needed.
 from __future__ import annotations
 
 from .common_templates import (
-    dedupe_links,
     TemplateLink,
+    dedupe_links,
     find_amendment_in_notification_links,
     find_corrigendum_substitution_links,
 )

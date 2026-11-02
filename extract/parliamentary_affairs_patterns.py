@@ -21,8 +21,8 @@ and standalone recruitment rules).
 from __future__ import annotations
 
 from .common_templates import (
-    dedupe_links,
     TemplateLink,
+    dedupe_links,
     find_corrigendum_substitution_links,
     find_supersession_links,
 )

@@ -10,3 +10,5 @@ data/exports/
 # re-running against whichever backend is configured, same as data/exports/.
 data/translations/
 data/translations_libretranslate_archive/
+.venv/
+.ruff_cache/
