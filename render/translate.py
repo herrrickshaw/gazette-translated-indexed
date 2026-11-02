@@ -79,7 +79,9 @@ import os
 import sqlite3
 import sys
 import time
+import urllib.error
 import urllib.request
+from typing import Callable
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -136,6 +138,53 @@ def _read_credential(name: str) -> str | None:
     return None
 
 
+def _post_json_with_retry(url: str, payload: bytes, parse: Callable[[dict], str], *, timeout: int,
+                          retries: int, label: str,
+                          is_fatal: Callable[[Exception], bool] = lambda e: False,
+                          backs_off: Callable[[Exception], bool] = lambda e: True) -> str:
+    """POST `payload` (JSON bytes) to `url` and return parse(response_json).
+
+    Transient failures (timeouts, URLError incl. HTTPError) are retried up to
+    `retries` more times. `is_fatal(err)` re-raises immediately; `backs_off(err)`
+    decides whether to sleep 2s/4s/8s before retrying. Raises TimeoutError once
+    attempts are exhausted. `parse` errors (KeyError, bad JSON) propagate."""
+    last_error: Exception | None = None
+    for attempt in range(retries + 1):
+        try:
+            req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                body = json.loads(resp.read())
+            return parse(body)
+        except (TimeoutError, urllib.error.URLError) as e:  # HTTPError is a URLError
+            if is_fatal(e):
+                raise
+            last_error = e
+            if attempt < retries and backs_off(e):
+                time.sleep(2 ** (attempt + 1))  # 2s, 4s, 8s
+    raise TimeoutError(f"{label} call failed after {retries + 1} attempts: {last_error}")
+
+
+def _translate_fields(record: dict, lang: str, fields: tuple[str, ...], translate_one: Callable[[str], str]) -> dict:
+    """Copy of `record` with each non-empty field in `fields` translated by
+    `translate_one`, the English original kept under '<field>_en'."""
+    out = dict(record)
+    out["lang"] = lang
+    for field in fields:
+        value = record.get(field)
+        if not value:
+            continue
+        out[f"{field}_en"] = value
+        out[field] = translate_one(value)
+    return out
+
+
+def _is_transient_http(e: Exception) -> bool:
+    # 429 = rate-limited/quota; 503 = model temporarily overloaded (observed
+    # in practice on gemini-flash-latest under load) -- both are transient,
+    # everything else (400 bad request, 404 unknown model, ...) is not.
+    return isinstance(e, urllib.error.HTTPError) and e.code in (429, 503)
+
+
 def _translate_text(text: str, lang_name: str, api_key: str, model: str, timeout: int = 60, retries: int = 3) -> str:
     prompt = (
         f"Translate the following short administrative/legal phrase into {lang_name}. "
@@ -144,26 +193,12 @@ def _translate_text(text: str, lang_name: str, api_key: str, model: str, timeout
     )
     payload = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode()
     url = GEMINI_URL_TEMPLATE.format(model=model, key=api_key)
-    last_error: Exception | None = None
-    for attempt in range(retries + 1):
-        try:
-            req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                body = json.loads(resp.read())
-            return body["candidates"][0]["content"]["parts"][0]["text"].strip()
-        except urllib.error.HTTPError as e:
-            last_error = e
-            # 429 = rate-limited/quota; 503 = model temporarily overloaded (observed
-            # in practice on gemini-flash-latest under load) -- both are transient,
-            # everything else (400 bad request, 404 unknown model, ...) is not.
-            if e.code in (429, 503) and attempt < retries:
-                time.sleep(2 ** (attempt + 1))  # 2s, 4s, 8s
-                continue
-            if e.code not in (429, 503):
-                raise
-        except (TimeoutError, urllib.error.URLError) as e:
-            last_error = e
-    raise TimeoutError(f"Gemini call failed after {retries + 1} attempts: {last_error}")
+    return _post_json_with_retry(
+        url, payload, lambda body: body["candidates"][0]["content"]["parts"][0]["text"].strip(),
+        timeout=timeout, retries=retries, label="Gemini",
+        is_fatal=lambda e: isinstance(e, urllib.error.HTTPError) and not _is_transient_http(e),
+        backs_off=_is_transient_http,
+    )
 
 
 def translate_record(record: dict, lang: str | None = None, lang_name: str | None = None,
@@ -192,15 +227,8 @@ def translate_record(record: dict, lang: str | None = None, lang_name: str | Non
     # see the DEFAULT_MODEL comment above for why.
     model = model or DEFAULT_MODEL
 
-    out = dict(record)
-    out["lang"] = lang or lang_name
-    for field in fields:
-        value = record.get(field)
-        if not value:
-            continue
-        out[f"{field}_en"] = value
-        out[field] = _translate_text(value, lang_name, key, model)
-    return out
+    return _translate_fields(record, lang or lang_name, fields,
+                             lambda value: _translate_text(value, lang_name, key, model))
 
 
 DEFAULT_LIBRETRANSLATE_URL = "http://127.0.0.1:5001"
@@ -232,17 +260,10 @@ def libretranslate_status(timeout: float = 5.0) -> str:
 def _translate_text_libretranslate(text: str, tgt_code: str, url: str, timeout: int = 30, retries: int = 3) -> str:
     payload = json.dumps({"q": text, "source": "en", "target": tgt_code, "format": "text"}).encode()
     endpoint = f"{url.rstrip('/')}/translate"
-    last_error: Exception | None = None
-    for attempt in range(retries + 1):
-        try:
-            req = urllib.request.Request(endpoint, data=payload, headers={"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                return json.loads(resp.read())["translatedText"].strip()
-        except (TimeoutError, urllib.error.URLError, urllib.error.HTTPError) as e:
-            last_error = e
-            if attempt < retries:
-                time.sleep(2 ** (attempt + 1))
-    raise TimeoutError(f"LibreTranslate call failed after {retries + 1} attempts: {last_error}")
+    return _post_json_with_retry(
+        endpoint, payload, lambda body: body["translatedText"].strip(),
+        timeout=timeout, retries=retries, label="LibreTranslate",
+    )
 
 
 def translate_record_libretranslate(record: dict, lang: str, url: str | None = None,
@@ -255,15 +276,8 @@ def translate_record_libretranslate(record: dict, lang: str, url: str | None = N
         raise ValueError(f"libretranslate backend only supports {sorted(LIBRETRANSLATE_CODES)}, got {lang!r}")
     endpoint = url or _read_credential("LIBRETRANSLATE_URL") or DEFAULT_LIBRETRANSLATE_URL
 
-    out = dict(record)
-    out["lang"] = lang
-    for field in fields:
-        value = record.get(field)
-        if not value:
-            continue
-        out[f"{field}_en"] = value
-        out[field] = _translate_text_libretranslate(value, lang, endpoint)
-    return out
+    return _translate_fields(record, lang, fields,
+                             lambda value: _translate_text_libretranslate(value, lang, endpoint))
 
 
 DEFAULT_KRUTRIM_URL = "http://127.0.0.1:5002"
@@ -303,17 +317,10 @@ def krutrim_status(timeout: float = 5.0) -> str:
 def _translate_text_krutrim(text: str, tgt_flores: str, url: str, timeout: int = 30, retries: int = 3) -> str:
     payload = json.dumps({"text": text, "tgt_lang": tgt_flores}).encode()
     endpoint = f"{url.rstrip('/')}/translate"
-    last_error: Exception | None = None
-    for attempt in range(retries + 1):
-        try:
-            req = urllib.request.Request(endpoint, data=payload, headers={"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                return json.loads(resp.read())["translation"].strip()
-        except (TimeoutError, urllib.error.URLError, urllib.error.HTTPError) as e:
-            last_error = e
-            if attempt < retries:
-                time.sleep(2 ** (attempt + 1))
-    raise TimeoutError(f"Krutrim call failed after {retries + 1} attempts: {last_error}")
+    return _post_json_with_retry(
+        endpoint, payload, lambda body: body["translation"].strip(),
+        timeout=timeout, retries=retries, label="Krutrim",
+    )
 
 
 def translate_record_krutrim(record: dict, lang: str, url: str | None = None,
@@ -328,15 +335,8 @@ def translate_record_krutrim(record: dict, lang: str, url: str | None = None,
     endpoint = url or _read_credential("KRUTRIM_URL") or DEFAULT_KRUTRIM_URL
     tgt_flores = KRUTRIM_CODES[lang]
 
-    out = dict(record)
-    out["lang"] = lang
-    for field in fields:
-        value = record.get(field)
-        if not value:
-            continue
-        out[f"{field}_en"] = value
-        out[field] = _translate_text_krutrim(value, tgt_flores, endpoint)
-    return out
+    return _translate_fields(record, lang, fields,
+                             lambda value: _translate_text_krutrim(value, tgt_flores, endpoint))
 
 
 BACKEND_FNS = {
