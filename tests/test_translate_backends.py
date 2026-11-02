@@ -120,3 +120,16 @@ def test_auto_dispatch_and_resolve_backend():
     assert T.resolve_backend("sa") == "gemini"
     with pytest.raises(ValueError):
         T.resolve_backend("xx")
+
+
+def test_read_credential_env_then_file(tmp_path, monkeypatch):
+    from ingest.credentials import read_credential
+
+    f = tmp_path / "creds.env"
+    f.write_text("A_KEY= from-file \nOTHER=x\n")
+    monkeypatch.delenv("A_KEY", raising=False)
+    assert read_credential("A_KEY", str(f)) == "from-file"
+    monkeypatch.setenv("A_KEY", "from-env")
+    assert read_credential("A_KEY", str(f)) == "from-env"
+    assert read_credential("MISSING_KEY_XYZ", str(f)) is None
+    assert read_credential("MISSING_KEY_XYZ", str(tmp_path / "nope")) is None

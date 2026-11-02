@@ -75,7 +75,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sqlite3
 import sys
 import time
@@ -85,9 +84,9 @@ from typing import Callable
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from ingest.credentials import read_credential  # noqa: E402
 from render.llm_export import build_record  # noqa: E402
 
-CREDENTIALS_FILE = os.path.expanduser("~/.config/market-secrets/credentials.env")
 GEMINI_URL_TEMPLATE = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
 # "gemini-flash-latest" -- an alias, not a dated model name -- so this stays
 # on a current model without needing an edit here every time Google renames
@@ -126,16 +125,7 @@ SUPPORTED_LANGUAGES = {**INDIAN_LANGUAGES, **FOREIGN_LANGUAGES}
 TRANSLATABLE_FIELDS = ("ministry", "instrument", "thread", "summary")
 
 
-def _read_credential(name: str) -> str | None:
-    value = os.environ.get(name)
-    if value:
-        return value
-    if os.path.exists(CREDENTIALS_FILE):
-        with open(CREDENTIALS_FILE, encoding="utf-8") as f:
-            for line in f:
-                if line.startswith(f"{name}="):
-                    return line.split("=", 1)[1].strip()
-    return None
+_read_credential = read_credential  # kept for existing callers
 
 
 def _post_json_with_retry(url: str, payload: bytes, parse: Callable[[dict], str], *, timeout: int,
