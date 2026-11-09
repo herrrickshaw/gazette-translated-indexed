@@ -1,3 +1,8 @@
+-- Freshness pass 2026-11-09: S.O. 5557(E), 9 Oct 2026 [CG-DL-E-12102026-277070;
+-- official egazette PDF, 'primary-source-egazette'] adds species 199+ to the
+-- PPV&FR Act registrable-crop Table of S.O. 1536(E); Note: "last amended,
+-- vide S.O. 2605(E), dated the 22nd May, 2026" -> amends 2605(E).
+--
 -- Ministry of Agriculture and Farmers Welfare. Deepened 2026-09-04 (depth
 -- pass — see docs/DEPTH_PASS_PLAN.md) beyond the original bounded pass.
 --
@@ -123,3 +128,12 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('agri-so-2598-2026', 'agri-gsr-313-2024', 'amends', 'research-agent-quoted', '2026-09-04'),
   -- Cotton Seeds Price Order
   ('agri-so-2071-2026', 'agri-so-1472-2025', 'cites', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('agri-so-5557-2026', 'Agriculture', 'S.O. 5557(E)', 2026, 'so-only', '2026-10-09', 'S.O. 5557(E)', 'agriculture-and-farmers-welfare', 'plant-varieties-registered-list', 'agriculture-plant-varieties-registered-list');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('agri-so-5557-2026', 'agri-so-2605-2026', 'amends', 'primary-source-egazette', '2026-11-09');
