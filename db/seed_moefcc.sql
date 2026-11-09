@@ -13,11 +13,17 @@
 --     31 Mar 2026 [CG-DL-E-31032026-271465]: amends principal G.S.R.
 --     320(E) (same per-amendment-to-principal convention as this seed's
 --     other PWM links) and recites its draft "G.S.R 365 (E) dated the 3rd
---     June 2025" -> `cites` 365(E) (a preamble-sourced node, not opened).
+--     June 2025" -> `cites` 365(E). The draft itself was then opened
+--     too -- G.S.R. 365(E), 3 Jun 2025 [CG-DL-E-05062025-263615], a draft
+--     "for making certain amendments in the Plastic Waste Management Rules,
+--     2016, issued vide G.S.R. 320 (E)" -> `cites` 320(E).
+--   * Plastic Waste Management (Amendment) Rules, 2025 -- G.S.R. 73(E),
+--     23 Jan 2025 [CG-DL-E-23012025-260415] -> amends 320(E) (the "last
+--     amended" link named in 237(E)'s Note, now opened).
 -- Real leads NOT modeled: both CRZ Notes say "last amended vide ... S.O.
--- 5495(E), dated the 24th November, 2022" and the PWM Note names G.S.R.
--- 73(E) of 23 Jan 2025 as the last amendment -- neither opened, so no
--- node is added for them here.
+-- 5495(E), dated the 24th November, 2022" -- not opened, so no node is
+-- added for it. S.O. 2125(E) of 13 May 2025 (Doon Valley ESZ amendment)
+-- cites only non-modeled notifications.
 --
 -- 🔴 CORRECTION (2026-09-04): the S.O. 3182(E)/S.O. 3252(E) pair below was
 -- originally tagged 'spot-checked' against gazette ID CG-DL-E-19072023-247431
@@ -163,6 +169,7 @@ INSERT OR IGNORE INTO gazette_notification
 VALUES
   ('moefcc-gsr-410-2026', 'MoEFCC', 'G.S.R. 410(E)', 2026, 'so-only', '2026-05-26', 'G.S.R. 410(E)', 'environment-forest-climate-change', 'coastal-regulation-zone-notification', 'crz-2019-amendments'),
   ('moefcc-gsr-832-2026', 'MoEFCC', 'G.S.R. 832(E)', 2026, 'so-only', '2026-09-22', 'G.S.R. 832(E)', 'environment-forest-climate-change', 'coastal-regulation-zone-notification', 'crz-2019-amendments'),
+  ('moefcc-gsr-73-2025',  'MoEFCC', 'G.S.R. 73(E)',  2025, 'so-only', '2025-01-23', 'G.S.R. 73(E)',  'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
   ('moefcc-gsr-365-2025', 'MoEFCC', 'G.S.R. 365(E)', 2025, 'so-only', '2025-06-03', 'G.S.R. 365(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
   ('moefcc-gsr-237-2026', 'MoEFCC', 'G.S.R. 237(E)', 2026, 'so-only', '2026-03-31', 'G.S.R. 237(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments');
 
@@ -171,4 +178,6 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('moefcc-gsr-832-2026', 'moefcc-gsr-37-2019',  'amends', 'primary-source-egazette', '2026-11-09'),
   ('moefcc-gsr-832-2026', 'moefcc-gsr-410-2026', 'cites',  'primary-source-egazette', '2026-11-09'),
   ('moefcc-gsr-237-2026', 'moefcc-gsr-320-2016', 'amends', 'primary-source-egazette', '2026-11-09'),
-  ('moefcc-gsr-237-2026', 'moefcc-gsr-365-2025', 'cites',  'primary-source-egazette', '2026-11-09');
+  ('moefcc-gsr-237-2026', 'moefcc-gsr-365-2025', 'cites',  'primary-source-egazette', '2026-11-09'),
+  ('moefcc-gsr-73-2025',  'moefcc-gsr-320-2016', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('moefcc-gsr-365-2025', 'moefcc-gsr-320-2016', 'cites',  'primary-source-egazette', '2026-11-09');
