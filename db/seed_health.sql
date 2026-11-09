@@ -1,3 +1,12 @@
+-- Freshness pass 2026-11-09: S.O. 4887(E), 31 Aug 2026
+-- [CG-DL-E-07092026-276033; official egazette PDF, 'primary-source-egazette']
+-- -- NCAHP Commission member substitution, "further to amend the
+-- notification ... number S.O. 1248 (E), dated the 11th March, 2024" ->
+-- amends 1248(E), as cited by its operative text. Its Note is STALE ("last
+-- amended vide notification number 1066 (E), dated 28th February, 2026"):
+-- S.O. 1066(E) is of 2025, and 4636(E), 850(E) and 4340(E) followed it --
+-- so no edge to a "latest" link is inferred.
+--
 -- Ministry of Health and Family Welfare. Deepened 2026-09-04 (depth pass
 -- — see docs/DEPTH_PASS_PLAN.md) beyond the original bounded pass
 -- (1 pair). gazettetracker.com's "Cite This Gazette" widget was found to
@@ -130,3 +139,12 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('mohfw-so-3617-2026', 'mohfw-so-2945-2026', 'corrigendum', 'research-agent-quoted', '2026-09-04'),
   -- Transplantation of Human Organs and Tissues Act
   ('mohfw-so-2969-2026', 'mohfw-so-1372-2024', 'rescinds', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('mohfw-so-4887-2026', 'MoHFW', 'S.O. 4887(E)', 2026, 'so-only', '2026-08-31', 'S.O. 4887(E)', 'health-family-welfare', 'nca-hp-act-2021-commission', 'nca-hp-commission-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('mohfw-so-4887-2026', 'mohfw-so-1248-2024', 'amends', 'primary-source-egazette', '2026-11-09');
