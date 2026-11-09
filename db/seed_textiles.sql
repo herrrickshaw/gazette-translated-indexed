@@ -1,3 +1,15 @@
+-- Freshness pass 2026-11-09 (official egazette PDFs, 'primary-source-egazette';
+-- transcripts in data/raw_md/):
+--   * Central Silk Board (Second Amendment) Rules, 2026 -- G.S.R. 872(E),
+--     1 Oct 2026 [CG-DL-E-09102026-276987]: Note lists principal S.R.O. 662
+--     (23 Mar 1955) through "(xi) G.S.R. 36(E), dated the 15th January
+--     2026" -> amends S.R.O. 662 and cites 36(E) (same shape as 36(E)'s own
+--     modeling).
+--   * Jute Packaging reservation Order validity extension -- S.O. 5794(E),
+--     27 Oct 2026 [CG-DL-E-27102026-277453]: "makes the following amendment
+--     in the Order ... vide number S.O. 1830(E), dated the 22nd April, 2025"
+--     (validity to 31 Jan 2027) -> amends 1830(E).
+--
 -- Ministry of Textiles. Coverage-plan pilot (2026-09-04) then depth pass
 -- (2026-09-05): 145-item corpus (3 listing pages) fully read via gazettetracker
 -- Full Text + 9 egazette PDF cross-checks. Went from 8 notifications / 6
@@ -211,3 +223,14 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('textiles-so-1010-2026', 'textiles-so-2523-2021', 'cites', 'research-agent-quoted', '2026-09-05'),
   ('textiles-so-2657-2024', 'textiles-so-2601-2022', 'cites', 'research-agent-quoted', '2026-09-05');
 
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('textiles-gsr-872-2026', 'Textiles', 'G.S.R. 872(E)', 2026, 'so-only', '2026-10-01', 'G.S.R. 872(E)', 'textiles', 'central-silk-board-rules-1955', 'textiles-central-silk-board-rules'),
+  ('textiles-so-5794-2026', 'Textiles', 'S.O. 5794(E)', 2026, 'so-only', '2026-10-27', 'S.O. 5794(E)', 'textiles', 'jpm-reservation-order', 'textiles-jpm-reservation-order');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('textiles-gsr-872-2026', 'textiles-sro-662-1955', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('textiles-gsr-872-2026', 'textiles-gsr-36-2026',  'cites',  'primary-source-egazette', '2026-11-09'),
+  ('textiles-so-5794-2026', 'textiles-so-1830-2025', 'amends', 'primary-source-egazette', '2026-11-09');
