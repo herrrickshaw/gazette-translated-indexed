@@ -1,3 +1,14 @@
+-- Freshness pass 2026-11-09: two Petroleum Rules r.16(1) port-of-import
+-- extensions, each read from its official egazette PDF
+-- ('primary-source-egazette'; transcripts in data/raw_md/), modeled as
+-- `cites` like the existing "in continuation of" links:
+--   * S.O. 5746(E), 22 Oct 2026 [CG-DL-E-22102026-277349] -- Pipavav, "in
+--     continuation of ... Notification No. S.O. 2365(E) dated 27th May,
+--     2025" -> cites 2365(E).
+--   * S.O. 5140(E), 17 Sep 2026 [CG-DL-E-18092026-276324] -- Sikka, "in
+--     continuation of ... Notification No. S.O. 140(E) dated 8th January,
+--     2025" -> cites 140(E).
+--
 -- Ministry of Ports, Shipping and Waterways. Deepened 2026-09-04 (depth
 -- pass — see docs/DEPTH_PASS_PLAN.md) beyond the original bounded pass (3
 -- pairs). Generated from the research log by a one-off script (scratchpad
@@ -434,3 +445,14 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('mopsw-gsr-395-2025', 'mopsw-gsr-884-2021', 'cites', 'research-agent-quoted', '2026-09-04'),
   ('mopsw-so-964-2025', 'mopsw-no-681-2023', 'cites', 'research-agent-quoted', '2026-09-04'),
   ('mopsw-gsr-915-2025', 'mopsw-gsr-20-2021', 'amends', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('mopsw-so-5746-2026', 'MoPSW', 'S.O. 5746(E)', 2026, 'so-only', '2026-10-22', 'S.O. 5746(E)', 'ports-shipping-waterways', 'petroleum-rules-2002-r16-port-of-import', 'port-of-import-pipavav'),
+  ('mopsw-so-5140-2026', 'MoPSW', 'S.O. 5140(E)', 2026, 'so-only', '2026-09-17', 'S.O. 5140(E)', 'ports-shipping-waterways', 'petroleum-rules-2002-r16-port-of-import', 'port-of-import-sikka');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('mopsw-so-5746-2026', 'mopsw-so-2365-2025', 'cites', 'primary-source-egazette', '2026-11-09'),
+  ('mopsw-so-5140-2026', 'mopsw-so-140-2025',  'cites', 'primary-source-egazette', '2026-11-09');
