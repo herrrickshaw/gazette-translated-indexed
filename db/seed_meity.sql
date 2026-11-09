@@ -2,6 +2,20 @@
 -- 2026-09-04 (depth pass — see docs/DEPTH_PASS_PLAN.md) beyond the
 -- original bounded pass (1 pair).
 --
+-- Freshness pass 2026-11-09: the Electronics and IT Goods (Requirement of
+-- Compulsory Registration) Order, 2021 note-chain gained two links, each
+-- read from its own official egazette PDF ('primary-source-egazette';
+-- transcripts in data/raw_md/):
+--   * S.O. 5190(E), 21 Sep 2026 [CG-DL-E-21092026-276371] -- adds Screen
+--     Protectors (IS 19348:2025) at S. No. 66; Note ends "S.O. 2204(E)
+--     dated 5th May, 2026 and S.O. 4182(E) dated 26th July, 2026" ->
+--     amends 4182(E).
+--   * S.O. 5689(E), 16 Oct 2026 [CG-DL-E-19102026-277286] -- extends the
+--     Standalone Hard Disk Drives date (set by S.O. 2204(E)) to 1 May 2027;
+--     Note ends "... and S.O. NO 5190(E) dated 21st September, 2026" ->
+--     amends 5190(E) (same note-chain convention as 4182(E), itself a
+--     date extension).
+--
 -- The already-modeled G.S.R. 120(E)/148(E) corrigendum turned out to sit
 -- at the end of a longer real chain: the IT (Intermediary Guidelines and
 -- Digital Media Ethics Code) Rules, 2021 principal (G.S.R. 139(E)) with
@@ -112,3 +126,14 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   -- Recruitment Rules
   ('meity-gsr-594-2025', 'meity-gsr-1031-2018', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('meity-gsr-826-2025', 'meity-gsr-468-2021',  'amends', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('meity-so-5190-2026', 'MeitY', 'S.O. 5190(E)', 2026, 'so-only', '2026-09-21', 'S.O. 5190(E)', 'electronics-and-information-technology', 'electronics-it-goods-registration-order-2021', 'electronics-registration-order-amendments'),
+  ('meity-so-5689-2026', 'MeitY', 'S.O. 5689(E)', 2026, 'so-only', '2026-10-16', 'S.O. 5689(E)', 'electronics-and-information-technology', 'electronics-it-goods-registration-order-2021', 'electronics-registration-order-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('meity-so-5190-2026', 'meity-so-4182-2026', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('meity-so-5689-2026', 'meity-so-5190-2026', 'amends', 'primary-source-egazette', '2026-11-09');
