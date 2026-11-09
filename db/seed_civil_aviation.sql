@@ -1,3 +1,10 @@
+-- Freshness pass 2026-11-09: S.O. 5660(E), 15 Oct 2026 [CG-DL-E-16102026-277207;
+-- official egazette PDF, 'primary-source-egazette'] -- delegation of
+-- powers to DGCA officers under the Aircraft (Carriage of Dangerous Goods)
+-- Rules, 2026; preamble: "by the notification ... vide G.S.R. 137(E), dated
+-- the 17th February, 2026 ... the Aircraft (Carriage of Dangerous Goods)
+-- Rules, 2026 were made" -> cites 137(E) (a delegation, not an amendment).
+--
 -- Ministry of Civil Aviation. Deepened 2026-09-04 (depth pass — see
 -- docs/DEPTH_PASS_PLAN.md) beyond the original 2-pair pass.
 --
@@ -100,3 +107,12 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('civav-gsr-769-2024', 'civav-gsr-596-2023', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('civav-gsr-877-2023', 'civav-gsr-751-2015', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('civav-gsr-335-2024', 'civav-gsr-877-2023', 'amends', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('civav-so-5660-2026', 'Civil Aviation', 'S.O. 5660(E)', 2026, 'so-only', '2026-10-15', 'S.O. 5660(E)', 'civil-aviation', 'aircraft-carriage-dangerous-goods-rules-2026', 'civil-aviation-dangerous-goods-rules');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('civav-so-5660-2026', 'civav-gsr-137-2026', 'cites', 'primary-source-egazette', '2026-11-09');
