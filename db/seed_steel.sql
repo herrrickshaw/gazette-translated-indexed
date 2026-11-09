@@ -1,5 +1,13 @@
 -- Ministry of Steel pilot.
 --
+-- Freshness pass 2026-11-09: DMI&SP Policy amendment G.S.R. 888(E), 14 Oct
+-- 2026 [CG-DL-E-15102026-277181; official egazette PDF,
+-- 'primary-source-egazette']: "In the ... (DMI&SP) Policy, notified vide
+-- G.S.R. 904(E), dated 17th December, 2025, and subsequently amended on
+-- 7th August, 2026" -> amends 904(E). The 7 Aug 2026 amendment (G.S.R.
+-- 720(E), already modeled) is cited by date only, no number, so no edge
+-- to it is drawn.
+--
 -- Modeled: S.O. 2685(E) corrects an address in S.O. 1868(E), a Collection of
 -- Statistics Act notification (verified_by 'research-agent-quoted').
 --
@@ -195,3 +203,11 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('steel-so-482-2020', 'steel-so-1435-2011', 'supersedes', 'research-agent-quoted', '2026-09-05'),
   ('steel-so-2893-2016', 'steel-so-1611-1999', 'supersedes', 'research-agent-quoted', '2026-09-05');
 
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('steel-gsr-888-2026', 'Steel', 'G.S.R. 888(E)', 2026, 'so-only', '2026-10-14', 'G.S.R. 888(E)', 'steel', 'dmisp-policy', 'steel-dmisp-policy');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('steel-gsr-888-2026', 'steel-gsr-904-2025', 'amends', 'primary-source-egazette', '2026-11-09');
