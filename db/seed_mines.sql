@@ -1,3 +1,17 @@
+-- Freshness pass 2026-11-09: Mineral (Auction) Third Amendment Rules, 2026
+-- -- G.S.R. 898(E), 16 Oct 2026 [CG-DL-E-19102026-277279; official
+-- egazette PDF, 'primary-source-egazette'] -> amends G.S.R. 223(E). Its
+-- Note enumerates the COMPLETE amendment history of the 2015 Rules (14
+-- items): 1469(E) 30-11-2017, 190(E) 20-03-2020, 195(E) 17-03-2021,
+-- 422(E) 18-06-2021, 776(E) 02-11-2021, 857(E) 14-12-2021, 137(E)
+-- 18-02-2022, 648(E) 01-09-2023, 49(E) 21-01-2024, 255(E) 23-04-2025,
+-- 764(E) 17-10-2025, 776(E) 22-10-2025, 71(E) 29-01-2026, 223(E)
+-- 30-03-2026. GAP CLOSED: the earlier pass had 71(E) amending the 2015
+-- principal directly; items 1-12 are now Note-sourced nodes (not
+-- independently opened -- same standard as the Posts IPO-Rules Note
+-- chain), linked linearly, and 71(E) is re-pointed to item 12. G.S.R.
+-- 776(E) occurs twice (2021 and 2025), kept distinct by year in gazette_id.
+--
 -- Ministry of Mines. Deepened 2026-09-04 (depth pass — see
 -- docs/DEPTH_PASS_PLAN.md) beyond the original bounded pass (3 pairs/
 -- chains).
@@ -103,6 +117,19 @@ VALUES
   ('mines-gsr-683-2026', 'Mines', 'G.S.R. 683(E)', 2026, 'so-only', '2026-07-30', 'G.S.R. 683(E)', 'mines', 'mineral-conservation-development-rules-2017', 'mines-mcdr-amendments'),
   -- Mineral (Auction) Rules three-node chain (unchanged)
   ('mines-gsr-406-2015', 'Mines', 'G.S.R. 406(E)', 2015, 'so-only', '2015-05-20', 'G.S.R. 406(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  -- Freshness pass 2026-11-09: 12 Note-sourced intermediate amendments (see header)
+  ('mines-gsr-1469-2017', 'Mines', 'G.S.R. 1469(E)', 2017, 'so-only', '2017-11-30', 'G.S.R. 1469(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-190-2020', 'Mines', 'G.S.R. 190(E)', 2020, 'so-only', '2020-03-20', 'G.S.R. 190(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-195-2021', 'Mines', 'G.S.R. 195(E)', 2021, 'so-only', '2021-03-17', 'G.S.R. 195(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-422-2021', 'Mines', 'G.S.R. 422(E)', 2021, 'so-only', '2021-06-18', 'G.S.R. 422(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-776-2021', 'Mines', 'G.S.R. 776(E)', 2021, 'so-only', '2021-11-02', 'G.S.R. 776(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-857-2021', 'Mines', 'G.S.R. 857(E)', 2021, 'so-only', '2021-12-14', 'G.S.R. 857(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-137-2022', 'Mines', 'G.S.R. 137(E)', 2022, 'so-only', '2022-02-18', 'G.S.R. 137(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-648-2023', 'Mines', 'G.S.R. 648(E)', 2023, 'so-only', '2023-09-01', 'G.S.R. 648(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-49-2024', 'Mines', 'G.S.R. 49(E)', 2024, 'so-only', '2024-01-21', 'G.S.R. 49(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-255-2025', 'Mines', 'G.S.R. 255(E)', 2025, 'so-only', '2025-04-23', 'G.S.R. 255(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-764-2025', 'Mines', 'G.S.R. 764(E)', 2025, 'so-only', '2025-10-17', 'G.S.R. 764(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
+  ('mines-gsr-776-2025', 'Mines', 'G.S.R. 776(E)', 2025, 'so-only', '2025-10-22', 'G.S.R. 776(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
   ('mines-gsr-71-2026',  'Mines', 'G.S.R. 71(E)',  2026, 'so-only', '2026-01-29', 'G.S.R. 71(E)',  'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
   ('mines-gsr-223-2026', 'Mines', 'G.S.R. 223(E)', 2026, 'so-only', '2026-03-30', 'G.S.R. 223(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments'),
   -- Atomic Minerals Concession Rules, 2016 (7-node chain)
@@ -175,7 +202,7 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('mines-gsr-683-2026', 'mines-gsr-449-2026', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('mines-gsr-683-2026', 'mines-penalties-gsr-682-2026', 'cites', 'research-agent-quoted', '2026-09-04'),
   -- Auction Rules (unchanged)
-  ('mines-gsr-71-2026',  'mines-gsr-406-2015', 'amends', 'research-agent-quoted', '2026-09-04'),
+  ('mines-gsr-71-2026',  'mines-gsr-776-2025', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('mines-gsr-223-2026', 'mines-gsr-71-2026',  'amends', 'research-agent-quoted', '2026-09-04'),
   -- Atomic Minerals Concession Rules
   ('mines-atomic-gsr-126-2019', 'mines-atomic-gsr-677-2016', 'amends', 'research-agent-quoted', '2026-09-04'),
@@ -208,3 +235,24 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('mines-cgpb-2026', 'mines-cgpb-2018',    'supersedes', 'research-agent-quoted', '2026-09-04'),
   ('mines-cgpb-2026', 'mines-cgpb-2019',    'supersedes', 'research-agent-quoted', '2026-09-04'),
   ('mines-cgpb-2026', 'mines-cgpb-2023',    'supersedes', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('mines-gsr-898-2026', 'Mines', 'G.S.R. 898(E)', 2026, 'so-only', '2026-10-16', 'G.S.R. 898(E)', 'mines', 'mineral-auction-rules-2015', 'mines-auction-rules-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('mines-gsr-1469-2017', 'mines-gsr-406-2015', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-190-2020', 'mines-gsr-1469-2017', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-195-2021', 'mines-gsr-190-2020', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-422-2021', 'mines-gsr-195-2021', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-776-2021', 'mines-gsr-422-2021', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-857-2021', 'mines-gsr-776-2021', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-137-2022', 'mines-gsr-857-2021', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-648-2023', 'mines-gsr-137-2022', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-49-2024', 'mines-gsr-648-2023', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-255-2025', 'mines-gsr-49-2024', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-764-2025', 'mines-gsr-255-2025', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-776-2025', 'mines-gsr-764-2025', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mines-gsr-898-2026', 'mines-gsr-223-2026', 'amends', 'primary-source-egazette', '2026-11-09');
