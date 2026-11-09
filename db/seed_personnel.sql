@@ -1,3 +1,16 @@
+-- Freshness pass 2026-11-09: Central Civil Services (Pension) Amendment
+-- Rules, 2026 -- G.S.R. 775(E) [CG-DL-E-07092026-276041; official egazette
+-- PDF, 'primary-source-egazette'] inserting a proviso below rule 37(7);
+-- Note names the principal G.S.R. 868(E) of 20 Dec 2021 -> amends 868(E)
+-- (same amends-the-principal shape as this thread's other links).
+-- DATE: the PDF's text layer drops every numeral in its date line ("New
+-- Delhi, the nd September"), so the signing day is unreadable;
+-- publish_date is the gazette publication date, 2026-09-07 (gazette ID +
+-- digital-signature stamp), not a guessed signing date.
+-- Also re-checked for the headline chain: no new CAT s.14(3)/s.18
+-- notification (G.S.R. 730(E)/1986 hub) since 2026-08-06, on either the
+-- official ministry search or the gazettetracker listing.
+--
 -- Ministry of Personnel, Public Grievances and Pensions (Department of
 -- Personnel and Training; Department of Pension and Pensioners' Welfare
 -- — the latter issues the CCS (Pension)/NPS-gratuity items below under
@@ -1091,3 +1104,12 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('dopt-gsr-772-2025', 'dopt-gsr-675-2025', 'corrigendum', 'research-agent-quoted', '2026-09-04'),
   ('dopt-gsr-687-2024', 'dopt-gsr-919-1992', 'cites', 'research-agent-quoted', '2026-09-04'),
   ('dopt-gsr-687-2024', 'dopt-gsr-361-1995', 'cites', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('dopt-gsr-775-2026', 'DoPT', 'G.S.R. 775(E)', 2026, 'so-only', '2026-09-07', 'G.S.R. 775(E)', 'personnel-public-grievances-pensions', 'ccs-pension-rules-2021', 'ccs-pension-2021-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('dopt-gsr-775-2026', 'dopt-gsr-868-2021', 'amends', 'primary-source-egazette', '2026-11-09');
