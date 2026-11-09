@@ -1,6 +1,16 @@
 -- Ministry of External Affairs. First deepened 2026-09-04 (depth pass — see
 -- docs/DEPTH_PASS_PLAN.md) beyond the original bounded pass (3 pairs),
 -- reaching 23 notifications / 16 cross-references across 7 subject threads.
+--
+-- Freshness pass 2026-11-09: Passports (Amendment) Rules, 2026 -- G.S.R.
+-- 820(E), 15 Sep 2026 [CG-DL-E-17092026-276294; official egazette PDF,
+-- 'primary-source-egazette'] -- rule 8(1) fee/Schedule IV and rule 12(1A).
+-- Its Note names the principal (G.S.R. 691(E), 11 Dec 1980) and says
+-- "last amended vide notification number G.S.R. 156 (E), dated the 20th
+-- June, 2026" -- a REAL CITING-TEXT ERROR: G.S.R. 156(E) is of 28 Feb 2025,
+-- and the June 2026 amendment already modeled is G.S.R. 516(E) of 25 Jun
+-- 2026. With no unambiguous predecessor, it is modeled as amending the
+-- principal only; no edge to 156(E) or 516(E) is inferred.
 -- Second depth-pass return trip 2026-09-06/07: found and verified 4 further
 -- real note-chain threads this project had explicitly flagged but not yet
 -- opened (DRC, Libya, Haiti, Iraq UNSC-sanctions Orders), plus a real gap
@@ -192,3 +202,12 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   -- Iraq Order, 2016 chain
   ('mea-so-5297-2023', 'mea-so-2272-2016', 'amends', 'research-agent-quoted', '2026-09-07'),
   ('mea-so-703-2026',  'mea-so-5297-2023', 'amends', 'research-agent-quoted', '2026-09-07');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('mea-gsr-820-2026', 'MEA', 'G.S.R. 820(E)', 2026, 'so-only', '2026-09-15', 'G.S.R. 820(E)', 'external-affairs', 'passports-rules-1980-fee-schedule', 'passports-rules-fee-schedule-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('mea-gsr-820-2026', 'mea-gsr-691-1980', 'amends', 'primary-source-egazette', '2026-11-09');

@@ -1,5 +1,24 @@
 -- Third-ministry pilot: Ministry of Environment, Forest and Climate Change.
 --
+-- Freshness pass 2026-11-09 (gazettetracker listing -> official egazette
+-- PDFs, 'primary-source-egazette'; transcripts in data/raw_md/):
+--   * Coastal Regulation Zone Notification, 2019 amendment -- G.S.R.
+--     832(E), 22 Sep 2026 [CG-DL-E-24092026-276460]: amends G.S.R. 37(E)
+--     (Note: "principal notification ... G.S.R. 37(E), dated the 18th
+--     January, 2019") and recites its draft "G.S.R.410(E) dated 26th May,
+--     2026" -> `cites` the draft (draft-to-final convention).
+--   * The draft itself -- G.S.R. 410(E), 26 May 2026
+--     [CG-DL-E-27052026-272892] -> `cites` G.S.R. 37(E).
+--   * Plastic Waste Management (Amendment) Rules, 2026 -- G.S.R. 237(E),
+--     31 Mar 2026 [CG-DL-E-31032026-271465]: amends principal G.S.R.
+--     320(E) (same per-amendment-to-principal convention as this seed's
+--     other PWM links) and recites its draft "G.S.R 365 (E) dated the 3rd
+--     June 2025" -> `cites` 365(E) (a preamble-sourced node, not opened).
+-- Real leads NOT modeled: both CRZ Notes say "last amended vide ... S.O.
+-- 5495(E), dated the 24th November, 2022" and the PWM Note names G.S.R.
+-- 73(E) of 23 Jan 2025 as the last amendment -- neither opened, so no
+-- node is added for them here.
+--
 -- 🔴 CORRECTION (2026-09-04): the S.O. 3182(E)/S.O. 3252(E) pair below was
 -- originally tagged 'spot-checked' against gazette ID CG-DL-E-19072023-247431
 -- — that gazette ID's OFFICIAL PDF (fetched from egazette.gov.in and parsed
@@ -134,3 +153,22 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('moefcc-gsr-338-2016', 'moefcc-gsr-472-2015', 'cites',      'official-government-mirror', '2026-09-04'),
   ('moefcc-gsr-801-2022', 'moefcc-gsr-338-2016', 'supersedes', 'official-government-mirror', '2026-09-04'),
   ('moefcc-gsr-801-2022', 'moefcc-so-360-2022',  'cites',      'official-government-mirror', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO subject_thread (thread_id, subject_summary, status) VALUES
+  ('crz-2019-amendments', 'Coastal Regulation Zone Notification, 2019 and its amendments', 'active');
+
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('moefcc-gsr-410-2026', 'MoEFCC', 'G.S.R. 410(E)', 2026, 'so-only', '2026-05-26', 'G.S.R. 410(E)', 'environment-forest-climate-change', 'coastal-regulation-zone-notification', 'crz-2019-amendments'),
+  ('moefcc-gsr-832-2026', 'MoEFCC', 'G.S.R. 832(E)', 2026, 'so-only', '2026-09-22', 'G.S.R. 832(E)', 'environment-forest-climate-change', 'coastal-regulation-zone-notification', 'crz-2019-amendments'),
+  ('moefcc-gsr-365-2025', 'MoEFCC', 'G.S.R. 365(E)', 2025, 'so-only', '2025-06-03', 'G.S.R. 365(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments'),
+  ('moefcc-gsr-237-2026', 'MoEFCC', 'G.S.R. 237(E)', 2026, 'so-only', '2026-03-31', 'G.S.R. 237(E)', 'environment-forest-climate-change', 'plastic-waste-management-rules-2016', 'pwm-rules-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('moefcc-gsr-410-2026', 'moefcc-gsr-37-2019',  'cites',  'primary-source-egazette', '2026-11-09'),
+  ('moefcc-gsr-832-2026', 'moefcc-gsr-37-2019',  'amends', 'primary-source-egazette', '2026-11-09'),
+  ('moefcc-gsr-832-2026', 'moefcc-gsr-410-2026', 'cites',  'primary-source-egazette', '2026-11-09'),
+  ('moefcc-gsr-237-2026', 'moefcc-gsr-320-2016', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('moefcc-gsr-237-2026', 'moefcc-gsr-365-2025', 'cites',  'primary-source-egazette', '2026-11-09');
