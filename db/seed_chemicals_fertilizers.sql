@@ -1,3 +1,12 @@
+-- Freshness pass 2026-11-09: Linear Alkyl Benzene (Quality Control) Order
+-- suspension S.O. 5343(E), 29 Sep 2026 [CG-DL-E-29092026-276598; official
+-- egazette PDF, 'primary-source-egazette'] -- IS conformity suspended
+-- 1 Apr-31 Dec 2026; Note: "last amended vide notification number S.O
+-- 3456(E), the dated the 25th June, 2026" -> amends 3456(E).
+-- NOT modeled: NPPA price orders S.O. 4774/4775/4780/5998/5999/6001(E)
+-- (Aug-Nov 2026) cite S.O. 5249(E)/2022 and S.O. 3516(E)/2026 only as
+-- DPCO enabling-power recitals (never modeled as edges in this seed).
+--
 -- Ministry of Chemicals and Fertilizers. Deepened 2026-09-04 (depth pass
 -- — see docs/DEPTH_PASS_PLAN.md) beyond the original 3-corrigendum pass.
 --
@@ -192,3 +201,12 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('mocf-so-2165-2023', 'mocf-so-5249-2022', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('mocf-so-2324-2023', 'mocf-so-2165-2023', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('mocf-so-3516-2026', 'mocf-so-2324-2023', 'amends', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('mocf-so-5343-2026', 'DCPC', 'S.O. 5343(E)', 2026, 'so-only', '2026-09-29', 'S.O. 5343(E)', 'chemicals-and-fertilizers', 'linear-alkyl-benzene-qco-2022', 'linear-alkyl-benzene-qco-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('mocf-so-5343-2026', 'mocf-so-3456-2026', 'amends', 'primary-source-egazette', '2026-11-09');
