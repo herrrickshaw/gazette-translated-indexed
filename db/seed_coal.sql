@@ -16,6 +16,28 @@
 -- percentage amendment, and a draft-to-final Adjudication of Penalties
 -- Rules pair (relation_type='cites' for the draft link, same convention
 -- as Petroleum's and Civil Aviation's own draft notifications).
+--
+-- Freshness pass 2026-11-09 (ingest.freshness_check, egazette.gov.in
+-- official PDFs, transcripts in data/raw_md/): four new links, every
+-- one read from its own official PDF ('primary-source-egazette').
+--   * Colliery Control (Second Amendment) Rules, 2026 -- G.S.R. 797(E),
+--     9 Sep 2026 [CG-DL-E-16092026-276266]; Note names G.S.R. 540(E)
+--     2004, 546(E) 2021, 917(E) 2025, 710(E) 2026 -> amends 710(E).
+--   * Draft Colliery Control (Amendment) Rules, 2026 -- G.S.R. 865(E),
+--     1 Oct 2026 [CG-DL-E-13102026-277095]; Note adds 797(E) as the
+--     latest amendment -> `cites` 797(E) (draft convention, as G.S.R.
+--     101(E) above).
+--   * Mineral Concession (Second Amendment) Rules, 2026 -- G.S.R. 796(E),
+--     9 Sep 2026 [CG-DL-E-16092026-276265]; "lastly amended vide G.S.R.
+--     150(E), dated the 27th Feb, 2026" -> amends 150(E).
+--   * Coal Blocks Allocation (Second Amendment) Rules, 2026 -- G.S.R.
+--     795(E), 9 Sep 2026 [CG-DL-E-16092026-276264]; Note: 877(E) 2017,
+--     300(E) 2020, 394(E) 2023, 508(E) 2026 -> amends 508(E).
+-- GAP CLOSED: both new Colliery Control Notes list G.S.R. 546(E), dated
+-- 9 Aug 2021, between the principal and G.S.R. 917(E). The earlier pass
+-- had 917(E) amending 540(E) directly; 546(E) is now a Note-sourced node
+-- (not independently opened -- same standard as other Note-sourced
+-- nodes) and the 917(E) edge is re-pointed to it.
 
 INSERT OR IGNORE INTO ministry (ministry_id, name, department) VALUES
   ('coal', 'Ministry of Coal', NULL);
@@ -50,6 +72,7 @@ VALUES
   ('coal-gsr-508-2026', 'Coal', 'G.S.R. 508(E)', 2026, 'so-only', '2026-06-22', 'G.S.R. 508(E)', 'coal', 'coal-blocks-allocation-rules-2017', 'coal-blocks-allocation-amendments'),
   -- Colliery Control Rules chain (unchanged)
   ('coal-gsr-540-2004', 'Coal', 'G.S.R. 540(E)', 2004, 'so-only', '2004-08-25', 'G.S.R. 540(E)', 'coal', 'colliery-control-rules-2004', 'colliery-control-amendments'),
+  ('coal-gsr-546-2021', 'Coal', 'G.S.R. 546(E)', 2021, 'so-only', '2021-08-09', 'G.S.R. 546(E)', 'coal', 'colliery-control-rules-2004', 'colliery-control-amendments'),
   ('coal-gsr-917-2025', 'Coal', 'G.S.R. 917(E)', 2025, 'so-only', '2025-12-23', 'G.S.R. 917(E)', 'coal', 'colliery-control-rules-2004', 'colliery-control-amendments'),
   ('coal-gsr-710-2026', 'Coal', 'G.S.R. 710(E)', 2026, 'so-only', '2026-08-06', 'G.S.R. 710(E)', 'coal', 'colliery-control-rules-2004', 'colliery-control-amendments'),
   -- Coal Mines Pension Scheme: full 20-node chain
@@ -97,7 +120,7 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('coal-gsr-300-2020', 'coal-gsr-877-2017', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('coal-gsr-394-2023', 'coal-gsr-300-2020', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('coal-gsr-508-2026', 'coal-gsr-394-2023', 'amends', 'research-agent-quoted', '2026-09-04'),
-  ('coal-gsr-917-2025', 'coal-gsr-540-2004', 'amends', 'research-agent-quoted', '2026-09-04'),
+  ('coal-gsr-917-2025', 'coal-gsr-546-2021', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('coal-gsr-710-2026', 'coal-gsr-917-2025', 'amends', 'research-agent-quoted', '2026-09-04'),
   -- Pension Scheme full chain
   ('coal-gsr-268-pension', 'coal-gsr-123-pension', 'amends', 'research-agent-quoted', '2026-09-04'),
@@ -129,3 +152,19 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('coal-gsr-101-2026', 'coal-gsr-393-2023', 'cites',  'research-agent-quoted', '2026-09-04'),
   ('coal-so-2626-2026', 'coal-so-4589-2021', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('coal-gsr-699-2026', 'coal-gsr-450-2026', 'cites',  'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('coal-gsr-797-2026', 'Coal', 'G.S.R. 797(E)', 2026, 'so-only', '2026-09-09', 'G.S.R. 797(E)', 'coal', 'colliery-control-rules-2004', 'colliery-control-amendments'),
+  ('coal-gsr-865-2026', 'Coal', 'G.S.R. 865(E)', 2026, 'so-only', '2026-10-01', 'G.S.R. 865(E)', 'coal', 'colliery-control-rules-2004', 'colliery-control-amendments'),
+  ('coal-gsr-796-2026', 'Coal', 'G.S.R. 796(E)', 2026, 'so-only', '2026-09-09', 'G.S.R. 796(E)', 'coal', 'mineral-concession-rules-1960', 'mineral-concession-rules-amendments'),
+  ('coal-gsr-795-2026', 'Coal', 'G.S.R. 795(E)', 2026, 'so-only', '2026-09-09', 'G.S.R. 795(E)', 'coal', 'coal-blocks-allocation-rules-2017', 'coal-blocks-allocation-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('coal-gsr-546-2021', 'coal-gsr-540-2004', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('coal-gsr-797-2026', 'coal-gsr-710-2026', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('coal-gsr-865-2026', 'coal-gsr-797-2026', 'cites',  'primary-source-egazette', '2026-11-09'),
+  ('coal-gsr-796-2026', 'coal-gsr-150-2026', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('coal-gsr-795-2026', 'coal-gsr-508-2026', 'amends', 'primary-source-egazette', '2026-11-09');
