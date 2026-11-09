@@ -1,3 +1,9 @@
+-- Freshness pass 2026-11-09: S.O. 5494(E), 7 Oct 2026 [CG-DL-E-07102026-276910;
+-- official egazette PDF, 'primary-source-egazette'] -- Press Council of
+-- India nominations "make[s] the following amendments in the notification
+-- ... number S.O. 5509(E)"; Note: "subsequently amended vide number
+-- S.O.5560(E), dated 02nd December, 2025" -> amends 5560(E) (linear chain).
+--
 -- Ministry of Information and Broadcasting. Deepened 2026-09-04 (depth
 -- pass — see docs/DEPTH_PASS_PLAN.md) beyond the original bounded pass
 -- (3 pairs/chains).
@@ -206,3 +212,12 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('mib-so-3011-2026', 'mib-so-2160-2022', 'supersedes', 'research-agent-quoted', '2026-09-04'),
   -- MSO/LCO registering authorities
   ('mib-so-315-2025', 'mib-so-718-1994', 'supersedes', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('mib-so-5494-2026', 'MIB', 'S.O. 5494(E)', 2026, 'so-only', '2026-10-07', 'S.O. 5494(E)', 'information-and-broadcasting', 'press-council-of-india-members-s5', 'press-council-members-s5-amendment');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('mib-so-5494-2026', 'mib-so-5560-2025', 'amends', 'primary-source-egazette', '2026-11-09');
