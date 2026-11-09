@@ -1,3 +1,10 @@
+-- Freshness pass 2026-11-09: first amendment to the Employees' Pension
+-- Scheme, 2026 -- G.S.R. 847(E), 25 Sep 2026 [CG-DL-E-29092026-276595;
+-- official egazette PDF, 'primary-source-egazette'] inserting para 7(1)(iii);
+-- Note: "The principal Scheme was published ... vide number G.S.R. 527(E),
+-- dated the 29th June, 2026" -> amends 527(E). Kept on the existing EPS
+-- 2026 thread alongside the two corrigenda.
+--
 -- Ministry of Labour and Employment. Deepened 2026-09-04 (depth pass —
 -- see docs/DEPTH_PASS_PLAN.md) beyond the original bounded pass (1 pair).
 --
@@ -114,3 +121,12 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('labour-so-5936-2025', 'labour-so-2060-2023', 'cites', 'research-agent-quoted', '2026-09-04'),
   ('labour-gsr-188-2026', 'labour-gsr-492-2025', 'rescinds', 'research-agent-quoted', '2026-09-04'),
   ('labour-gsr-187-2026', 'labour-gsr-491-2025', 'rescinds', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('labour-gsr-847-2026', 'Labour', 'G.S.R. 847(E)', 2026, 'so-only', '2026-09-25', 'G.S.R. 847(E)', 'labour-and-employment', 'eps-scheme-2026', 'eps-scheme-2026-corrigenda');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('labour-gsr-847-2026', 'labour-gsr-527-2026', 'amends', 'primary-source-egazette', '2026-11-09');
