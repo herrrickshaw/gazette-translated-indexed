@@ -1,3 +1,12 @@
+-- Freshness pass 2026-11-09: No. 31/2026-Customs, G.S.R. 840(E), 23 Sep 2026
+-- [CG-DL-E-23092026-276439; official egazette PDF, 'primary-source-egazette']
+-- -- edible-oil BCD cuts in TABLE I of No. 45/2025-Customs: "hereby makes
+-- the following further amendments in the notification ... No. 45/2025-
+-- Customs ... vide number G.S.R. 781(E)"; Note: "last amended vide
+-- notification No. 25/2026-Customs, dated the 8th July, 2026, vide number
+-- G.S.R. 600 (E)" -> amends 45/2025 (same amends-the-principal shape as
+-- every other link on this thread).
+--
 -- Verified CBIC seed data: the 31 notifications superseded by No. 45/2025-Customs
 -- (transcribed from that notification's own preamble), 45/2025-Customs itself,
 -- and its first amendment, No. 02/2026-Customs.
@@ -146,3 +155,11 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('cus-44-2025', 'cus-45-2025', 'cites', 'research-agent-quoted', '2026-09-05'),
   ('cus-corr-44-2025', 'cus-44-2025', 'corrigendum', 'research-agent-quoted', '2026-09-05');
 
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('cus-31-2026', 'Customs', '31/2026', 2026, '4-digit-year', '2026-09-23', 'G.S.R. 840(E)', 'finance-revenue-cbic', 'customs-act-1962-s25-1', 'customs-45-2025-amendment-history');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('cus-31-2026', 'cus-45-2025', 'amends', 'primary-source-egazette', '2026-11-09');
