@@ -1,3 +1,11 @@
+-- Freshness pass 2026-11-09: G.S.R. 868(E), 30 Sep 2026 [CG-DL-E-08102026-276958;
+-- official egazette PDF, 'primary-source-egazette'] -- a DRAFT amendment of
+-- the Motor Vehicles (Registration and Functions of Vehicle Scrapping
+-- Facility) Rules, 2021; Note: principal "G.S.R. 653(E), dated the 23rd
+-- September, 2021 and lastly amended vide ... G.S.R. 700(E), dated the
+-- 19th September, 2025" -> `cites` 653(E) (same draft convention as the
+-- earlier draft G.S.R. 548(E) on this thread).
+--
 -- Ministry of Road Transport and Highways. Deepened 2026-09-04 (depth
 -- pass — see docs/DEPTH_PASS_PLAN.md) beyond the original bounded pass
 -- (3 corrigendum pairs, all National Highways Act s.3A/3D land-
@@ -86,3 +94,12 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('morth-gsr-32-2024', 'morth-gsr-441-2023', 'cites',  'research-agent-quoted', '2026-09-04'),
   ('morth-gsr-354-2024', 'morth-gsr-150-2024', 'cites', 'research-agent-quoted', '2026-09-04'),
   ('morth-gsr-568-2025', 'morth-gsr-124-2025', 'cites', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('morth-gsr-868-2026', 'MoRTH', 'G.S.R. 868(E)', 2026, 'so-only', '2026-09-30', 'G.S.R. 868(E)', 'road-transport-highways', 'mv-scrapping-facility-rules-2021', 'mv-scrapping-facility-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('morth-gsr-868-2026', 'morth-gsr-653-2021', 'cites', 'primary-source-egazette', '2026-11-09');
