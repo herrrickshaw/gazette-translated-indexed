@@ -11,6 +11,19 @@
 -- and the June 2026 amendment already modeled is G.S.R. 516(E) of 25 Jun
 -- 2026. With no unambiguous predecessor, it is modeled as amending the
 -- principal only; no edge to 156(E) or 516(E) is inferred.
+-- Same pass: three UNSC sanctions-order amendments (official egazette PDFs,
+-- 'primary-source-egazette'), each Note naming the immediately preceding link:
+--   * S.O. 5703(E), 15 Oct 2026 [CG-DL-E-19102026-277295] -- Prevention and
+--     Suppression of Terrorism (...) Fifth Amendment Order, 2026; "last
+--     amended vide notification number S.O. 4039(E), dated the 21st July,
+--     2026" -> amends 4039(E). (This seed dates 4039(E) 27 Jul 2026; the
+--     Note says 21 Jul -- discrepancy recorded, node left as is.)
+--   * S.O. 5772(E), 22 Oct 2026 [CG-DL-E-24102026-277403] -- DRC Order
+--     (Second Amendment) 2026; "last amended ... S.O. 1443 (E), dated the
+--     19th March, 2026" -> amends 1443(E).
+--   * S.O. 5773(E), 22 Oct 2026 [CG-DL-E-24102026-277402] -- Libya Order
+--     (Amendment) 2026; "last amended ... S.O. 1305(E), dated the 12th
+--     March, 2026" -> amends 1305(E).
 -- Second depth-pass return trip 2026-09-06/07: found and verified 4 further
 -- real note-chain threads this project had explicitly flagged but not yet
 -- opened (DRC, Libya, Haiti, Iraq UNSC-sanctions Orders), plus a real gap
@@ -207,7 +220,13 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
 INSERT OR IGNORE INTO gazette_notification
   (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
 VALUES
-  ('mea-gsr-820-2026', 'MEA', 'G.S.R. 820(E)', 2026, 'so-only', '2026-09-15', 'G.S.R. 820(E)', 'external-affairs', 'passports-rules-1980-fee-schedule', 'passports-rules-fee-schedule-amendments');
+  ('mea-gsr-820-2026', 'MEA', 'G.S.R. 820(E)', 2026, 'so-only', '2026-09-15', 'G.S.R. 820(E)', 'external-affairs', 'passports-rules-1980-fee-schedule', 'passports-rules-fee-schedule-amendments'),
+  ('mea-so-5703-2026', 'MEA', 'S.O. 5703(E)', 2026, 'so-only', '2026-10-15', 'S.O. 5703(E)', 'external-affairs', 'terrorism-implementation-order-2007', 'terrorism-order-2007-amendments'),
+  ('mea-so-5772-2026', 'MEA', 'S.O. 5772(E)', 2026, 'so-only', '2026-10-22', 'S.O. 5772(E)', 'external-affairs', 'drc-unsc-implementation-order-2016', 'drc-order-2016-amendments'),
+  ('mea-so-5773-2026', 'MEA', 'S.O. 5773(E)', 2026, 'so-only', '2026-10-22', 'S.O. 5773(E)', 'external-affairs', 'libya-unsc-implementation-order-2016', 'libya-order-2016-amendments');
 
 INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
-  ('mea-gsr-820-2026', 'mea-gsr-691-1980', 'amends', 'primary-source-egazette', '2026-11-09');
+  ('mea-gsr-820-2026', 'mea-gsr-691-1980', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mea-so-5703-2026', 'mea-so-4039-2026', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mea-so-5772-2026', 'mea-so-1443-2026', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('mea-so-5773-2026', 'mea-so-1305-2026', 'amends', 'primary-source-egazette', '2026-11-09');
