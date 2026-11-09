@@ -2,6 +2,21 @@
 -- 2026-09-04 (depth pass — see docs/DEPTH_PASS_PLAN.md) beyond the
 -- original 2-chain pass.
 --
+-- Freshness pass 2026-11-09: three chains extended, each link read from
+-- its own official egazette PDF ('primary-source-egazette'; transcripts
+-- in data/raw_md/):
+--   * Legal Metrology (General) Fifth Amendment Rules, 2026 -- G.S.R.
+--     809(E), 15 Sep 2026 [CG-DL-E-18092026-276323; own number printed
+--     "GSR. 809(E)"]: "last amended, vide notification number G.S.R.
+--     568 (E), dated the 03rd July, 2026" -> amends 568(E).
+--   * Legal Metrology (Packaged Commodities) Fourth Amendment Rules, 2026
+--     -- G.S.R. 826(E), 21 Sep 2026 [CG-DL-E-21092026-276373]: "last
+--     amended vide number G.S.R. 418(E), dated 29th May, 2026" -> amends 418(E).
+--   * Hallmarking of Gold Jewellery and Gold Artefacts (Fourth Amendment)
+--     Order, 2026 -- S.O. 5997(E), 2 Nov 2026 [CG-DL-E-07112026-277799]:
+--     "lastly amended vide number S.O. 4345(E), dated the 3rd August,
+--     2026" -> amends 4345(E).
+--
 -- Both known chains (wheat stock-limit order, Legal Metrology Packaged
 -- Commodities Rules) confirmed to have no further amendments beyond
 -- what was already modeled. Eight further real pairs/chains found across
@@ -230,3 +245,16 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('cafpd-gsr-746-2024', 'cafpd-gsr-588-2024', 'amends', 'research-agent-quoted', '2026-09-07'),
   ('cafpd-gsr-378-2025', 'cafpd-gsr-746-2024', 'amends', 'research-agent-quoted', '2026-09-07'),
   ('cafpd-gsr-436-2025', 'cafpd-gsr-378-2025', 'amends', 'research-agent-quoted', '2026-09-07');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('cafpd-gsr-809-2026', 'Consumer Affairs', 'G.S.R. 809(E)', 2026, 'so-only', '2026-09-15', 'G.S.R. 809(E)', 'consumer-affairs-food-public-distribution', 'legal-metrology-general-rules-2011', 'lm-general-rules-amendments'),
+  ('cafpd-gsr-826-2026', 'Consumer Affairs', 'G.S.R. 826(E)', 2026, 'so-only', '2026-09-21', 'G.S.R. 826(E)', 'consumer-affairs-food-public-distribution', 'legal-metrology-packaged-commodities-rules-2011', 'legal-metrology-packaged-commodities'),
+  ('cafpd-so-5997-2026', 'Consumer Affairs', 'S.O. 5997(E)', 2026, 'so-only', '2026-11-02', 'S.O. 5997(E)', 'consumer-affairs-food-public-distribution', 'bis-act-2016-hallmarking-order', 'bis-hallmarking-order-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('cafpd-gsr-809-2026', 'cafpd-gsr-568-2026', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('cafpd-gsr-826-2026', 'cafpd-gsr-418-2026', 'amends', 'primary-source-egazette', '2026-11-09'),
+  ('cafpd-so-5997-2026', 'cafpd-so-4345-2026', 'amends', 'primary-source-egazette', '2026-11-09');

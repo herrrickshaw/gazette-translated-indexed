@@ -1,6 +1,31 @@
 -- Ministry of Commerce and Industry. Deepened 2026-09-04 (depth pass —
 -- see docs/DEPTH_PASS_PLAN.md) beyond the original 3-pair pass.
 --
+-- Freshness pass 2026-11-09: the SEZ Rules, 2006 chain grew by three
+-- amendments and a corrigendum, all read from official egazette PDFs
+-- ('primary-source-egazette'; transcripts in data/raw_md/). Found via
+-- gazettetracker's ministry listing because egazette.gov.in's month search
+-- hit its 15-row cap for Aug-Oct 2026.
+--   * Third Amendment -- G.S.R. 893(E), 15 Oct 2026 [CG-DL-E-19102026-277277]:
+--     "lastly amended vide notification number G.S.R. 609(E) dated the 9th
+--     July 2026" -> amends 609(E).
+--   * Fourth Amendment -- G.S.R. 895(E), 15 Oct 2026 [CG-DL-E-17102026-277245]:
+--     its Note was printed with BLANKS ("last amended vide notification
+--     number G.S.R ……..(E), dated the ……….") -- a real drafting gap. Only
+--     the principal (G.S.R. 54(E)) is named, so it is modeled as amending
+--     54(E); no edge to 893(E) is invented.
+--   * Fifth Amendment -- G.S.R. 962(E), 30 Oct 2026 [CG-DL-E-02112026-277588]:
+--     Note says "lastly amended vide notification G.S.R. 609(E), dated the
+--     15th October, 2026" -- a REAL CITING-TEXT ERROR: 609(E) is dated 9 July;
+--     15 Oct is the date of 893(E)/895(E). Modeled to the number actually
+--     cited (amends 609(E)), discrepancy kept on record here.
+--   * Corrigendum -- G.S.R. 967(E), 2 Nov 2026 [CG-DL-E-04112026-277681]:
+--     "Corrigendum in the ... notification number G.S.R 895 (E), dated the
+--     15th October, 2026" -> corrigendum to 895(E).
+-- Not modeled: S.O. 5695(E) (Tata Steel SEZ area table) -- its prior S.O.s
+-- are not in the database; its S.O. 4632(E) of 14 Dec 2023 is NOT
+-- Textiles' S.O. 4632(E) of 20 Oct 2023 (cross-ministry number collision).
+--
 -- The known SEZ Rules and Ammonium Nitrate Rules chains were confirmed to
 -- have NO further amendments beyond what was already modeled (both
 -- "current" links' own pages were independently re-opened and checked).
@@ -120,3 +145,18 @@ INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, rel
   ('moci-so-4037-2026', 'moci-so-2899-2013', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('moci-so-3020-2024', 'moci-so-1426-2009', 'amends', 'research-agent-quoted', '2026-09-04'),
   ('moci-so-4036-2026', 'moci-so-3020-2024', 'amends', 'research-agent-quoted', '2026-09-04');
+
+-- Freshness pass 2026-11-09 (see header).
+INSERT OR IGNORE INTO gazette_notification
+  (gazette_id, series, number, year, numbering_form, publish_date, gsr_or_so, ministry_id, instrument_id, thread_id)
+VALUES
+  ('moci-gsr-893-2026', 'MoCI', 'G.S.R. 893(E)', 2026, 'so-only', '2026-10-15', 'G.S.R. 893(E)', 'commerce-and-industry', 'sez-rules-2006', 'sez-rules-amendments'),
+  ('moci-gsr-895-2026', 'MoCI', 'G.S.R. 895(E)', 2026, 'so-only', '2026-10-15', 'G.S.R. 895(E)', 'commerce-and-industry', 'sez-rules-2006', 'sez-rules-amendments'),
+  ('moci-gsr-962-2026', 'MoCI', 'G.S.R. 962(E)', 2026, 'so-only', '2026-10-30', 'G.S.R. 962(E)', 'commerce-and-industry', 'sez-rules-2006', 'sez-rules-amendments'),
+  ('moci-gsr-967-2026', 'MoCI', 'G.S.R. 967(E)', 2026, 'so-only', '2026-11-02', 'G.S.R. 967(E)', 'commerce-and-industry', 'sez-rules-2006', 'sez-rules-amendments');
+
+INSERT OR IGNORE INTO cross_reference (source_gazette_id, target_gazette_id, relation_type, verified_by, verified_at) VALUES
+  ('moci-gsr-893-2026', 'moci-gsr-609-2026', 'amends',      'primary-source-egazette', '2026-11-09'),
+  ('moci-gsr-895-2026', 'moci-gsr-54-2006',  'amends',      'primary-source-egazette', '2026-11-09'),
+  ('moci-gsr-962-2026', 'moci-gsr-609-2026', 'amends',      'primary-source-egazette', '2026-11-09'),
+  ('moci-gsr-967-2026', 'moci-gsr-895-2026', 'corrigendum', 'primary-source-egazette', '2026-11-09');
