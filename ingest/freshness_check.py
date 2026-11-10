@@ -12,8 +12,10 @@ follow-up -- this never writes to the database itself.
 
 Design: for each ministry, take MAX(publish_date) already in the DB as a
 high-water mark, then query TWO independent sources for anything newer --
-gazettetracker.com's listing page 1 for that ministry (most-recent-first,
-not rate-limited per this project's own findings) via `fetch_listing()`,
+gazettetracker.com's listing for that ministry (most-recent-first, paged
+back via `fetch_listing_since()` until it reaches the high-water mark;
+parsed by `parse_listing()`, which reports zero parsed items as
+`tracker_parse_empty` rather than as "nothing new"),
 and egazette.gov.in's own "Search by Ministry" via
 `ingest.egazette_search.search_by_ministry_since()` (see
 `db/egazette_ministry_map.py` for the ministry_id -> official dropdown
@@ -47,11 +49,13 @@ exactly like every other row in this project.
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import re
 import sqlite3
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
@@ -62,11 +66,25 @@ from db.egazette_ministry_map import EGAZETTE_MINISTRY_VALUES  # noqa: E402
 from ingest.egazette import gazette_id_to_pdf_url  # noqa: E402
 from ingest.egazette_search import EGazetteSearchError, search_by_ministry_since  # noqa: E402
 
+# gazettetracker.com listing markup, current as of 2026-11 (verified live on
+# /ministry/<slug>?page=N): one <div class="feed-card" data-gazette-id="...">
+# per item, holding a share button with data-date="23 Oct 2026" and an
+# <a ... class="feed-subject"> link to /g/<gazette_id>. Parsed card by card so
+# a field can never be borrowed from the neighbouring item.
+FEED_CARD_SPLIT_RE = re.compile(r'<div class="feed-card"\s+data-gazette-id="([A-Za-z0-9-]+)"')
+FEED_DATE_RE = re.compile(r'data-date="([^"]+)"')
+FEED_SUBJECT_RE = re.compile(
+    r'<a href="(https://gazettetracker\.com/g/([A-Za-z0-9-]+))" class="feed-subject">([^<]*)</a>'
+)
+# Pre-2026-11 markup, kept as a fallback in case a page still serves it.
 BROWSE_ITEM_RE = re.compile(
     r'<time class="browse-item-date">([^<]+)</time>.*?'
     r'<a href="(https://gazettetracker\.com/g/([A-Za-z0-9-]+))">([^<]+)</a>',
     re.DOTALL,
 )
+LISTING_PAGE_SIZE = 50   # items per gazettetracker listing page (observed 2026-11)
+MAX_LISTING_PAGES = 20   # hard stop for paging back to a high-water mark
+LISTING_DELAY_S = 1.2    # polite gap between listing pages (CLAUDE.md: ~1 req/s/host)
 
 
 @dataclass
@@ -81,18 +99,62 @@ def _parse_tracker_date(raw: str) -> date:
     return datetime.strptime(raw.strip(), "%d %b %Y").date()
 
 
+def parse_listing(html_text: str) -> list[TrackerItem]:
+    """Parse one gazettetracker.com listing page into TrackerItems, newest first.
+    Tries the current feed-card markup, then the older browse-item markup.
+    Items whose date can't be parsed are skipped rather than guessed."""
+    items: list[TrackerItem] = []
+    parts = FEED_CARD_SPLIT_RE.split(html_text)
+    # split() yields [preamble, id1, body1, id2, body2, ...]
+    for card_id, body in zip(parts[1::2], parts[2::2]):
+        dm, sm = FEED_DATE_RE.search(body), FEED_SUBJECT_RE.search(body)
+        if not dm or not sm:
+            continue
+        item_url, gazette_id, title = sm.groups()
+        if gazette_id != card_id:
+            continue  # subject link belongs to a different card -- don't mix fields
+        try:
+            items.append(TrackerItem(gazette_id=gazette_id, url=item_url,
+                                     title=html.unescape(title).strip(), date=_parse_tracker_date(dm.group(1))))
+        except ValueError:
+            continue
+    if items:
+        return items
+    for m in BROWSE_ITEM_RE.finditer(html_text):
+        raw_date, item_url, gazette_id, title = m.groups()
+        try:
+            items.append(TrackerItem(gazette_id=gazette_id, url=item_url,
+                                     title=html.unescape(title).strip(), date=_parse_tracker_date(raw_date)))
+        except ValueError:
+            continue
+    return items
+
+
 def fetch_listing(slug: str, page: int = 1, timeout: int = 20) -> list[TrackerItem]:
     """Fetch one gazettetracker.com listing page. curl, not WebFetch -- see module docstring."""
     url = f"https://gazettetracker.com/ministry/{slug}?page={page}"
     result = subprocess.run(["curl", "-s", "--max-time", str(timeout), url], capture_output=True, text=True)
-    items = []
-    for m in BROWSE_ITEM_RE.finditer(result.stdout):
-        raw_date, item_url, gazette_id, title = m.groups()
-        try:
-            items.append(TrackerItem(gazette_id=gazette_id, url=item_url, title=title.strip(), date=_parse_tracker_date(raw_date)))
-        except ValueError:
-            continue  # unparseable date -- skip rather than guess
-    return items
+    return parse_listing(result.stdout)
+
+
+def fetch_listing_since(slug: str, mark: date, *, max_pages: int = MAX_LISTING_PAGES,
+                        delay_s: float = LISTING_DELAY_S) -> tuple[list[TrackerItem], int]:
+    """Page back through a ministry's listing (newest first) until an item
+    dated on or before `mark` appears, a short/empty page ends the listing, or
+    `max_pages` is reached. Returns (every item seen, pages fetched). Page 1
+    alone is not enough: a busy ministry can publish more than one page's
+    worth of items after its high-water mark."""
+    seen: list[TrackerItem] = []
+    pages = 0
+    for page in range(1, max_pages + 1):
+        if page > 1:
+            time.sleep(delay_s)
+        items = fetch_listing(slug, page)
+        pages += 1
+        seen.extend(items)
+        if not items or len(items) < LISTING_PAGE_SIZE or min(i.date for i in items) <= mark:
+            break
+    return seen, pages
 
 
 def fetch_official(
@@ -157,9 +219,12 @@ def check_ministry(conn: sqlite3.Connection, ministry_id: str, do_extract: bool,
         return {"ministry_id": ministry_id, "status": "no_existing_data", "new_items": []}
 
     try:
-        tracker_items = fetch_listing(slug)
+        tracker_items, _pages = fetch_listing_since(slug, mark)
         tracker_new = {i.gazette_id: i for i in tracker_items if i.date > mark}
-        tracker_status = "ok"
+        # Every mapped ministry has a non-empty listing, so zero parsed items
+        # means the page markup changed (or the fetch was blocked) -- report
+        # it instead of letting it read as "nothing new".
+        tracker_status = "ok" if tracker_items else "tracker_parse_empty"
     except Exception as e:
         tracker_new = {}
         tracker_status = f"tracker_fetch_failed: {e}"
@@ -229,6 +294,9 @@ def main() -> None:
         if result["status"] != "ok":
             print(f"- **{mid}**: {result['status']}")
             continue
+        if result.get("tracker_status", "ok") != "ok":
+            print(f"- **{mid}**: WARNING tracker {result['tracker_status']} -- no gazettetracker items parsed; "
+                  f"listing markup may have changed (official-source result below)")
         if result.get("official_status", "").startswith("official_fetch_failed"):
             print(f"- **{mid}**: {result['official_status']} (tracker-only result below)")
         if result.get("truncated_months"):
