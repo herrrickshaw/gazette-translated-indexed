@@ -248,16 +248,14 @@ def find_bare_citation_links(text: str, self_citation: str | None = None) -> lis
     citations = find_gazette_citations(text)
     out: list[TemplateLink] = []
     for anchor in _BARE_CITATION_ANCHORS:
-        start = 0
-        while True:
-            idx = lower.find(anchor, start)
-            if idx == -1:
-                break
+        # Whole-word match: a bare substring scan let 'vide' fire inside
+        # "provided"/"divide" and link whatever citation followed.
+        for m in re.finditer(r'\b' + re.escape(anchor) + r'\b', lower):
+            idx = m.start()
             window_end = idx + len(anchor) + _BARE_CITATION_WINDOW_CHARS
             for c in citations:
                 if idx < c.start < window_end and c.normalized != self_citation:
                     out.append(TemplateLink(target_citation=c.normalized))
-            start = idx + len(anchor)
 
     seen = set()
     deduped = []
