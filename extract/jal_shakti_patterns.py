@@ -17,7 +17,7 @@ extract.common_templates.find_note_chain instead.
 """
 from __future__ import annotations
 
-from .common_templates import TemplateLink, find_amendment_in_notification_links
+from .common_templates import TemplateLink, dedupe_links, find_amendment_in_notification_links
 
 _MINISTRY_NAMES = ('jal shakti', 'water resources, river development')
 
@@ -26,10 +26,4 @@ def find_candidate_links(text: str, self_citation: str | None = None) -> list[Te
     links: list[TemplateLink] = []
     for name in _MINISTRY_NAMES:
         links += find_amendment_in_notification_links(text, name, self_citation=self_citation)
-    seen = set()
-    out = []
-    for l in links:
-        if l.target_citation not in seen:
-            seen.add(l.target_citation)
-            out.append(l)
-    return out
+    return dedupe_links(links)

@@ -1,0 +1,2189 @@
+{
+ "amendment": {
+  "after_anchor[None]": [],
+  "after_anchor[S.O. 100(E)]": [],
+  "agriculture_patterns[None]": [],
+  "agriculture_patterns[S.O. 100(E)]": [],
+  "amend[ministry of power|None]": [],
+  "amend[ministry of power|S.O. 100(E)]": [],
+  "amend[power|None]": [],
+  "amend[power|S.O. 100(E)]": [],
+  "amend[road transport and highways|None]": [
+   {
+    "target_citation": "G.S.R. 12(E)"
+   },
+   {
+    "target_citation": "S.O. 55(E)"
+   }
+  ],
+  "amend[road transport and highways|S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 12(E)"
+   },
+   {
+    "target_citation": "S.O. 55(E)"
+   }
+  ],
+  "atomic_energy_patterns[None]": [],
+  "atomic_energy_patterns[S.O. 100(E)]": [],
+  "ayush_patterns[None]": [],
+  "ayush_patterns[S.O. 100(E)]": [],
+  "bare[None]": [],
+  "bare[S.O. 100(E)]": [],
+  "chemicals_fertilizers_patterns[None]": [],
+  "chemicals_fertilizers_patterns[S.O. 100(E)]": [],
+  "citations": [],
+  "civil_aviation_patterns[None]": [],
+  "civil_aviation_patterns[S.O. 100(E)]": [],
+  "communications_patterns[None]": [],
+  "communications_patterns[S.O. 100(E)]": [],
+  "consumer_affairs_patterns[None]": [],
+  "consumer_affairs_patterns[S.O. 100(E)]": [],
+  "cooperation_patterns[None]": [],
+  "cooperation_patterns[S.O. 100(E)]": [],
+  "corrig[ministry of power|None]": [],
+  "corrig[ministry of power|S.O. 100(E)]": [],
+  "corrig[power|None]": [],
+  "corrig[power|S.O. 100(E)]": [],
+  "corrig[road transport and highways|None]": [
+   {
+    "target_citation": "G.S.R. 12(E)"
+   },
+   {
+    "target_citation": "S.O. 55(E)"
+   }
+  ],
+  "corrig[road transport and highways|S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 12(E)"
+   },
+   {
+    "target_citation": "S.O. 55(E)"
+   }
+  ],
+  "cross_ref[45/2025]": [],
+  "cross_ref[None]": [],
+  "culture_patterns[None]": [],
+  "culture_patterns[S.O. 100(E)]": [],
+  "defence_patterns[None]": [],
+  "defence_patterns[S.O. 100(E)]": [],
+  "earth_sciences_patterns[None]": [],
+  "earth_sciences_patterns[S.O. 100(E)]": [],
+  "education_patterns[None]": [],
+  "education_patterns[S.O. 100(E)]": [],
+  "external_affairs_patterns[None]": [],
+  "external_affairs_patterns[S.O. 100(E)]": [],
+  "finance_other_patterns[None]": [],
+  "finance_other_patterns[S.O. 100(E)]": [],
+  "food_processing_patterns[None]": [],
+  "food_processing_patterns[S.O. 100(E)]": [],
+  "gazette_citations": [
+   {
+    "end": 224,
+    "kind": "G.S.R.",
+    "normalized": "G.S.R. 12(E)",
+    "start": 212
+   },
+   {
+    "end": 11,
+    "kind": "S.O.",
+    "normalized": "S.O. 100(E)",
+    "start": 0
+   },
+   {
+    "end": 187,
+    "kind": "S.O.",
+    "normalized": "S.O. 55(E)",
+    "start": 177
+   }
+  ],
+  "gazette_ids": [
+   "G.S.R. 12(E)",
+   "S.O. 100(E)",
+   "S.O. 55(E)"
+  ],
+  "health_patterns[None]": [],
+  "health_patterns[S.O. 100(E)]": [],
+  "heavy_industries_patterns[None]": [],
+  "heavy_industries_patterns[S.O. 100(E)]": [],
+  "information_broadcasting_patterns[None]": [],
+  "information_broadcasting_patterns[S.O. 100(E)]": [],
+  "jal_shakti_patterns[None]": [],
+  "jal_shakti_patterns[S.O. 100(E)]": [],
+  "labour_patterns[None]": [],
+  "labour_patterns[S.O. 100(E)]": [],
+  "mca_patterns[None]": [],
+  "mca_patterns[S.O. 100(E)]": [],
+  "meity_patterns[None]": [],
+  "meity_patterns[S.O. 100(E)]": [],
+  "mha_patterns[None]": [],
+  "mha_patterns[S.O. 100(E)]": [],
+  "mines_patterns[None]": [],
+  "mines_patterns[S.O. 100(E)]": [],
+  "moefcc_patterns[None]": [],
+  "moefcc_patterns[S.O. 100(E)]": [],
+  "mohua_patterns[None]": [],
+  "mohua_patterns[S.O. 100(E)]": [],
+  "morth_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 12(E)"
+   },
+   {
+    "target_citation": "S.O. 55(E)"
+   }
+  ],
+  "morth_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 12(E)"
+   },
+   {
+    "target_citation": "S.O. 55(E)"
+   }
+  ],
+  "mospi_patterns[None]": [],
+  "mospi_patterns[S.O. 100(E)]": [],
+  "msme_patterns[None]": [],
+  "msme_patterns[S.O. 100(E)]": [],
+  "note_chain": [],
+  "parliamentary_affairs_patterns[None]": [],
+  "parliamentary_affairs_patterns[S.O. 100(E)]": [],
+  "personnel_patterns[None]": [],
+  "personnel_patterns[S.O. 100(E)]": [],
+  "ports_shipping_patterns[None]": [],
+  "ports_shipping_patterns[S.O. 100(E)]": [],
+  "power_patterns[None]": [],
+  "power_patterns[S.O. 100(E)]": [],
+  "railways_patterns[None]": [],
+  "railways_patterns[S.O. 100(E)]": [],
+  "skill_development_patterns[None]": [],
+  "skill_development_patterns[S.O. 100(E)]": [],
+  "space_patterns[None]": [],
+  "space_patterns[S.O. 100(E)]": [],
+  "steel_patterns[None]": [],
+  "steel_patterns[S.O. 100(E)]": [],
+  "supersession[None]": [],
+  "supersession[S.O. 100(E)]": [],
+  "tribal_affairs_patterns[None]": [],
+  "tribal_affairs_patterns[S.O. 100(E)]": [],
+  "youth_affairs_sports_patterns[None]": [],
+  "youth_affairs_sports_patterns[S.O. 100(E)]": []
+ },
+ "bare": {
+  "after_anchor[None]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "after_anchor[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "agriculture_patterns[None]": [],
+  "agriculture_patterns[S.O. 100(E)]": [],
+  "amend[ministry of power|None]": [],
+  "amend[ministry of power|S.O. 100(E)]": [],
+  "amend[power|None]": [],
+  "amend[power|S.O. 100(E)]": [],
+  "amend[road transport and highways|None]": [],
+  "amend[road transport and highways|S.O. 100(E)]": [],
+  "atomic_energy_patterns[None]": [],
+  "atomic_energy_patterns[S.O. 100(E)]": [],
+  "ayush_patterns[None]": [],
+  "ayush_patterns[S.O. 100(E)]": [],
+  "bare[None]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "bare[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "chemicals_fertilizers_patterns[None]": [],
+  "chemicals_fertilizers_patterns[S.O. 100(E)]": [],
+  "citations": [],
+  "civil_aviation_patterns[None]": [],
+  "civil_aviation_patterns[S.O. 100(E)]": [],
+  "communications_patterns[None]": [],
+  "communications_patterns[S.O. 100(E)]": [],
+  "consumer_affairs_patterns[None]": [],
+  "consumer_affairs_patterns[S.O. 100(E)]": [],
+  "cooperation_patterns[None]": [],
+  "cooperation_patterns[S.O. 100(E)]": [],
+  "corrig[ministry of power|None]": [],
+  "corrig[ministry of power|S.O. 100(E)]": [],
+  "corrig[power|None]": [],
+  "corrig[power|S.O. 100(E)]": [],
+  "corrig[road transport and highways|None]": [],
+  "corrig[road transport and highways|S.O. 100(E)]": [],
+  "cross_ref[45/2025]": [],
+  "cross_ref[None]": [],
+  "culture_patterns[None]": [],
+  "culture_patterns[S.O. 100(E)]": [],
+  "defence_patterns[None]": [],
+  "defence_patterns[S.O. 100(E)]": [],
+  "earth_sciences_patterns[None]": [],
+  "earth_sciences_patterns[S.O. 100(E)]": [],
+  "education_patterns[None]": [],
+  "education_patterns[S.O. 100(E)]": [],
+  "external_affairs_patterns[None]": [],
+  "external_affairs_patterns[S.O. 100(E)]": [],
+  "finance_other_patterns[None]": [],
+  "finance_other_patterns[S.O. 100(E)]": [],
+  "food_processing_patterns[None]": [],
+  "food_processing_patterns[S.O. 100(E)]": [],
+  "gazette_citations": [
+   {
+    "end": 431,
+    "kind": "G.S.R.",
+    "normalized": "G.S.R. 77(E)",
+    "start": 419
+   },
+   {
+    "end": 37,
+    "kind": "S.O.",
+    "normalized": "S.O. 1398(E)",
+    "start": 25
+   },
+   {
+    "end": 78,
+    "kind": "S.O.",
+    "normalized": "S.O. 174(E)",
+    "start": 67
+   },
+   {
+    "end": 124,
+    "kind": "S.O.",
+    "normalized": "S.O. 1935(E)",
+    "start": 113
+   }
+  ],
+  "gazette_ids": [
+   "G.S.R. 77(E)",
+   "S.O. 1398(E)",
+   "S.O. 174(E)",
+   "S.O. 1935(E)"
+  ],
+  "health_patterns[None]": [],
+  "health_patterns[S.O. 100(E)]": [],
+  "heavy_industries_patterns[None]": [],
+  "heavy_industries_patterns[S.O. 100(E)]": [],
+  "information_broadcasting_patterns[None]": [],
+  "information_broadcasting_patterns[S.O. 100(E)]": [],
+  "jal_shakti_patterns[None]": [],
+  "jal_shakti_patterns[S.O. 100(E)]": [],
+  "labour_patterns[None]": [],
+  "labour_patterns[S.O. 100(E)]": [],
+  "mca_patterns[None]": [],
+  "mca_patterns[S.O. 100(E)]": [],
+  "meity_patterns[None]": [],
+  "meity_patterns[S.O. 100(E)]": [],
+  "mha_patterns[None]": [],
+  "mha_patterns[S.O. 100(E)]": [],
+  "mines_patterns[None]": [],
+  "mines_patterns[S.O. 100(E)]": [],
+  "moefcc_patterns[None]": [],
+  "moefcc_patterns[S.O. 100(E)]": [],
+  "mohua_patterns[None]": [],
+  "mohua_patterns[S.O. 100(E)]": [],
+  "morth_patterns[None]": [],
+  "morth_patterns[S.O. 100(E)]": [],
+  "mospi_patterns[None]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "mospi_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "msme_patterns[None]": [],
+  "msme_patterns[S.O. 100(E)]": [],
+  "note_chain": [],
+  "parliamentary_affairs_patterns[None]": [],
+  "parliamentary_affairs_patterns[S.O. 100(E)]": [],
+  "personnel_patterns[None]": [],
+  "personnel_patterns[S.O. 100(E)]": [],
+  "ports_shipping_patterns[None]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "ports_shipping_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "power_patterns[None]": [],
+  "power_patterns[S.O. 100(E)]": [],
+  "railways_patterns[None]": [],
+  "railways_patterns[S.O. 100(E)]": [],
+  "skill_development_patterns[None]": [],
+  "skill_development_patterns[S.O. 100(E)]": [],
+  "space_patterns[None]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "space_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 1398(E)"
+   },
+   {
+    "target_citation": "S.O. 174(E)"
+   },
+   {
+    "target_citation": "S.O. 1935(E)"
+   },
+   {
+    "target_citation": "G.S.R. 77(E)"
+   }
+  ],
+  "steel_patterns[None]": [],
+  "steel_patterns[S.O. 100(E)]": [],
+  "supersession[None]": [],
+  "supersession[S.O. 100(E)]": [],
+  "tribal_affairs_patterns[None]": [],
+  "tribal_affairs_patterns[S.O. 100(E)]": [],
+  "youth_affairs_sports_patterns[None]": [],
+  "youth_affairs_sports_patterns[S.O. 100(E)]": []
+ },
+ "cbic": {
+  "after_anchor[None]": [],
+  "after_anchor[S.O. 100(E)]": [],
+  "agriculture_patterns[None]": [],
+  "agriculture_patterns[S.O. 100(E)]": [],
+  "amend[ministry of power|None]": [],
+  "amend[ministry of power|S.O. 100(E)]": [],
+  "amend[power|None]": [],
+  "amend[power|S.O. 100(E)]": [],
+  "amend[road transport and highways|None]": [],
+  "amend[road transport and highways|S.O. 100(E)]": [],
+  "atomic_energy_patterns[None]": [],
+  "atomic_energy_patterns[S.O. 100(E)]": [],
+  "ayush_patterns[None]": [],
+  "ayush_patterns[S.O. 100(E)]": [],
+  "bare[None]": [],
+  "bare[S.O. 100(E)]": [],
+  "chemicals_fertilizers_patterns[None]": [],
+  "chemicals_fertilizers_patterns[S.O. 100(E)]": [],
+  "citations": [
+   {
+    "end": 45,
+    "number": "45/2025",
+    "numbering_form": "4-digit-year",
+    "raw": "No. 45/2025-Customs",
+    "series": "Customs",
+    "start": 26,
+    "year": 2025
+   },
+   {
+    "end": 97,
+    "number": "207/89",
+    "numbering_form": "2-digit-year",
+    "raw": "No. 207/89-Customs",
+    "series": "Customs",
+    "start": 79,
+    "year": 1989
+   },
+   {
+    "end": 112,
+    "number": "3",
+    "numbering_form": "bare",
+    "raw": "No. 3-Customs",
+    "series": "Customs",
+    "start": 99,
+    "year": null
+   },
+   {
+    "end": 144,
+    "number": "12/2020",
+    "numbering_form": "4-digit-year",
+    "raw": "No. 12/2020 - Customs (ADD)",
+    "series": "Customs (ADD)",
+    "start": 117,
+    "year": 2020
+   },
+   {
+    "end": 218,
+    "number": "7/2019",
+    "numbering_form": "4-digit-year",
+    "raw": "No. 7/2019-Customs",
+    "series": "Customs",
+    "start": 200,
+    "year": 2019
+   },
+   {
+    "end": 249,
+    "number": "9/2018",
+    "numbering_form": "4-digit-year",
+    "raw": "No. 9/2018 \u2013Customs",
+    "series": "Customs",
+    "start": 230,
+    "year": 2018
+   },
+   {
+    "end": 297,
+    "number": "45/2025",
+    "numbering_form": "4-digit-year",
+    "raw": "No. 45/2025-Customs",
+    "series": "Customs",
+    "start": 278,
+    "year": 2025
+   },
+   {
+    "end": 361,
+    "number": "99/2001",
+    "numbering_form": "4-digit-year",
+    "raw": "No. 99/2001-Customs",
+    "series": "Customs",
+    "start": 342,
+    "year": 2001
+   }
+  ],
+  "civil_aviation_patterns[None]": [],
+  "civil_aviation_patterns[S.O. 100(E)]": [],
+  "communications_patterns[None]": [],
+  "communications_patterns[S.O. 100(E)]": [],
+  "consumer_affairs_patterns[None]": [],
+  "consumer_affairs_patterns[S.O. 100(E)]": [],
+  "cooperation_patterns[None]": [],
+  "cooperation_patterns[S.O. 100(E)]": [],
+  "corrig[ministry of power|None]": [],
+  "corrig[ministry of power|S.O. 100(E)]": [],
+  "corrig[power|None]": [],
+  "corrig[power|S.O. 100(E)]": [],
+  "corrig[road transport and highways|None]": [],
+  "corrig[road transport and highways|S.O. 100(E)]": [],
+  "cross_ref[45/2025]": [
+   {
+    "citation": {
+     "end": 97,
+     "number": "207/89",
+     "numbering_form": "2-digit-year",
+     "raw": "No. 207/89-Customs",
+     "series": "Customs",
+     "start": 79,
+     "year": 1989
+    },
+    "phrase": "in supersession of",
+    "phrase_start": 47,
+    "relation_type": "supersedes"
+   },
+   {
+    "citation": {
+     "end": 112,
+     "number": "3",
+     "numbering_form": "bare",
+     "raw": "No. 3-Customs",
+     "series": "Customs",
+     "start": 99,
+     "year": null
+    },
+    "phrase": "in supersession of",
+    "phrase_start": 47,
+    "relation_type": "supersedes"
+   },
+   {
+    "citation": {
+     "end": 144,
+     "number": "12/2020",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 12/2020 - Customs (ADD)",
+     "series": "Customs (ADD)",
+     "start": 117,
+     "year": 2020
+    },
+    "phrase": "in supersession of",
+    "phrase_start": 47,
+    "relation_type": "supersedes"
+   },
+   {
+    "citation": {
+     "end": 218,
+     "number": "7/2019",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 7/2019-Customs",
+     "series": "Customs",
+     "start": 200,
+     "year": 2019
+    },
+    "phrase": "further amend",
+    "phrase_start": 186,
+    "relation_type": "amends"
+   },
+   {
+    "citation": {
+     "end": 249,
+     "number": "9/2018",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 9/2018 \u2013Customs",
+     "series": "Customs",
+     "start": 230,
+     "year": 2018
+    },
+    "phrase": "further amend",
+    "phrase_start": 186,
+    "relation_type": "amends"
+   },
+   {
+    "citation": {
+     "end": 249,
+     "number": "9/2018",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 9/2018 \u2013Customs",
+     "series": "Customs",
+     "start": 230,
+     "year": 2018
+    },
+    "phrase": "read with",
+    "phrase_start": 220,
+    "relation_type": "cites"
+   }
+  ],
+  "cross_ref[None]": [
+   {
+    "citation": {
+     "end": 97,
+     "number": "207/89",
+     "numbering_form": "2-digit-year",
+     "raw": "No. 207/89-Customs",
+     "series": "Customs",
+     "start": 79,
+     "year": 1989
+    },
+    "phrase": "in supersession of",
+    "phrase_start": 47,
+    "relation_type": "supersedes"
+   },
+   {
+    "citation": {
+     "end": 112,
+     "number": "3",
+     "numbering_form": "bare",
+     "raw": "No. 3-Customs",
+     "series": "Customs",
+     "start": 99,
+     "year": null
+    },
+    "phrase": "in supersession of",
+    "phrase_start": 47,
+    "relation_type": "supersedes"
+   },
+   {
+    "citation": {
+     "end": 144,
+     "number": "12/2020",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 12/2020 - Customs (ADD)",
+     "series": "Customs (ADD)",
+     "start": 117,
+     "year": 2020
+    },
+    "phrase": "in supersession of",
+    "phrase_start": 47,
+    "relation_type": "supersedes"
+   },
+   {
+    "citation": {
+     "end": 297,
+     "number": "45/2025",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 45/2025-Customs",
+     "series": "Customs",
+     "start": 278,
+     "year": 2025
+    },
+    "phrase": "in partial modification of",
+    "phrase_start": 251,
+    "relation_type": "amends"
+   },
+   {
+    "citation": {
+     "end": 218,
+     "number": "7/2019",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 7/2019-Customs",
+     "series": "Customs",
+     "start": 200,
+     "year": 2019
+    },
+    "phrase": "further amend",
+    "phrase_start": 186,
+    "relation_type": "amends"
+   },
+   {
+    "citation": {
+     "end": 249,
+     "number": "9/2018",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 9/2018 \u2013Customs",
+     "series": "Customs",
+     "start": 230,
+     "year": 2018
+    },
+    "phrase": "further amend",
+    "phrase_start": 186,
+    "relation_type": "amends"
+   },
+   {
+    "citation": {
+     "end": 249,
+     "number": "9/2018",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 9/2018 \u2013Customs",
+     "series": "Customs",
+     "start": 230,
+     "year": 2018
+    },
+    "phrase": "read with",
+    "phrase_start": 220,
+    "relation_type": "cites"
+   },
+   {
+    "citation": {
+     "end": 297,
+     "number": "45/2025",
+     "numbering_form": "4-digit-year",
+     "raw": "No. 45/2025-Customs",
+     "series": "Customs",
+     "start": 278,
+     "year": 2025
+    },
+    "phrase": "read with",
+    "phrase_start": 220,
+    "relation_type": "cites"
+   }
+  ],
+  "culture_patterns[None]": [],
+  "culture_patterns[S.O. 100(E)]": [],
+  "defence_patterns[None]": [],
+  "defence_patterns[S.O. 100(E)]": [],
+  "earth_sciences_patterns[None]": [],
+  "earth_sciences_patterns[S.O. 100(E)]": [],
+  "education_patterns[None]": [],
+  "education_patterns[S.O. 100(E)]": [],
+  "external_affairs_patterns[None]": [],
+  "external_affairs_patterns[S.O. 100(E)]": [],
+  "finance_other_patterns[None]": [],
+  "finance_other_patterns[S.O. 100(E)]": [],
+  "food_processing_patterns[None]": [],
+  "food_processing_patterns[S.O. 100(E)]": [],
+  "gazette_citations": [
+   {
+    "end": 11,
+    "kind": "G.S.R.",
+    "normalized": "G.S.R. 1(E)",
+    "start": 0
+   }
+  ],
+  "gazette_ids": [
+   "G.S.R. 1(E)"
+  ],
+  "health_patterns[None]": [],
+  "health_patterns[S.O. 100(E)]": [],
+  "heavy_industries_patterns[None]": [],
+  "heavy_industries_patterns[S.O. 100(E)]": [],
+  "information_broadcasting_patterns[None]": [],
+  "information_broadcasting_patterns[S.O. 100(E)]": [],
+  "jal_shakti_patterns[None]": [],
+  "jal_shakti_patterns[S.O. 100(E)]": [],
+  "labour_patterns[None]": [],
+  "labour_patterns[S.O. 100(E)]": [],
+  "mca_patterns[None]": [],
+  "mca_patterns[S.O. 100(E)]": [],
+  "meity_patterns[None]": [],
+  "meity_patterns[S.O. 100(E)]": [],
+  "mha_patterns[None]": [],
+  "mha_patterns[S.O. 100(E)]": [],
+  "mines_patterns[None]": [],
+  "mines_patterns[S.O. 100(E)]": [],
+  "moefcc_patterns[None]": [],
+  "moefcc_patterns[S.O. 100(E)]": [],
+  "mohua_patterns[None]": [],
+  "mohua_patterns[S.O. 100(E)]": [],
+  "morth_patterns[None]": [],
+  "morth_patterns[S.O. 100(E)]": [],
+  "mospi_patterns[None]": [],
+  "mospi_patterns[S.O. 100(E)]": [],
+  "msme_patterns[None]": [],
+  "msme_patterns[S.O. 100(E)]": [],
+  "note_chain": [],
+  "parliamentary_affairs_patterns[None]": [],
+  "parliamentary_affairs_patterns[S.O. 100(E)]": [],
+  "personnel_patterns[None]": [],
+  "personnel_patterns[S.O. 100(E)]": [],
+  "ports_shipping_patterns[None]": [],
+  "ports_shipping_patterns[S.O. 100(E)]": [],
+  "power_patterns[None]": [],
+  "power_patterns[S.O. 100(E)]": [],
+  "railways_patterns[None]": [],
+  "railways_patterns[S.O. 100(E)]": [],
+  "skill_development_patterns[None]": [],
+  "skill_development_patterns[S.O. 100(E)]": [],
+  "space_patterns[None]": [],
+  "space_patterns[S.O. 100(E)]": [],
+  "steel_patterns[None]": [],
+  "steel_patterns[S.O. 100(E)]": [],
+  "supersession[None]": [],
+  "supersession[S.O. 100(E)]": [],
+  "tribal_affairs_patterns[None]": [],
+  "tribal_affairs_patterns[S.O. 100(E)]": [],
+  "youth_affairs_sports_patterns[None]": [],
+  "youth_affairs_sports_patterns[S.O. 100(E)]": []
+ },
+ "corrigendum": {
+  "after_anchor[None]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "after_anchor[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "agriculture_patterns[None]": [],
+  "agriculture_patterns[S.O. 100(E)]": [],
+  "amend[ministry of power|None]": [],
+  "amend[ministry of power|S.O. 100(E)]": [],
+  "amend[power|None]": [],
+  "amend[power|S.O. 100(E)]": [],
+  "amend[road transport and highways|None]": [],
+  "amend[road transport and highways|S.O. 100(E)]": [],
+  "atomic_energy_patterns[None]": [],
+  "atomic_energy_patterns[S.O. 100(E)]": [],
+  "ayush_patterns[None]": [],
+  "ayush_patterns[S.O. 100(E)]": [],
+  "bare[None]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "bare[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "chemicals_fertilizers_patterns[None]": [],
+  "chemicals_fertilizers_patterns[S.O. 100(E)]": [],
+  "citations": [],
+  "civil_aviation_patterns[None]": [],
+  "civil_aviation_patterns[S.O. 100(E)]": [],
+  "communications_patterns[None]": [],
+  "communications_patterns[S.O. 100(E)]": [],
+  "consumer_affairs_patterns[None]": [],
+  "consumer_affairs_patterns[S.O. 100(E)]": [],
+  "cooperation_patterns[None]": [],
+  "cooperation_patterns[S.O. 100(E)]": [],
+  "corrig[ministry of power|None]": [],
+  "corrig[ministry of power|S.O. 100(E)]": [],
+  "corrig[power|None]": [],
+  "corrig[power|S.O. 100(E)]": [],
+  "corrig[road transport and highways|None]": [],
+  "corrig[road transport and highways|S.O. 100(E)]": [],
+  "cross_ref[45/2025]": [],
+  "cross_ref[None]": [],
+  "culture_patterns[None]": [],
+  "culture_patterns[S.O. 100(E)]": [],
+  "defence_patterns[None]": [],
+  "defence_patterns[S.O. 100(E)]": [],
+  "earth_sciences_patterns[None]": [],
+  "earth_sciences_patterns[S.O. 100(E)]": [],
+  "education_patterns[None]": [],
+  "education_patterns[S.O. 100(E)]": [],
+  "external_affairs_patterns[None]": [],
+  "external_affairs_patterns[S.O. 100(E)]": [],
+  "finance_other_patterns[None]": [],
+  "finance_other_patterns[S.O. 100(E)]": [],
+  "food_processing_patterns[None]": [],
+  "food_processing_patterns[S.O. 100(E)]": [],
+  "gazette_citations": [
+   {
+    "end": 222,
+    "kind": "G.S.R.",
+    "normalized": "G.S.R. 9(E)",
+    "start": 211
+   },
+   {
+    "end": 126,
+    "kind": "S.O.",
+    "normalized": "S.O. 7(E)",
+    "start": 117
+   }
+  ],
+  "gazette_ids": [
+   "G.S.R. 9(E)",
+   "S.O. 7(E)"
+  ],
+  "health_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 9(E)"
+   }
+  ],
+  "health_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 9(E)"
+   }
+  ],
+  "heavy_industries_patterns[None]": [],
+  "heavy_industries_patterns[S.O. 100(E)]": [],
+  "information_broadcasting_patterns[None]": [],
+  "information_broadcasting_patterns[S.O. 100(E)]": [],
+  "jal_shakti_patterns[None]": [],
+  "jal_shakti_patterns[S.O. 100(E)]": [],
+  "labour_patterns[None]": [],
+  "labour_patterns[S.O. 100(E)]": [],
+  "mca_patterns[None]": [],
+  "mca_patterns[S.O. 100(E)]": [],
+  "meity_patterns[None]": [],
+  "meity_patterns[S.O. 100(E)]": [],
+  "mha_patterns[None]": [],
+  "mha_patterns[S.O. 100(E)]": [],
+  "mines_patterns[None]": [],
+  "mines_patterns[S.O. 100(E)]": [],
+  "moefcc_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 9(E)"
+   },
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "moefcc_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 9(E)"
+   },
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "mohua_patterns[None]": [],
+  "mohua_patterns[S.O. 100(E)]": [],
+  "morth_patterns[None]": [],
+  "morth_patterns[S.O. 100(E)]": [],
+  "mospi_patterns[None]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "mospi_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "msme_patterns[None]": [],
+  "msme_patterns[S.O. 100(E)]": [],
+  "note_chain": [],
+  "parliamentary_affairs_patterns[None]": [],
+  "parliamentary_affairs_patterns[S.O. 100(E)]": [],
+  "personnel_patterns[None]": [],
+  "personnel_patterns[S.O. 100(E)]": [],
+  "ports_shipping_patterns[None]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "ports_shipping_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "power_patterns[None]": [],
+  "power_patterns[S.O. 100(E)]": [],
+  "railways_patterns[None]": [],
+  "railways_patterns[S.O. 100(E)]": [],
+  "skill_development_patterns[None]": [],
+  "skill_development_patterns[S.O. 100(E)]": [],
+  "space_patterns[None]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "space_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 7(E)"
+   }
+  ],
+  "steel_patterns[None]": [],
+  "steel_patterns[S.O. 100(E)]": [],
+  "supersession[None]": [],
+  "supersession[S.O. 100(E)]": [],
+  "tribal_affairs_patterns[None]": [],
+  "tribal_affairs_patterns[S.O. 100(E)]": [],
+  "youth_affairs_sports_patterns[None]": [],
+  "youth_affairs_sports_patterns[S.O. 100(E)]": []
+ },
+ "further_amendment": {
+  "after_anchor[None]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "after_anchor[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   }
+  ],
+  "agriculture_patterns[None]": [],
+  "agriculture_patterns[S.O. 100(E)]": [],
+  "amend[ministry of power|None]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "amend[ministry of power|S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   }
+  ],
+  "amend[power|None]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "amend[power|S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   }
+  ],
+  "amend[road transport and highways|None]": [],
+  "amend[road transport and highways|S.O. 100(E)]": [],
+  "atomic_energy_patterns[None]": [],
+  "atomic_energy_patterns[S.O. 100(E)]": [],
+  "ayush_patterns[None]": [],
+  "ayush_patterns[S.O. 100(E)]": [],
+  "bare[None]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "bare[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   }
+  ],
+  "chemicals_fertilizers_patterns[None]": [],
+  "chemicals_fertilizers_patterns[S.O. 100(E)]": [],
+  "citations": [],
+  "civil_aviation_patterns[None]": [],
+  "civil_aviation_patterns[S.O. 100(E)]": [],
+  "communications_patterns[None]": [],
+  "communications_patterns[S.O. 100(E)]": [],
+  "consumer_affairs_patterns[None]": [],
+  "consumer_affairs_patterns[S.O. 100(E)]": [],
+  "cooperation_patterns[None]": [],
+  "cooperation_patterns[S.O. 100(E)]": [],
+  "corrig[ministry of power|None]": [],
+  "corrig[ministry of power|S.O. 100(E)]": [],
+  "corrig[power|None]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "corrig[power|S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   }
+  ],
+  "corrig[road transport and highways|None]": [],
+  "corrig[road transport and highways|S.O. 100(E)]": [],
+  "cross_ref[45/2025]": [],
+  "cross_ref[None]": [],
+  "culture_patterns[None]": [],
+  "culture_patterns[S.O. 100(E)]": [],
+  "defence_patterns[None]": [],
+  "defence_patterns[S.O. 100(E)]": [],
+  "earth_sciences_patterns[None]": [],
+  "earth_sciences_patterns[S.O. 100(E)]": [],
+  "education_patterns[None]": [],
+  "education_patterns[S.O. 100(E)]": [],
+  "external_affairs_patterns[None]": [],
+  "external_affairs_patterns[S.O. 100(E)]": [],
+  "finance_other_patterns[None]": [],
+  "finance_other_patterns[S.O. 100(E)]": [],
+  "food_processing_patterns[None]": [],
+  "food_processing_patterns[S.O. 100(E)]": [],
+  "gazette_citations": [
+   {
+    "end": 121,
+    "kind": "S.O.",
+    "normalized": "S.O. 371(E)",
+    "start": 110
+   },
+   {
+    "end": 158,
+    "kind": "S.O.",
+    "normalized": "S.O. 100(E)",
+    "start": 147
+   }
+  ],
+  "gazette_ids": [
+   "S.O. 371(E)",
+   "S.O. 100(E)"
+  ],
+  "health_patterns[None]": [],
+  "health_patterns[S.O. 100(E)]": [],
+  "heavy_industries_patterns[None]": [],
+  "heavy_industries_patterns[S.O. 100(E)]": [],
+  "information_broadcasting_patterns[None]": [],
+  "information_broadcasting_patterns[S.O. 100(E)]": [],
+  "jal_shakti_patterns[None]": [],
+  "jal_shakti_patterns[S.O. 100(E)]": [],
+  "labour_patterns[None]": [],
+  "labour_patterns[S.O. 100(E)]": [],
+  "mca_patterns[None]": [],
+  "mca_patterns[S.O. 100(E)]": [],
+  "meity_patterns[None]": [],
+  "meity_patterns[S.O. 100(E)]": [],
+  "mha_patterns[None]": [],
+  "mha_patterns[S.O. 100(E)]": [],
+  "mines_patterns[None]": [],
+  "mines_patterns[S.O. 100(E)]": [],
+  "moefcc_patterns[None]": [],
+  "moefcc_patterns[S.O. 100(E)]": [],
+  "mohua_patterns[None]": [],
+  "mohua_patterns[S.O. 100(E)]": [],
+  "morth_patterns[None]": [],
+  "morth_patterns[S.O. 100(E)]": [],
+  "mospi_patterns[None]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "mospi_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   }
+  ],
+  "msme_patterns[None]": [],
+  "msme_patterns[S.O. 100(E)]": [],
+  "note_chain": [],
+  "parliamentary_affairs_patterns[None]": [],
+  "parliamentary_affairs_patterns[S.O. 100(E)]": [],
+  "personnel_patterns[None]": [],
+  "personnel_patterns[S.O. 100(E)]": [],
+  "ports_shipping_patterns[None]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "ports_shipping_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   }
+  ],
+  "power_patterns[None]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "power_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   }
+  ],
+  "railways_patterns[None]": [],
+  "railways_patterns[S.O. 100(E)]": [],
+  "skill_development_patterns[None]": [],
+  "skill_development_patterns[S.O. 100(E)]": [],
+  "space_patterns[None]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "space_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 371(E)"
+   }
+  ],
+  "steel_patterns[None]": [],
+  "steel_patterns[S.O. 100(E)]": [],
+  "supersession[None]": [],
+  "supersession[S.O. 100(E)]": [],
+  "tribal_affairs_patterns[None]": [],
+  "tribal_affairs_patterns[S.O. 100(E)]": [],
+  "youth_affairs_sports_patterns[None]": [],
+  "youth_affairs_sports_patterns[S.O. 100(E)]": []
+ },
+ "no_match": {
+  "after_anchor[None]": [],
+  "after_anchor[S.O. 100(E)]": [],
+  "agriculture_patterns[None]": [],
+  "agriculture_patterns[S.O. 100(E)]": [],
+  "amend[ministry of power|None]": [],
+  "amend[ministry of power|S.O. 100(E)]": [],
+  "amend[power|None]": [],
+  "amend[power|S.O. 100(E)]": [],
+  "amend[road transport and highways|None]": [],
+  "amend[road transport and highways|S.O. 100(E)]": [],
+  "atomic_energy_patterns[None]": [],
+  "atomic_energy_patterns[S.O. 100(E)]": [],
+  "ayush_patterns[None]": [],
+  "ayush_patterns[S.O. 100(E)]": [],
+  "bare[None]": [],
+  "bare[S.O. 100(E)]": [],
+  "chemicals_fertilizers_patterns[None]": [],
+  "chemicals_fertilizers_patterns[S.O. 100(E)]": [],
+  "citations": [],
+  "civil_aviation_patterns[None]": [],
+  "civil_aviation_patterns[S.O. 100(E)]": [],
+  "communications_patterns[None]": [],
+  "communications_patterns[S.O. 100(E)]": [],
+  "consumer_affairs_patterns[None]": [],
+  "consumer_affairs_patterns[S.O. 100(E)]": [],
+  "cooperation_patterns[None]": [],
+  "cooperation_patterns[S.O. 100(E)]": [],
+  "corrig[ministry of power|None]": [],
+  "corrig[ministry of power|S.O. 100(E)]": [],
+  "corrig[power|None]": [],
+  "corrig[power|S.O. 100(E)]": [],
+  "corrig[road transport and highways|None]": [],
+  "corrig[road transport and highways|S.O. 100(E)]": [],
+  "cross_ref[45/2025]": [],
+  "cross_ref[None]": [],
+  "culture_patterns[None]": [],
+  "culture_patterns[S.O. 100(E)]": [],
+  "defence_patterns[None]": [],
+  "defence_patterns[S.O. 100(E)]": [],
+  "earth_sciences_patterns[None]": [],
+  "earth_sciences_patterns[S.O. 100(E)]": [],
+  "education_patterns[None]": [],
+  "education_patterns[S.O. 100(E)]": [],
+  "external_affairs_patterns[None]": [],
+  "external_affairs_patterns[S.O. 100(E)]": [],
+  "finance_other_patterns[None]": [],
+  "finance_other_patterns[S.O. 100(E)]": [],
+  "food_processing_patterns[None]": [],
+  "food_processing_patterns[S.O. 100(E)]": [],
+  "gazette_citations": [],
+  "gazette_ids": [],
+  "health_patterns[None]": [],
+  "health_patterns[S.O. 100(E)]": [],
+  "heavy_industries_patterns[None]": [],
+  "heavy_industries_patterns[S.O. 100(E)]": [],
+  "information_broadcasting_patterns[None]": [],
+  "information_broadcasting_patterns[S.O. 100(E)]": [],
+  "jal_shakti_patterns[None]": [],
+  "jal_shakti_patterns[S.O. 100(E)]": [],
+  "labour_patterns[None]": [],
+  "labour_patterns[S.O. 100(E)]": [],
+  "mca_patterns[None]": [],
+  "mca_patterns[S.O. 100(E)]": [],
+  "meity_patterns[None]": [],
+  "meity_patterns[S.O. 100(E)]": [],
+  "mha_patterns[None]": [],
+  "mha_patterns[S.O. 100(E)]": [],
+  "mines_patterns[None]": [],
+  "mines_patterns[S.O. 100(E)]": [],
+  "moefcc_patterns[None]": [],
+  "moefcc_patterns[S.O. 100(E)]": [],
+  "mohua_patterns[None]": [],
+  "mohua_patterns[S.O. 100(E)]": [],
+  "morth_patterns[None]": [],
+  "morth_patterns[S.O. 100(E)]": [],
+  "mospi_patterns[None]": [],
+  "mospi_patterns[S.O. 100(E)]": [],
+  "msme_patterns[None]": [],
+  "msme_patterns[S.O. 100(E)]": [],
+  "note_chain": [],
+  "parliamentary_affairs_patterns[None]": [],
+  "parliamentary_affairs_patterns[S.O. 100(E)]": [],
+  "personnel_patterns[None]": [],
+  "personnel_patterns[S.O. 100(E)]": [],
+  "ports_shipping_patterns[None]": [],
+  "ports_shipping_patterns[S.O. 100(E)]": [],
+  "power_patterns[None]": [],
+  "power_patterns[S.O. 100(E)]": [],
+  "railways_patterns[None]": [],
+  "railways_patterns[S.O. 100(E)]": [],
+  "skill_development_patterns[None]": [],
+  "skill_development_patterns[S.O. 100(E)]": [],
+  "space_patterns[None]": [],
+  "space_patterns[S.O. 100(E)]": [],
+  "steel_patterns[None]": [],
+  "steel_patterns[S.O. 100(E)]": [],
+  "supersession[None]": [],
+  "supersession[S.O. 100(E)]": [],
+  "tribal_affairs_patterns[None]": [],
+  "tribal_affairs_patterns[S.O. 100(E)]": [],
+  "youth_affairs_sports_patterns[None]": [],
+  "youth_affairs_sports_patterns[S.O. 100(E)]": []
+ },
+ "note": {
+  "after_anchor[None]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   },
+   {
+    "target_citation": "S.O. 5(E)"
+   }
+  ],
+  "after_anchor[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   },
+   {
+    "target_citation": "S.O. 5(E)"
+   }
+  ],
+  "agriculture_patterns[None]": [],
+  "agriculture_patterns[S.O. 100(E)]": [],
+  "amend[ministry of power|None]": [],
+  "amend[ministry of power|S.O. 100(E)]": [],
+  "amend[power|None]": [],
+  "amend[power|S.O. 100(E)]": [],
+  "amend[road transport and highways|None]": [],
+  "amend[road transport and highways|S.O. 100(E)]": [],
+  "atomic_energy_patterns[None]": [],
+  "atomic_energy_patterns[S.O. 100(E)]": [],
+  "ayush_patterns[None]": [],
+  "ayush_patterns[S.O. 100(E)]": [],
+  "bare[None]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "bare[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   }
+  ],
+  "chemicals_fertilizers_patterns[None]": [],
+  "chemicals_fertilizers_patterns[S.O. 100(E)]": [],
+  "citations": [],
+  "civil_aviation_patterns[None]": [],
+  "civil_aviation_patterns[S.O. 100(E)]": [],
+  "communications_patterns[None]": [],
+  "communications_patterns[S.O. 100(E)]": [],
+  "consumer_affairs_patterns[None]": [],
+  "consumer_affairs_patterns[S.O. 100(E)]": [],
+  "cooperation_patterns[None]": [],
+  "cooperation_patterns[S.O. 100(E)]": [],
+  "corrig[ministry of power|None]": [],
+  "corrig[ministry of power|S.O. 100(E)]": [],
+  "corrig[power|None]": [],
+  "corrig[power|S.O. 100(E)]": [],
+  "corrig[road transport and highways|None]": [],
+  "corrig[road transport and highways|S.O. 100(E)]": [],
+  "cross_ref[45/2025]": [],
+  "cross_ref[None]": [],
+  "culture_patterns[None]": [],
+  "culture_patterns[S.O. 100(E)]": [],
+  "defence_patterns[None]": [],
+  "defence_patterns[S.O. 100(E)]": [],
+  "earth_sciences_patterns[None]": [],
+  "earth_sciences_patterns[S.O. 100(E)]": [],
+  "education_patterns[None]": [],
+  "education_patterns[S.O. 100(E)]": [],
+  "external_affairs_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   },
+   {
+    "target_citation": "S.O. 5(E)"
+   }
+  ],
+  "external_affairs_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   },
+   {
+    "target_citation": "S.O. 5(E)"
+   }
+  ],
+  "finance_other_patterns[None]": [],
+  "finance_other_patterns[S.O. 100(E)]": [],
+  "food_processing_patterns[None]": [],
+  "food_processing_patterns[S.O. 100(E)]": [],
+  "gazette_citations": [
+   {
+    "end": 79,
+    "kind": "G.S.R.",
+    "normalized": "G.S.R. 1(E)",
+    "start": 68
+   },
+   {
+    "end": 163,
+    "kind": "G.S.R.",
+    "normalized": "G.S.R. 1(E)",
+    "start": 152
+   },
+   {
+    "end": 139,
+    "kind": "S.O.",
+    "normalized": "S.O. 2(E)",
+    "start": 130
+   },
+   {
+    "end": 150,
+    "kind": "S.O.",
+    "normalized": "S.O. 3(E)",
+    "start": 141
+   },
+   {
+    "end": 179,
+    "kind": "S.O.",
+    "normalized": "S.O. 100(E)",
+    "start": 168
+   },
+   {
+    "end": 201,
+    "kind": "S.O.",
+    "normalized": "S.O. 5(E)",
+    "start": 192
+   }
+  ],
+  "gazette_ids": [
+   "G.S.R. 1(E)",
+   "G.S.R. 1(E)",
+   "S.O. 2(E)",
+   "S.O. 3(E)",
+   "S.O. 100(E)",
+   "S.O. 5(E)"
+  ],
+  "health_patterns[None]": [],
+  "health_patterns[S.O. 100(E)]": [],
+  "heavy_industries_patterns[None]": [],
+  "heavy_industries_patterns[S.O. 100(E)]": [],
+  "information_broadcasting_patterns[None]": [],
+  "information_broadcasting_patterns[S.O. 100(E)]": [],
+  "jal_shakti_patterns[None]": [],
+  "jal_shakti_patterns[S.O. 100(E)]": [],
+  "labour_patterns[None]": [],
+  "labour_patterns[S.O. 100(E)]": [],
+  "mca_patterns[None]": [],
+  "mca_patterns[S.O. 100(E)]": [],
+  "meity_patterns[None]": [],
+  "meity_patterns[S.O. 100(E)]": [],
+  "mha_patterns[None]": [],
+  "mha_patterns[S.O. 100(E)]": [],
+  "mines_patterns[None]": [],
+  "mines_patterns[S.O. 100(E)]": [],
+  "moefcc_patterns[None]": [],
+  "moefcc_patterns[S.O. 100(E)]": [],
+  "mohua_patterns[None]": [],
+  "mohua_patterns[S.O. 100(E)]": [],
+  "morth_patterns[None]": [],
+  "morth_patterns[S.O. 100(E)]": [],
+  "mospi_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "mospi_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   }
+  ],
+  "msme_patterns[None]": [],
+  "msme_patterns[S.O. 100(E)]": [],
+  "note_chain": [
+   "G.S.R. 1(E)",
+   "S.O. 2(E)",
+   "S.O. 3(E)",
+   "S.O. 100(E)",
+   "S.O. 5(E)"
+  ],
+  "parliamentary_affairs_patterns[None]": [],
+  "parliamentary_affairs_patterns[S.O. 100(E)]": [],
+  "personnel_patterns[None]": [],
+  "personnel_patterns[S.O. 100(E)]": [],
+  "ports_shipping_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "ports_shipping_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   }
+  ],
+  "power_patterns[None]": [],
+  "power_patterns[S.O. 100(E)]": [],
+  "railways_patterns[None]": [],
+  "railways_patterns[S.O. 100(E)]": [],
+  "skill_development_patterns[None]": [],
+  "skill_development_patterns[S.O. 100(E)]": [],
+  "space_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   },
+   {
+    "target_citation": "S.O. 100(E)"
+   }
+  ],
+  "space_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 1(E)"
+   },
+   {
+    "target_citation": "S.O. 2(E)"
+   },
+   {
+    "target_citation": "S.O. 3(E)"
+   }
+  ],
+  "steel_patterns[None]": [],
+  "steel_patterns[S.O. 100(E)]": [],
+  "supersession[None]": [],
+  "supersession[S.O. 100(E)]": [],
+  "tribal_affairs_patterns[None]": [],
+  "tribal_affairs_patterns[S.O. 100(E)]": [],
+  "youth_affairs_sports_patterns[None]": [],
+  "youth_affairs_sports_patterns[S.O. 100(E)]": []
+ },
+ "railways": {
+  "after_anchor[None]": [],
+  "after_anchor[S.O. 100(E)]": [],
+  "agriculture_patterns[None]": [],
+  "agriculture_patterns[S.O. 100(E)]": [],
+  "amend[ministry of power|None]": [],
+  "amend[ministry of power|S.O. 100(E)]": [],
+  "amend[power|None]": [],
+  "amend[power|S.O. 100(E)]": [],
+  "amend[road transport and highways|None]": [],
+  "amend[road transport and highways|S.O. 100(E)]": [],
+  "atomic_energy_patterns[None]": [],
+  "atomic_energy_patterns[S.O. 100(E)]": [],
+  "ayush_patterns[None]": [],
+  "ayush_patterns[S.O. 100(E)]": [],
+  "bare[None]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "bare[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "chemicals_fertilizers_patterns[None]": [],
+  "chemicals_fertilizers_patterns[S.O. 100(E)]": [],
+  "citations": [],
+  "civil_aviation_patterns[None]": [],
+  "civil_aviation_patterns[S.O. 100(E)]": [],
+  "communications_patterns[None]": [],
+  "communications_patterns[S.O. 100(E)]": [],
+  "consumer_affairs_patterns[None]": [],
+  "consumer_affairs_patterns[S.O. 100(E)]": [],
+  "cooperation_patterns[None]": [],
+  "cooperation_patterns[S.O. 100(E)]": [],
+  "corrig[ministry of power|None]": [],
+  "corrig[ministry of power|S.O. 100(E)]": [],
+  "corrig[power|None]": [],
+  "corrig[power|S.O. 100(E)]": [],
+  "corrig[road transport and highways|None]": [],
+  "corrig[road transport and highways|S.O. 100(E)]": [],
+  "cross_ref[45/2025]": [],
+  "cross_ref[None]": [],
+  "culture_patterns[None]": [],
+  "culture_patterns[S.O. 100(E)]": [],
+  "defence_patterns[None]": [],
+  "defence_patterns[S.O. 100(E)]": [],
+  "earth_sciences_patterns[None]": [],
+  "earth_sciences_patterns[S.O. 100(E)]": [],
+  "education_patterns[None]": [],
+  "education_patterns[S.O. 100(E)]": [],
+  "external_affairs_patterns[None]": [],
+  "external_affairs_patterns[S.O. 100(E)]": [],
+  "finance_other_patterns[None]": [],
+  "finance_other_patterns[S.O. 100(E)]": [],
+  "food_processing_patterns[None]": [],
+  "food_processing_patterns[S.O. 100(E)]": [],
+  "gazette_citations": [
+   {
+    "end": 11,
+    "kind": "S.O.",
+    "normalized": "S.O. 100(E)",
+    "start": 0
+   },
+   {
+    "end": 43,
+    "kind": "S.O.",
+    "normalized": "S.O. 8(E)",
+    "start": 34
+   }
+  ],
+  "gazette_ids": [
+   "S.O. 100(E)",
+   "S.O. 8(E)"
+  ],
+  "health_patterns[None]": [],
+  "health_patterns[S.O. 100(E)]": [],
+  "heavy_industries_patterns[None]": [],
+  "heavy_industries_patterns[S.O. 100(E)]": [],
+  "information_broadcasting_patterns[None]": [],
+  "information_broadcasting_patterns[S.O. 100(E)]": [],
+  "jal_shakti_patterns[None]": [],
+  "jal_shakti_patterns[S.O. 100(E)]": [],
+  "labour_patterns[None]": [],
+  "labour_patterns[S.O. 100(E)]": [],
+  "mca_patterns[None]": [],
+  "mca_patterns[S.O. 100(E)]": [],
+  "meity_patterns[None]": [],
+  "meity_patterns[S.O. 100(E)]": [],
+  "mha_patterns[None]": [],
+  "mha_patterns[S.O. 100(E)]": [],
+  "mines_patterns[None]": [],
+  "mines_patterns[S.O. 100(E)]": [],
+  "moefcc_patterns[None]": [],
+  "moefcc_patterns[S.O. 100(E)]": [],
+  "mohua_patterns[None]": [],
+  "mohua_patterns[S.O. 100(E)]": [],
+  "morth_patterns[None]": [],
+  "morth_patterns[S.O. 100(E)]": [],
+  "mospi_patterns[None]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "mospi_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "msme_patterns[None]": [],
+  "msme_patterns[S.O. 100(E)]": [],
+  "note_chain": [],
+  "parliamentary_affairs_patterns[None]": [],
+  "parliamentary_affairs_patterns[S.O. 100(E)]": [],
+  "personnel_patterns[None]": [],
+  "personnel_patterns[S.O. 100(E)]": [],
+  "ports_shipping_patterns[None]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "ports_shipping_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "power_patterns[None]": [],
+  "power_patterns[S.O. 100(E)]": [],
+  "railways_patterns[None]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "railways_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "skill_development_patterns[None]": [],
+  "skill_development_patterns[S.O. 100(E)]": [],
+  "space_patterns[None]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "space_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "S.O. 8(E)"
+   }
+  ],
+  "steel_patterns[None]": [],
+  "steel_patterns[S.O. 100(E)]": [],
+  "supersession[None]": [],
+  "supersession[S.O. 100(E)]": [],
+  "tribal_affairs_patterns[None]": [],
+  "tribal_affairs_patterns[S.O. 100(E)]": [],
+  "youth_affairs_sports_patterns[None]": [],
+  "youth_affairs_sports_patterns[S.O. 100(E)]": []
+ },
+ "supersession": {
+  "after_anchor[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "after_anchor[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "agriculture_patterns[None]": [],
+  "agriculture_patterns[S.O. 100(E)]": [],
+  "amend[ministry of power|None]": [],
+  "amend[ministry of power|S.O. 100(E)]": [],
+  "amend[power|None]": [],
+  "amend[power|S.O. 100(E)]": [],
+  "amend[road transport and highways|None]": [],
+  "amend[road transport and highways|S.O. 100(E)]": [],
+  "atomic_energy_patterns[None]": [],
+  "atomic_energy_patterns[S.O. 100(E)]": [],
+  "ayush_patterns[None]": [],
+  "ayush_patterns[S.O. 100(E)]": [],
+  "bare[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "bare[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "chemicals_fertilizers_patterns[None]": [],
+  "chemicals_fertilizers_patterns[S.O. 100(E)]": [],
+  "citations": [],
+  "civil_aviation_patterns[None]": [],
+  "civil_aviation_patterns[S.O. 100(E)]": [],
+  "communications_patterns[None]": [],
+  "communications_patterns[S.O. 100(E)]": [],
+  "consumer_affairs_patterns[None]": [],
+  "consumer_affairs_patterns[S.O. 100(E)]": [],
+  "cooperation_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "cooperation_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "corrig[ministry of power|None]": [],
+  "corrig[ministry of power|S.O. 100(E)]": [],
+  "corrig[power|None]": [],
+  "corrig[power|S.O. 100(E)]": [],
+  "corrig[road transport and highways|None]": [],
+  "corrig[road transport and highways|S.O. 100(E)]": [],
+  "cross_ref[45/2025]": [],
+  "cross_ref[None]": [],
+  "culture_patterns[None]": [],
+  "culture_patterns[S.O. 100(E)]": [],
+  "defence_patterns[None]": [],
+  "defence_patterns[S.O. 100(E)]": [],
+  "earth_sciences_patterns[None]": [],
+  "earth_sciences_patterns[S.O. 100(E)]": [],
+  "education_patterns[None]": [],
+  "education_patterns[S.O. 100(E)]": [],
+  "external_affairs_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "external_affairs_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "finance_other_patterns[None]": [],
+  "finance_other_patterns[S.O. 100(E)]": [],
+  "food_processing_patterns[None]": [],
+  "food_processing_patterns[S.O. 100(E)]": [],
+  "gazette_citations": [
+   {
+    "end": 114,
+    "kind": "G.S.R.",
+    "normalized": "G.S.R. 165(E)",
+    "start": 100
+   },
+   {
+    "end": 81,
+    "kind": "S.O.",
+    "normalized": "S.O. 1436(E)",
+    "start": 67
+   },
+   {
+    "end": 95,
+    "kind": "S.O.",
+    "normalized": "S.O. 2281(E)",
+    "start": 83
+   },
+   {
+    "end": 197,
+    "kind": "S.O.",
+    "normalized": "S.O. 999(E)",
+    "start": 186
+   },
+   {
+    "end": 128,
+    "kind": "S.R.O.",
+    "normalized": "S.R.O. 44(E)",
+    "start": 116
+   }
+  ],
+  "gazette_ids": [
+   "G.S.R. 165(E)",
+   "S.O. 1436(E)",
+   "S.O. 2281(E)",
+   "S.O. 999(E)",
+   "S.R.O. 44(E)"
+  ],
+  "health_patterns[None]": [],
+  "health_patterns[S.O. 100(E)]": [],
+  "heavy_industries_patterns[None]": [],
+  "heavy_industries_patterns[S.O. 100(E)]": [],
+  "information_broadcasting_patterns[None]": [],
+  "information_broadcasting_patterns[S.O. 100(E)]": [],
+  "jal_shakti_patterns[None]": [],
+  "jal_shakti_patterns[S.O. 100(E)]": [],
+  "labour_patterns[None]": [],
+  "labour_patterns[S.O. 100(E)]": [],
+  "mca_patterns[None]": [],
+  "mca_patterns[S.O. 100(E)]": [],
+  "meity_patterns[None]": [],
+  "meity_patterns[S.O. 100(E)]": [],
+  "mha_patterns[None]": [],
+  "mha_patterns[S.O. 100(E)]": [],
+  "mines_patterns[None]": [],
+  "mines_patterns[S.O. 100(E)]": [],
+  "moefcc_patterns[None]": [],
+  "moefcc_patterns[S.O. 100(E)]": [],
+  "mohua_patterns[None]": [],
+  "mohua_patterns[S.O. 100(E)]": [],
+  "morth_patterns[None]": [],
+  "morth_patterns[S.O. 100(E)]": [],
+  "mospi_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "mospi_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "msme_patterns[None]": [],
+  "msme_patterns[S.O. 100(E)]": [],
+  "note_chain": [],
+  "parliamentary_affairs_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "parliamentary_affairs_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "personnel_patterns[None]": [],
+  "personnel_patterns[S.O. 100(E)]": [],
+  "ports_shipping_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "ports_shipping_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "power_patterns[None]": [],
+  "power_patterns[S.O. 100(E)]": [],
+  "railways_patterns[None]": [],
+  "railways_patterns[S.O. 100(E)]": [],
+  "skill_development_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "skill_development_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "space_patterns[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "space_patterns[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "steel_patterns[None]": [],
+  "steel_patterns[S.O. 100(E)]": [],
+  "supersession[None]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "supersession[S.O. 100(E)]": [
+   {
+    "target_citation": "G.S.R. 165(E)"
+   },
+   {
+    "target_citation": "S.O. 1436(E)"
+   },
+   {
+    "target_citation": "S.O. 2281(E)"
+   },
+   {
+    "target_citation": "S.R.O. 44(E)"
+   }
+  ],
+  "tribal_affairs_patterns[None]": [],
+  "tribal_affairs_patterns[S.O. 100(E)]": [],
+  "youth_affairs_sports_patterns[None]": [],
+  "youth_affairs_sports_patterns[S.O. 100(E)]": []
+ }
+}

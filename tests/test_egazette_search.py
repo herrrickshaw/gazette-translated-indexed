@@ -14,7 +14,6 @@ connection failure and a real server 500 partway through and, before this
 fix, lost every already-fetched month along with it.
 """
 from datetime import date
-from unittest.mock import patch
 
 from ingest.egazette_search import (
     MONTH_RETRIES,

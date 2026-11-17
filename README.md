@@ -1,159 +1,98 @@
 # Gazette Trail
 
-<!-- how-to-use-with-ai -->
-> **New here?** See [How to use this repo with AI (Claude, Gemini, ChatGPT)](HOW_TO_USE_WITH_AI.md) — clone it, paste it into an AI tool, and ask in plain English.
+A citation index for Indian central-government gazette notifications: what a notification amends,
+what amended it before, and what supersedes it next -- none of which is visible when you read a
+single notification on its own. It extracts G.S.R./S.O./S.R.O. and CBIC `No. X/YYYY-Customs`
+citations from official text, stores notifications and cross-references in SQLite, and renders a
+compendium view, an LLM-ready JSONL corpus and per-language summaries. Piloted on CBIC customs
+notifications, now covering 53 ministries.
 
+> Status: active. Every row traces to quoted primary-source text; the index is a research aid, not
+> legal advice -- always confirm against the official gazette (egazette.gov.in). No licence file yet --
+> all rights reserved.
 
-A citation index for Indian gazette notifications: what a notification amends,
-what amended it before, and what it will be superseded by next — none of which
-is visible when you read a single notification on its own.
+New to the repo? See [How to use this repo with AI](HOW_TO_USE_WITH_AI.md).
 
-**Scope:** 53 central Government of India ministries/departments modeled, plus
-3 honestly abandoned (documented, not silently dropped — see
-`docs/MINISTRY_COVERAGE_PLAN.md` for the full list and the reasoning behind
-each abandonment). 2,591 notifications, 2,113 cross-references, 141 tests, all
-built against real quoted primary-source text — no synthetic fixtures. See
-`docs/MINISTRY_COVERAGE_PLAN.md` for how coverage was first built out batch by
-batch, and `docs/DEPTH_PASS_PLAN.md` for the subsequent depth pass that took
-every ministry from a bounded first coverage to substantially deeper linkage.
+## What it does
+- Fetches official gazette PDFs from egazette.gov.in by gazette ID and extracts text (`ingest/`).
+- Finds citations and relation phrases ("in supersession of", "further amend", Note chains) with
+  ministry-specific and shared drafting-template matchers (`extract/`).
+- Stores notifications and cross-references with per-row provenance (`verified_by`) in SQLite (`db/`).
+- Renders a notification's lineage as an HTML fragment and exports the whole graph as JSONL (`render/`).
+- Checks modeled ministries for newer notifications than the database holds (`ingest/freshness_check.py`).
+- Translates the index's own summaries into 22 Eighth Schedule languages plus a foreign tier (`render/translate.py`).
 
-## Setup
-
+## Quick start
 ```bash
-python3 -m venv ~/.venvs/gazette-trail
-source ~/.venvs/gazette-trail/bin/activate
+git clone https://github.com/herrrickshaw/gazette-translated-indexed.git
+cd gazette-translated-indexed
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-```
-
-## Pipeline
-
-```bash
-# 0. fetch the official PDF straight from egazette.gov.in by gazette ID
-#    (deterministic URL: WriteReadData/<year>/<file-id>.pdf — no login, no aggregator;
-#     --extract also writes the transcript to data/raw_md/<id>.md)
-python3 -m ingest.egazette CG-DL-E-03092026-275956 --extract
-
-# 1. or extract text from a PDF you already have
-python3 -m ingest.pdf_text data/raw/some-notification.pdf > data/raw_md/some-notification.md
-
-# 0b. bulk: fetch every ID in a manifest (one column of gazette IDs), then parse
-#     the official PDFs against what the index claims and upgrade provenance on
-#     evidence. data/manifest/collected_ids.csv is the first bounded run: every
-#     ID discovered during the design sessions, PDFs kept outside the repo.
-tail -n +2 data/manifest/collected_ids.csv | cut -d, -f1 \
-  | xargs python3 -m ingest.egazette --out "$PDF_DIR"
-python3 -m ingest.parse_manifest data/manifest/collected_ids.csv \
-  --pdf-dir "$PDF_DIR" --report data/manifest/parse_report.md --update-db gazette.db
-
-# 2. load the schema + every ministry's seed data (one file per ministry, db/seed_*.sql)
 sqlite3 gazette.db < db/schema.sql
 for f in db/seed_*.sql; do sqlite3 gazette.db < "$f"; done
 sqlite3 gazette.db "PRAGMA foreign_key_check;"   # should print nothing
-
-# 2b. all reads/writes to gazette_notification and cross_reference go through
-#     db/crud.py — not raw SQL. It never stores a PDF's bytes (pdf_url only,
-#     since every gazette here is a public document, re-fetchable by ID) and
-#     Delete has two real modes: archive_*/restore_* (soft — the row and
-#     everything pointing at it stay valid, it just drops out of default
-#     listings) and hard_delete_* (refuses if cross_reference rows still
-#     reference it, unless cascade=True). See db/crud.py's own docstring.
-python3 -c "
-import sqlite3
-from db.crud import list_notifications, get_lineage
-conn = sqlite3.connect('gazette.db'); conn.execute('PRAGMA foreign_keys = ON')
-for n in list_notifications(conn, ministry_id='power'):
-    print(n['gsr_or_so'], n['publish_date'])
-print(get_lineage(conn, 'power-so-5852-2022'))
-"
-
-# 3. run the full test suite (141 tests, one file per template/ministry-module,
-#    each built against real quoted notification text)
-pytest tests/
-
-# 4. review any newly auto-suggested cross-references
-python3 -m verify.review_queue --db gazette.db
-
-# 5. regenerate a page from the database
 python3 -m render.pages --db gazette.db --notification "45/2025-Customs" > out.html
-
-# 6. export the whole graph as an LLM-ready JSONL corpus (one notification
-#    per line, ministry/instrument/thread + one-hop lineage inlined) --
-#    schema and usage in docs/LLM_CORPUS.md
-python3 -m render.llm_export --db gazette.db > data/exports/llm_corpus.jsonl
-
-# 7. check already-modeled ministries for notifications newer than what's
-#    in the database (never writes to the db -- flags candidates for a
-#    depth-pass-style follow-up, same as extract/cross_ref.py's regex
-#    candidates or ingest/mistral_extract.py's model candidates)
-python3 -m ingest.freshness_check --db gazette.db --extract
-
-# 8. read a single notification's data in another language (translates this
-#    project's own ministry/instrument/thread/summary text, not the
-#    notification's original legal text -- see "Reading it in another
-#    language" below)
-python3 -m render.translate cus-45-2025 --lang hi --db gazette.db
-python3 -m render.translate --list-languages
 ```
 
-OCR is opt-in and only invoked for scanned (non-digital-native) PDFs, via the
-existing `~/ocr` Unlimited-OCR client — see `ingest/ocr_fallback.py`. It
-requires `UNLIMITED_OCR_URL` to point at a running endpoint (typically a
-Colab GPU notebook); when that endpoint isn't up, ingestion marks the
-document `needs_ocr` instead of failing.
+## How it works
+| Stage | Module | Output |
+|---|---|---|
+| fetch PDF by ID | `ingest/egazette.py`, `ingest/egazette_search.py` | cached PDF (gitignored `data/raw/`) |
+| PDF to text (OCR opt-in) | `ingest/pdf_text.py`, `ingest/ocr_fallback.py` | `data/raw_md/<id>.md` |
+| citation regexes | `extract/citation_patterns.py` | `Citation` / `GazetteCitation` |
+| relation phrases (CBIC) | `extract/cross_ref.py` | candidate links for review |
+| shared drafting templates | `extract/common_templates.py` | `TemplateLink` lists |
+| per-ministry matchers | `extract/*_patterns.py` | target citations per notification |
+| seed data | `db/seed_<ministry>.sql` | `gazette.db` |
+| all reads/writes | `db/crud.py` | notifications, cross-references, lineage |
+| review of suggestions | `verify/review_queue.py` | queue of unverified candidates |
+| output | `render/pages.py`, `render/llm_export.py` | HTML, `data/exports/llm_corpus.jsonl` |
 
-## How extraction works
+Run each stage as `python3 -m <module>`. Common commands:
+```bash
+python3 -m ingest.egazette CG-DL-E-03092026-275956 --extract        # fetch + transcript
+python3 -m ingest.pdf_text data/raw/some.pdf > data/raw_md/some.md   # local PDF
+python3 -m ingest.parse_manifest data/manifest/collected_ids.csv --pdf-dir "$PDF_DIR" \
+    --report data/manifest/parse_report.md --update-db gazette.db   # bulk check vs official PDFs
+python3 -m verify.review_queue --db gazette.db                       # review auto-suggested links
+python3 -m render.llm_export --db gazette.db > data/exports/llm_corpus.jsonl   # see docs/LLM_CORPUS.md
+python3 -m ingest.freshness_check --db gazette.db --extract          # never writes to the db
+```
+All reads/writes to `gazette_notification` and `cross_reference` go through `db/crud.py`, not raw SQL. It
+never stores PDF bytes (only `pdf_url`) and has two delete modes: `archive_*`/`restore_*` (soft) and
+`hard_delete_*` (refuses while cross-references point at the row, unless `cascade=True`).
 
-Real Indian gazette drafting turns out to follow a small number of recurring
-sentence shapes across ministries, once you've seen enough real examples. Five
-shared templates live in `extract/common_templates.py`, each one written only
-after 2+ independent ministries confirmed the same shape — never designed
-speculatively from a single example:
+OCR is opt-in and only used for scanned PDFs, through the existing `~/ocr` Unlimited-OCR client
+(`ingest/ocr_fallback.py`); it needs `UNLIMITED_OCR_URL` pointing at a running endpoint. When that is down,
+ingestion marks the document `needs_ocr` instead of failing.
 
-- **amendment-in-notification** — "hereby makes the following amendment[s] in
-  the notification ... Ministry of X ... vide number \<citation\>, dated ..."
-- **corrigendum-substitution** — "In the notification ... Ministry of X ...
-  number \<citation\> ... for [old] read [new]"
-- **supersession-preamble** — "in supersession of the notification ... vide
-  number \<citation\> ... except as respects things done or omitted to be done
-  before such supersession" — does *not* anchor on a ministry name, since the
-  superseded notification is often issued by a different ministry entirely
-- **bare-citation-reference** — a citation with no ministry-name anchor at all
-  ("vide notification number X", "In the Notification X") — a tight 60-char
-  window since there's no ministry name to help narrow the scan
-- **note-chain** — a trailing "Note[:.-]" (also "Footnote:") clause naming an
-  instrument's own full amendment history, in order
+### How extraction works
+Real gazette drafting follows a few recurring sentence shapes. Five shared templates live in
+`extract/common_templates.py`, each written only after two or more independent ministries confirmed it:
 
-A ministry whose real text doesn't fit any shared template gets its own
-module instead (e.g. `extract/railways_patterns.py`, whose citation appears
-*before* the ministry name rather than after) — see `extract/common_templates.py`'s
-own docstring for the full evidence trail behind each template, and any
-`extract/*_patterns.py` module for a ministry-specific shape.
+- **amendment-in-notification** -- "hereby makes the following [further] amendment[s] in the notification ... Ministry of X ... vide number <citation>"
+- **corrigendum-substitution** -- "In the notification ... Ministry of X ... number <citation> ... for [old] read [new]"
+- **supersession-preamble** -- "in supersession of ... vide number <citation> ... except as respects things done"; not anchored on a ministry name, since the superseded notification is often another ministry's
+- **bare-citation-reference** -- "vide notification number X" with no ministry anchor; tight 60-character window
+- **note-chain** -- a trailing "Note[:.-]" (also "Footnote:") clause listing an instrument's amendment history
+
+A ministry whose text fits none gets its own module (e.g. `extract/railways_patterns.py`, where the citation
+precedes the ministry name). The docstring of `extract/common_templates.py` holds the evidence trail.
 
 ## Reading it in another language
+`render/translate.py` translates one notification's *data* (ministry, instrument, thread summary, generated
+summary sentence) -- not its legal text, which the government publishes (often bilingually; tracked by the
+`primary-source-egazette-hindi-column` tier of `verified_by`). Numbers, dates and gazette IDs are never touched;
+English originals stay as `<field>_en`.
+```bash
+python3 -m render.translate cus-45-2025 --lang hi --db gazette.db
+python3 -m render.translate cus-45-2025 --lang-name Swahili --db gazette.db
+python3 -m render.translate --list-languages
+```
+Coverage: all 22 Eighth Schedule languages, a foreign tier (French, Spanish, Arabic, Chinese, Russian, Portuguese,
+German, Japanese, Sinhala, Burmese, Tibetan), or any language via `--lang-name`.
 
-Two separate tools, for two separate things:
-
-- **`render/translate.py`** translates one notification's *data* -- the
-  ministry name, instrument title, thread summary, and generated summary
-  sentence -- into another language, on request:
-
-  ```bash
-  python3 -m render.translate cus-45-2025 --lang hi --db gazette.db      # Hindi
-  python3 -m render.translate cus-45-2025 --lang-name Swahili --db gazette.db
-  python3 -m render.translate --list-languages                          # the priority list
-  ```
-
-  Coverage, in priority order: all 22 languages of the Eighth Schedule to
-  the Constitution (the actual constitutional list -- Assamese through
-  Urdu, including Bodo, Dogri, Konkani, Maithili, Manipuri and Santali,
-  not just the eleven or twelve "major" ones), then a foreign-language tier
-  (French, Spanish, Arabic, Chinese, Russian, Portuguese, German, Japanese,
-  plus neighbors Sinhala, Burmese, Tibetan), then anything else at all via
-  `--lang-name`. Numbers, dates, and `gazette_id`s are never touched --
-  only the four text fields translate, and the English originals stay
-  alongside as `<field>_en`.
-
-  **Sample translation** -- No. 45/2025-Customs's generated summary, live
+**Sample translation** -- No. 45/2025-Customs's generated summary, live
   output from six of the twenty-two languages:
 
   | Language | Translation |
@@ -166,78 +105,66 @@ Two separate tools, for two separate things:
   | Tamil | சுங்கம் 45/2025 (G.S.R. 781(E), 2025-10-24) 31 அறிவிக்கைகளை ரத்து செய்து மாற்றீடு செய்கிறது; 6 அறிவிக்கைகளால் திருத்தப்பட்டுள்ளது; 2 அறிவிக்கைகள் மூலம் பிழைதிருத்தம் வெளியிடப்பட்டுள்ளது; 1 அறிவிக்கையில் மேற்கோள் காட்டப்பட்டுள்ளது. |
   | Marathi | सीमा शुल्क ४५/२०२५ (जी.एस.आर. ७८१(ई), २०२५-१०-२४) हे ३१ अधिसूचनांचे अधिक्रमण करते; ६ अधिसूचनांद्वारे सुधारित; २ अधिसूचनांद्वारे शुद्धिपत्रक जारी; १ अधिसूचनेत उद्धृत. |
 
-  (Live output, one Gemini call per row -- not hand-translated. Regenerate
-  with `python3 -m render.translate cus-45-2025 --lang <code> --db gazette.db`.)
+  (Live output, one Gemini call per row -- not hand-translated. Regenerate with
+  `python3 -m render.translate cus-45-2025 --lang <code> --db gazette.db`.)
 
-  This does **not** translate a notification's own legal text -- that's
-  the government's job, and many gazette notifications already print an
-  official Hindi column alongside English (this project's `verified_by`
-  tier `primary-source-egazette-hindi-column` tracks exactly that case).
-  It exists so a reader can find and understand a citation *chain* in
-  their own language, then follow `pdf_url` to the official bilingual
-  source for the legal text itself.
+Backends: Gemini by default (`GEMINI_API_KEY`; free-tier quota 20 requests/day per model), and two self-hosted
+backends with no quota for bulk work -- together translating the whole summary corpus into 18 languages:
+`--backend krutrim` (Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati, Kannada, Malayalam, Punjabi; Krutrim
+Community License, attribution required; CTranslate2 on CPU) and `--backend libretranslate` (AGPL; Urdu plus
+French, Spanish, Arabic, Chinese, Russian, Portuguese, German, Japanese). AI4Bharat/IndicTrans2 via
+`transformers` was tried first and abandoned as incompatible (see the `render/translate.py` docstring and
+`notebooks/serve_indictrans2_colab.ipynb`). The other 12 Eighth Schedule languages are reachable only through
+Gemini's per-record path. NLLB-200 is CC-BY-NC-4.0 and deliberately not adopted. `render/pages.py
+--translate-widget` instead adds Google's page-translate widget to a rendered page (off by default).
 
-  Default backend is Gemini (`GEMINI_API_KEY`, environment or
-  `~/.config/market-secrets/credentials.env`) -- zero setup, adequate
-  quality, a paid per-call API capped at Google AI Studio's free-tier
-  quota of 20 requests/day per model. For bulk translation at corpus
-  scale, the whole 2,591-notification summary corpus is translated into
-  **18 languages across two self-hosted backends**, both with no
-  per-call quota:
+## Repository layout
+| Path | Purpose |
+|---|---|
+| `ingest/` | fetch, search, text extraction, manifest parsing, freshness check, credential lookup |
+| `extract/` | citation regexes, shared templates, one `*_patterns.py` per ministry |
+| `db/` | `schema.sql`, `seed_<ministry>.sql` (53), `crud.py`, ministry/slug maps |
+| `render/` | HTML pages, JSONL export, translation (`translate`, `bulk_translate`, `query_translation`, `load_translations`) |
+| `verify/` | review queue for suggested cross-references |
+| `data/` | `manifest/` (tracked ID list + parse report), `raw_md/` (tracked transcripts); `raw/`, `exports/`, `translations/` are gitignored |
+| `docs/` | coverage plans, data pipeline, LLM corpus schema |
+| `tests/` | pytest suite, one file per template/ministry module plus golden extraction baseline |
 
-  - `--backend krutrim` covers the 9 Indian languages with the most
-    native speakers (Hindi, Bengali, Marathi, Telugu, Tamil, Gujarati,
-    Kannada, Malayalam, Punjabi):
-    [Krutrim-Translate](https://huggingface.co/krutrim-ai-labs/Krutrim-Translate)
-    (Krutrim Community License, attribution required -- see
-    `~/krutrim-translate/LICENSE.md`), Ola Krutrim's extension of
-    AI4Bharat/IndicTrans2, served locally via
-    [CTranslate2](https://github.com/OpenNMT/CTranslate2) with no GPU
-    (confirmed live at ~0.1-0.2s/call on CPU). **AI4Bharat/IndicTrans2 via
-    HuggingFace `transformers`** was attempted first, but its remote model
-    code proved incompatible with current `transformers`' reworked
-    KV-cache internals in a way that went past reasonable monkey-patching
-    (see `render/translate.py`'s module docstring and
-    `notebooks/serve_indictrans2_colab.ipynb` for the full diagnosis) --
-    Krutrim's CTranslate2 serving path sidesteps this entirely.
-  - `--backend libretranslate`
-    ([LibreTranslate](https://github.com/LibreTranslate/LibreTranslate),
-    AGPL, self-hosted, Argos Translate models) covers the 9 languages
-    Krutrim doesn't reach: Urdu (the one remaining Eighth Schedule
-    language its models support) plus the 8-of-11 foreign-language tier
-    (French, Spanish, Arabic, Chinese, Russian, Portuguese, German,
-    Japanese).
+## Data sources
+| Source | What is taken | Access route | Licence / caveat |
+|---|---|---|---|
+| egazette.gov.in | official gazette PDFs | direct `WriteReadData/<year>/<file-id>.pdf` URL, via `curl` (Python `ssl` cannot verify its chain; TLS verification is never disabled) | public government documents; fetch politely, no documented rate limit |
+| gazettetracker.com | listings used by `freshness_check` | HTTP | third-party aggregator; an aggregator ID once served the wrong content (see `data/manifest/collected_ids.csv` notes) |
 
-  Together the two backends translate every summary in the corpus into
-  all 18 languages; the remaining 12 Eighth Schedule languages
-  (Assamese, Bodo, Dogri, Kashmiri, Konkani, Maithili, Manipuri, Nepali,
-  Odia, Sanskrit, Santali, Sindhi) have no self-hosted option today and
-  are only reachable via Gemini's live per-record path, not bulk
-  translation, given its 20-request/day quota. Meta's NLLB-200 covers
-  200+ languages but ships CC-BY-NC-4.0 (non-commercial only), so it's
-  noted, not adopted, for a public repo.
+## Configuration
+`GEMINI_API_KEY`, `LIBRETRANSLATE_URL` (default `http://127.0.0.1:5001`), `KRUTRIM_URL` (default
+`http://127.0.0.1:5002`), `MISTRAL_API_KEY`, `MISTRAL_COLAB_URL`, `UNLIMITED_OCR_URL` are read from the
+environment, then from `~/.config/market-secrets/credentials.env` (`ingest/credentials.py`). All are optional,
+and none is ever committed.
 
-- **`render/pages.py --translate-widget`** puts Google's own
-  `translate.google.com` page widget on a *rendered page*, for a human
-  browsing it in whatever language their browser is already set to --
-  no API key, no translation this project maintains itself. Off by
-  default so the plain HTML fragment still diffs cleanly against the
-  existing published compendium page.
+## Testing
+```bash
+pip install pytest ruff
+pytest -q        # offline: no test contacts egazette.gov.in or any translation service
+ruff check .
+```
+`tests/test_golden_extraction.py` compares every extractor's output on synthetic text with a stored baseline.
 
-## Data quality discipline
+## Limitations and known issues
+- Every citation traces to quoted primary-source text; a genuinely incomplete chain stays incomplete, with the
+  gap noted in that seed file's header, never bridged.
+- `cross_reference.verified_by` is never smoothed: `primary-source-*` tiers rank above `research-agent-quoted`.
+- Citation forms the schema does not represent (bare file numbers, Act/Regulation numbers) are documented as
+  unmodeled in the ministry's seed file, not forced through a mismatched pattern.
+- `docs/MINISTRY_COVERAGE_PLAN.md` lists 3 abandoned ministries and why; `docs/DEPTH_PASS_PLAN.md` the depth pass.
+- `SearchPublishDate.aspx` returns at most 15 rows per page and pagination failed server-side, so
+  `search_by_publish_date()` is a single-page spot-check; use `search_by_ministry_since()` for coverage.
+- Seeding every `db/seed_*.sql` currently yields 2,637 notifications and 2,150 cross-references across 53
+  ministries (earlier README figures of 2,591 / 2,113 were out of date).
+- The six-language sample above is live Gemini output; verify before relying on any translation.
 
-- Every citation traces to a real, quoted primary-source notification with a
-  URL. Nothing is invented to complete a chain — a genuinely incomplete chain
-  (a missing intermediate amendment) is left incomplete, with the gap
-  documented in that seed file's header comment, rather than bridged.
-- `cross_reference.verified_by` tracks provenance per row, never smoothed to
-  look uniform: `primary-source-*` tiers (hand-verified or fetched directly
-  from egazette.gov.in) rank above `research-agent-quoted` (a research agent
-  found and quoted the real primary text via a third-party tracker).
-- A citation form the schema/extractor doesn't yet represent (a bare
-  notification/file number, an Act/Regulation number instead of a G.S.R./S.O.)
-  is documented as deliberately unmodeled in that ministry's seed file, not
-  silently dropped or forced through a mismatched pattern.
-- `docs/MINISTRY_COVERAGE_PLAN.md` records which ministries were fully
-  abandoned (checked and found to have nothing linkable) versus modeled, and
-  why.
+## Related repositories
+None required. `CLAUDE.md` documents the shared source-fetching rules used when collecting primary documents.
+
+## Licence
+No licence file yet -- all rights reserved.

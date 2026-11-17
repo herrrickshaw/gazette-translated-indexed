@@ -16,7 +16,7 @@ extract.common_templates.find_note_chain's anchor regex this batch.
 """
 from __future__ import annotations
 
-from .common_templates import TemplateLink, find_corrigendum_substitution_links
+from .common_templates import TemplateLink, dedupe_links, find_corrigendum_substitution_links
 
 MINISTRY_NAME = 'information and broadcasting'
 
@@ -26,10 +26,4 @@ def find_candidate_links(text: str, self_citation: str | None = None) -> list[Te
     # A second real example anchors on the shorter "Ministry of
     # Information" alone (no "and Broadcasting"), so also try that.
     links += find_corrigendum_substitution_links(text, 'information', self_citation=self_citation)
-    seen = set()
-    out = []
-    for l in links:
-        if l.target_citation not in seen:
-            seen.add(l.target_citation)
-            out.append(l)
-    return out
+    return dedupe_links(links)

@@ -1,14 +1,14 @@
 """Structural tests for render/translate.py that don't call the network --
 the language-priority lists and translate_record's argument validation."""
 from render.translate import (
-    INDIAN_LANGUAGES,
     FOREIGN_LANGUAGES,
-    SUPPORTED_LANGUAGES,
-    LIBRETRANSLATE_CODES,
+    INDIAN_LANGUAGES,
     KRUTRIM_CODES,
+    LIBRETRANSLATE_CODES,
+    SUPPORTED_LANGUAGES,
     translate_record,
-    translate_record_libretranslate,
     translate_record_krutrim,
+    translate_record_libretranslate,
 )
 
 
