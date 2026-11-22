@@ -68,6 +68,11 @@ def test_list_notifications_filters_by_thread_and_orders_by_publish_date(conn):
     assert list_notifications(conn, ministry_id="customs", thread_id="nope") == []
 
 
+def test_list_notifications_orders_by_publish_date_not_by_id(conn):
+    create_notification(conn, "zzz-oldest", "Customs", "1/2000", "2000-01-01", "4-digit-year")
+    assert [n["gazette_id"] for n in list_notifications(conn)] == ["zzz-oldest", "cus-31-2024", "cus-45-2025"]
+
+
 def test_list_notifications_include_archived(conn):
     archive_notification(conn, "cus-31-2024")
     assert [n["gazette_id"] for n in list_notifications(conn)] == ["cus-45-2025"]

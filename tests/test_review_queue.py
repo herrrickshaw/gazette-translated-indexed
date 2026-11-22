@@ -82,6 +82,15 @@ def test_review_unknown_answer_leaves_row_pending(conn, monkeypatch):
     assert row is not None and row["verified_by"] is None
 
 
+@pytest.mark.parametrize("answer", ["y", "yes", "accept", "reject", "n", "x"])
+def test_review_only_exact_letters_act(conn, monkeypatch, answer):
+    r1 = create_cross_reference(conn, "a", "b", "amends")
+    _answers(monkeypatch, [answer])
+    rq.review(conn, "bob")
+    row = get_cross_reference(conn, r1["ref_id"])
+    assert row is not None and row["verified_by"] is None
+
+
 def test_review_empty_answer_leaves_row_pending(conn, monkeypatch):
     r1 = create_cross_reference(conn, "a", "b", "amends")
     _answers(monkeypatch, [""])
